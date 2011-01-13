@@ -8,7 +8,8 @@ import org.anddev.andengine.engine.options.EngineOptions;
 import org.anddev.andengine.engine.options.EngineOptions.ScreenOrientation;
 import org.anddev.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
 import org.anddev.andengine.entity.scene.Scene;
-import org.anddev.andengine.entity.scene.background.ColorBackground;
+import org.anddev.andengine.entity.scene.background.AutoParallaxBackground;
+import org.anddev.andengine.entity.scene.background.ParallaxBackground.ParallaxEntity;
 import org.anddev.andengine.entity.sprite.Sprite;
 import org.anddev.andengine.entity.util.FPSLogger;
 import org.anddev.andengine.extension.input.touch.controller.MultiTouch;
@@ -40,9 +41,11 @@ public class SoccerBoard extends BaseBoard {
 
 	private Camera mCamera;
 	private Texture mCardDeckTexture;
-
 	private HashMap<Card, TextureRegion> mCardTotextureRegionMap;
-
+	
+	private TextureRegion mSoccerField;
+	private Texture mTexture;
+	private Texture mBackground;
 	// ===========================================================
 	// Constructors
 	// ===========================================================
@@ -80,11 +83,18 @@ public class SoccerBoard extends BaseBoard {
 
 	@Override
 	public void onLoadResources() {
-		this.mCardDeckTexture = new Texture(1024, 512, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
-
+		this.mCardDeckTexture = new Texture(1024, 512, TextureOptions.BILINEAR_PREMULTIPLYALPHA);	
 		TextureRegionFactory.createFromAsset(this.mCardDeckTexture, this, "gfx/carddeck_tiled.png", 0, 0);
 
+		this.mTexture = new Texture(256, 128, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
+		this.mBackground = new Texture(1024, 1024, TextureOptions.DEFAULT);
+		this.mSoccerField = TextureRegionFactory.createFromAsset(this.mBackground, this, "gfx/soccer_field.png", 0, 188);        
+
+		
 		this.mCardTotextureRegionMap = new HashMap<Card, TextureRegion>();
+		
+		
+		
 
 		/* Extract the TextureRegion of each card in the whole deck. */
 		for(final Card card : Card.values()) {
@@ -92,7 +102,7 @@ public class SoccerBoard extends BaseBoard {
 			this.mCardTotextureRegionMap.put(card, cardTextureRegion);
 		}
 
-		this.mEngine.getTextureManager().loadTexture(this.mCardDeckTexture);
+		this.mEngine.getTextureManager().loadTextures(this.mTexture, this.mBackground);
 	}
 
 	@Override
@@ -100,17 +110,11 @@ public class SoccerBoard extends BaseBoard {
 		this.mEngine.registerUpdateHandler(new FPSLogger());
 
 		final Scene scene = new Scene(1);
+		
 		scene.setOnAreaTouchTraversalFrontToBack();
-
-		this.addCard(scene, Card.CLUB_ACE, 200, 100);
-		this.addCard(scene, Card.HEART_ACE, 200, 260);
-		this.addCard(scene, Card.DIAMOND_ACE, 440, 100);
-		this.addCard(scene, Card.SPADE_ACE, 440, 260);
-
-		scene.setBackground(new ColorBackground(0.09804f, 0.6274f, 0.8784f));
-
+		
 		scene.setTouchAreaBindingEnabled(true);
-
+	
 		return scene;
 	}
 
