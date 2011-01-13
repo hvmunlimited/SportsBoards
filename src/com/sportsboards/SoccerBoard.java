@@ -8,20 +8,13 @@ import org.anddev.andengine.engine.options.EngineOptions;
 import org.anddev.andengine.engine.options.EngineOptions.ScreenOrientation;
 import org.anddev.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
 import org.anddev.andengine.entity.scene.Scene;
-import org.anddev.andengine.entity.scene.background.AutoParallaxBackground;
-import org.anddev.andengine.entity.scene.background.ParallaxBackground.ParallaxEntity;
 import org.anddev.andengine.entity.sprite.Sprite;
 import org.anddev.andengine.entity.util.FPSLogger;
-import org.anddev.andengine.extension.input.touch.controller.MultiTouch;
-import org.anddev.andengine.extension.input.touch.controller.MultiTouchController;
-import org.anddev.andengine.extension.input.touch.controller.MultiTouchException;
 import org.anddev.andengine.input.touch.TouchEvent;
 import org.anddev.andengine.opengl.texture.Texture;
 import org.anddev.andengine.opengl.texture.TextureOptions;
 import org.anddev.andengine.opengl.texture.region.TextureRegion;
 import org.anddev.andengine.opengl.texture.region.TextureRegionFactory;
-
-import android.widget.Toast;
 
 /**
  * @author Mike Bonar
@@ -43,12 +36,13 @@ public class SoccerBoard extends BaseBoard {
 	private Texture mCardDeckTexture;
 	private HashMap<Card, TextureRegion> mCardTotextureRegionMap;
 	
-	private TextureRegion mSoccerField;
+	private Sprite mBackground;
 	private Texture mTexture;
-	private Texture mBackground;
+	private TextureRegion mBackGroundTextureRegion;
 	// ===========================================================
 	// Constructors
 	// ===========================================================
+	private Texture mBackgroundTexture;
 
 	// ===========================================================
 	// Getter & Setter
@@ -63,58 +57,36 @@ public class SoccerBoard extends BaseBoard {
 		this.mCamera = new Camera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
 		final Engine engine = new Engine(new EngineOptions(true, ScreenOrientation.LANDSCAPE, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), this.mCamera));
 
-		try {
-			if(MultiTouch.isSupported(this)) {
-				engine.setTouchController(new MultiTouchController());
-				if(MultiTouch.isSupportedDistinct(this)) {
-					Toast.makeText(this, "MultiTouch detected --> Drag multiple Sprites with multiple fingers!", Toast.LENGTH_LONG).show();
-				} else {
-					Toast.makeText(this, "MultiTouch detected --> Drag multiple Sprites with multiple fingers!\n\n(Your device might have problems to distinguish between separate fingers.)", Toast.LENGTH_LONG).show();
-				}
-			} else {
-				Toast.makeText(this, "Sorry your device does NOT support MultiTouch!\n\n(Falling back to SingleTouch.)", Toast.LENGTH_LONG).show();
-			}
-		} catch (final MultiTouchException e) {
-			Toast.makeText(this, "Sorry your Android Version does NOT support MultiTouch!\n\n(Falling back to SingleTouch.)", Toast.LENGTH_LONG).show();
-		}
+		
+		
+		
+		
+		
 
 		return engine;
 	}
 
 	@Override
 	public void onLoadResources() {
-		this.mCardDeckTexture = new Texture(1024, 512, TextureOptions.BILINEAR_PREMULTIPLYALPHA);	
-		TextureRegionFactory.createFromAsset(this.mCardDeckTexture, this, "gfx/carddeck_tiled.png", 0, 0);
-
-		this.mTexture = new Texture(256, 128, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
-		this.mBackground = new Texture(1024, 1024, TextureOptions.DEFAULT);
-		this.mSoccerField = TextureRegionFactory.createFromAsset(this.mBackground, this, "gfx/soccer_field.png", 0, 188);        
-
 		
-		this.mCardTotextureRegionMap = new HashMap<Card, TextureRegion>();
+		this.mTexture = new Texture(64, 64, TextureOptions.BILINEAR);
+		TextureRegionFactory.setAssetBasePath("gfx/");
+		this.mBackgroundTexture = new Texture(1024, 512, TextureOptions.DEFAULT);
+		this.mBackGroundTextureRegion = TextureRegionFactory.createFromAsset(this.mBackgroundTexture, this, "soccer_field.png", 0, 0);
 		
-		
-		
-
-		/* Extract the TextureRegion of each card in the whole deck. */
-		for(final Card card : Card.values()) {
-			final TextureRegion cardTextureRegion = TextureRegionFactory.extractFromTexture(this.mCardDeckTexture, card.getTexturePositionX(), card.getTexturePositionY(), Card.CARD_WIDTH, Card.CARD_HEIGHT);
-			this.mCardTotextureRegionMap.put(card, cardTextureRegion);
-		}
-
-		this.mEngine.getTextureManager().loadTextures(this.mTexture, this.mBackground);
+		this.mEngine.getTextureManager().loadTextures(this.mBackgroundTexture, this.mTexture);
 	}
-
 	@Override
 	public Scene onLoadScene() {
 		this.mEngine.registerUpdateHandler(new FPSLogger());
+		
+		final Scene scene = new Scene(4);
 
-		final Scene scene = new Scene(1);
+		scene.getLayer(0).addEntity(new Sprite(0, 0, this.mBackGroundTextureRegion));
 		
 		scene.setOnAreaTouchTraversalFrontToBack();
-		
 		scene.setTouchAreaBindingEnabled(true);
-	
+	//
 		return scene;
 	}
 
