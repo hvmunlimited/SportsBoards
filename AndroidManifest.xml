@@ -16,5 +16,5 @@
 		
 	</application>
 <supports-screens android:largeScreens="true"></supports-screens>
-<uses-sdk android:minSdkVersion="5" />
+<uses-sdk android:targetSdkVersion="8" android:minSdkVersion="7"></uses-sdk>
 </manifest> 
