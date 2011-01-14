@@ -15,4 +15,6 @@
 		<activity android:configChanges="orientation" android:name="com.sportsboards.SoccerBoard"/>
 		
 	</application>
+<supports-screens android:largeScreens="true"></supports-screens>
+<uses-sdk android:minSdkVersion="5" />
 </manifest> 
