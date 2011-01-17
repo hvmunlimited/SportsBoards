@@ -63,6 +63,9 @@ public abstract class BaseBoard extends BaseGameActivity {
 	// Methods
 	// ===========================================================
 
+	public abstract void addPlayer();
+	
+	public abstract void addBall();
 	// ===========================================================
 	// Inner and Anonymous Classes
 	// ===========================================================
