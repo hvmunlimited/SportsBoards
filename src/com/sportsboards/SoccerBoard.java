@@ -1,7 +1,6 @@
 package com.sportsboards;
 
 import java.util.HashMap;
-
 import org.anddev.andengine.engine.Engine;
 import org.anddev.andengine.engine.camera.Camera;
 import org.anddev.andengine.engine.options.EngineOptions;
@@ -36,13 +35,16 @@ public class SoccerBoard extends BaseBoard {
 	private Texture mCardDeckTexture;
 	private HashMap<Card, TextureRegion> mCardTotextureRegionMap;
 	
-	private Sprite mBackground;
+	
 	private Texture mTexture;
+	private Texture mBallTexture;
+	private Texture mBackgroundTexture;
+	private TextureRegion mBallTextureRegion;
 	private TextureRegion mBackGroundTextureRegion;
 	// ===========================================================
 	// Constructors
 	// ===========================================================
-	private Texture mBackgroundTexture;
+	
 
 	// ===========================================================
 	// Getter & Setter
@@ -69,22 +71,39 @@ public class SoccerBoard extends BaseBoard {
 	@Override
 	public void onLoadResources() {
 		
-		this.mTexture = new Texture(64, 64, TextureOptions.BILINEAR);
+		this.mTexture = new Texture(64, 64, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
 		TextureRegionFactory.setAssetBasePath("gfx/");
 		this.mBackgroundTexture = new Texture(1024, 512, TextureOptions.DEFAULT);
 		this.mBackGroundTextureRegion = TextureRegionFactory.createFromAsset(this.mBackgroundTexture, this, "soccer_field.png", 0, 0);
 		
-		this.mEngine.getTextureManager().loadTextures(this.mBackgroundTexture, this.mTexture);
+		this.mBallTexture = new Texture(128, 128, TextureOptions.BILINEAR);
+		this.mBallTextureRegion = TextureRegionFactory.createFromAsset(this.mBallTexture, this, "soccer_ball.png", 0, 0);
+		
+		this.mEngine.getTextureManager().loadTextures(this.mBackgroundTexture, this.mTexture, this.mBallTexture);
 	}
 	@Override
 	public Scene onLoadScene() {
 		this.mEngine.registerUpdateHandler(new FPSLogger());
 		
-		final Scene scene = new Scene(4);
+		final Scene scene = new Scene(1);
 
 		scene.getLayer(0).addEntity(new Sprite(0, 0, this.mBackGroundTextureRegion));
 		
+		final int centerX = (CAMERA_WIDTH - this.mBallTextureRegion.getWidth()) / 2 - 100;
+		final int centerY = (CAMERA_HEIGHT - this.mBallTextureRegion.getHeight()) / 2;
+		final Sprite ball = new Sprite(centerX, centerY, this.mBallTextureRegion){
+			
+		@Override
+		public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY) {
+			this.setPosition(pSceneTouchEvent.getX() - this.getWidth() / 2, pSceneTouchEvent.getY() - this.getHeight() / 2);
+			return true;
+		}
+		};
+		
+		
+		scene.getTopLayer().addEntity(ball);
 		scene.setOnAreaTouchTraversalFrontToBack();
+		scene.registerTouchArea(ball);
 		scene.setTouchAreaBindingEnabled(true);
 	//
 		return scene;
