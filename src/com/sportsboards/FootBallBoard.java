@@ -28,7 +28,7 @@ import org.anddev.andengine.opengl.texture.region.TextureRegionFactory;
  * @author Mike Bonar
  * 
  */
-public class SoccerBoard extends BaseBoard implements IOnSceneTouchListener, IScrollDetectorListener, IPinchZoomDetectorListener {
+public class FootBallBoard extends BaseBoard implements IOnSceneTouchListener, IScrollDetectorListener, IPinchZoomDetectorListener {
 	// ===========================================================
 	// Constants
 	// ===========================================================
