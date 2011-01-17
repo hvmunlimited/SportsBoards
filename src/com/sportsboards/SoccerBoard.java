@@ -99,7 +99,7 @@ public class SoccerBoard extends BaseBoard {
 			return true;
 		}
 		};
-		
+		//
 		
 		scene.getTopLayer().addEntity(ball);
 		scene.setOnAreaTouchTraversalFrontToBack();
