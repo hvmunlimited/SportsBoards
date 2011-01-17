@@ -74,7 +74,7 @@ public class SoccerBoard extends BaseBoard {
 		this.mTexture = new Texture(64, 64, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
 		TextureRegionFactory.setAssetBasePath("gfx/");
 		this.mBackgroundTexture = new Texture(1024, 512, TextureOptions.DEFAULT);
-		this.mBackGroundTextureRegion = TextureRegionFactory.createFromAsset(this.mBackgroundTexture, this, "soccer_field.png", 0, 0);
+		this.mBackGroundTextureRegion = TextureRegionFactory.createFromAsset(this.mBackgroundTexture, this, "soccerboard_background_1024_512.png", 0, 0);
 		
 		this.mBallTexture = new Texture(128, 128, TextureOptions.BILINEAR);
 		this.mBallTextureRegion = TextureRegionFactory.createFromAsset(this.mBallTexture, this, "soccer_ball.png", 0, 0);
