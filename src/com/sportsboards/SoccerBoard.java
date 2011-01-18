@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.anddev.andengine.engine.Engine;
 import org.anddev.andengine.engine.camera.ZoomCamera;
+import org.anddev.andengine.engine.handler.IUpdateHandler;
 import org.anddev.andengine.engine.options.EngineOptions;
 import org.anddev.andengine.engine.options.EngineOptions.ScreenOrientation;
 import org.anddev.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
@@ -24,6 +25,8 @@ import org.anddev.andengine.opengl.texture.TextureOptions;
 import org.anddev.andengine.opengl.texture.region.TextureRegion;
 import org.anddev.andengine.opengl.texture.region.TextureRegionFactory;
 
+import com.sportsboards.sprites.Player;
+
 /**
  * @author Mike Bonar
  * 
@@ -38,11 +41,6 @@ public class SoccerBoard extends BaseBoard implements IOnSceneTouchListener, ISc
 	
 	private static final int RED_START_X = 1;
 	private static final int RED_START_Y = 512;
-	
-	private static final int BLUE_START_X = 512;
-	private static final int BLUE_START_Y = 512;
-	
-	private static final int INTERVAL = 32;
 
 	// ===========================================================
 	// Fields
@@ -63,8 +61,8 @@ public class SoccerBoard extends BaseBoard implements IOnSceneTouchListener, ISc
 	private TextureRegion mRedPlayerTextureRegion;
 	private TextureRegion mBluePlayerTextureRegion;
 	
-	private List<Sprite> mRedSpritesList = new ArrayList<Sprite>();
-	private List<Sprite> mBlueSpritesList = new ArrayList<Sprite>();
+	private List<Player> mRedSpritesList = new ArrayList<Player>();
+	private List<Player> mBlueSpritesList = new ArrayList<Player>();
 	// ===========================================================
 	// Constructors
 	// ===========================================================
@@ -131,31 +129,32 @@ public class SoccerBoard extends BaseBoard implements IOnSceneTouchListener, ISc
 		}
 		};
 		
-		final Sprite red_player = new Sprite(1, 512, this.mRedPlayerTextureRegion){
-			@Override
-			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY) {
-				this.setPosition(pSceneTouchEvent.getX() - this.getWidth() / 2, pSceneTouchEvent.getY() - this.getHeight() / 2);
-				return true;
-			}
+		int startx = RED_START_X;
+		int starty = RED_START_Y;
+		
+		int interval = 102;
+		
+		for(int i = 0; i < 5; i++){
+		
+			final Player red_player = new Player(0, "", startx, starty, this.mRedPlayerTextureRegion);
+			scene.getTopLayer().addEntity(red_player);
+			scene.registerTouchArea(red_player);
+			mRedSpritesList.add(red_player);
+			startx += interval;
+		}
+		
+		for(int i = 0; i < 5; i++){
 			
-		};
-		final Sprite blue_player = new Sprite(512, 512, this.mBluePlayerTextureRegion){
-			@Override
-			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY) {
-				this.setPosition(pSceneTouchEvent.getX() - this.getWidth() / 2, pSceneTouchEvent.getY() - this.getHeight() / 2);
-				return true;
-			}
-			
-		};
+			final Player blue_player = new Player(0, "", startx, starty, this.mBluePlayerTextureRegion);
+			scene.getTopLayer().addEntity(blue_player);
+			scene.registerTouchArea(blue_player);
+			mBlueSpritesList.add(blue_player);
+			startx += interval;
+		}
 		
 		scene.getTopLayer().addEntity(ball);
-		scene.getTopLayer().addEntity(red_player);
-		scene.getTopLayer().addEntity(blue_player);
 		scene.setOnAreaTouchTraversalFrontToBack();
 		scene.registerTouchArea(ball);
-		scene.registerTouchArea(red_player);
-		scene.registerTouchArea(blue_player);
-	
 		
 		this.mScrollDetector = new SurfaceScrollDetector(this);
 		if(MultiTouch.isSupportedByAndroidVersion()) {
@@ -170,6 +169,22 @@ public class SoccerBoard extends BaseBoard implements IOnSceneTouchListener, ISc
 		scene.setOnSceneTouchListener(this);
 		scene.setTouchAreaBindingEnabled(true);
 	//
+
+		
+		scene.registerUpdateHandler(new IUpdateHandler(){
+			@Override
+			public void reset(){}
+			@Override
+			public void onUpdate(final float pSecondsElapsed){
+				
+				for(Player p: mRedSpritesList){
+					if(ball.collidesWith(p)){
+						//ball.setColor
+					}
+				}
+			}
+		});
+		
 		return scene;
 	}
 

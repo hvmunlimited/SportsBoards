@@ -14,6 +14,7 @@ class MenuAdapter extends BaseAdapter{
 
 	private static final Activity[] Activities = {
 		Activity.SOCCER,
+		Activity.FOOTBALL,
 	};
 	
 	private final Context mContext;

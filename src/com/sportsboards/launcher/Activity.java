@@ -1,14 +1,16 @@
 package com.sportsboards.launcher;
 
 import org.anddev.andengine.ui.activity.BaseGameActivity;
+
+import com.sportsboards.FootBallBoard;
 import com.sportsboards.R;
 import com.sportsboards.SoccerBoard;
 
 
 enum Activity{
 
-	SOCCER(SoccerBoard.class, R.string.soccer_string);
-	
+	SOCCER(SoccerBoard.class, R.string.soccer_string),
+	FOOTBALL(FootBallBoard.class, R.string.football_string);
 	
 
 	public final Class<? extends BaseGameActivity> Class;
