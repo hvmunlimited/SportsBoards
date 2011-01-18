@@ -1,5 +1,8 @@
 package com.sportsboards;
 
+import org.anddev.andengine.entity.scene.Scene.IOnSceneTouchListener;
+import org.anddev.andengine.extension.input.touch.detector.PinchZoomDetector.IPinchZoomDetectorListener;
+import org.anddev.andengine.input.touch.detector.ScrollDetector.IScrollDetectorListener;
 import org.anddev.andengine.ui.activity.BaseGameActivity;
 
 import android.view.Menu;
@@ -9,11 +12,12 @@ import android.view.MenuItem;
  * @author Mike Bonar
  * 
  */
-public abstract class BaseBoard extends BaseGameActivity {
+public abstract class BaseBoard extends BaseGameActivity implements IOnSceneTouchListener, IScrollDetectorListener, IPinchZoomDetectorListener {
 	// ===========================================================
 	// Constants
 	// ===========================================================
-
+	public static final int CAMERA_WIDTH = 1024;
+	public static final int CAMERA_HEIGHT = 600;
 	private static final int MENU_TRACE = Menu.FIRST;
 
 	// ===========================================================
@@ -31,10 +35,10 @@ public abstract class BaseBoard extends BaseGameActivity {
 	// ===========================================================
 	// Methods for/from SuperClass/Interfaces
 	// ===========================================================
-
+	
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
-		menu.add(Menu.NONE, MENU_TRACE, Menu.NONE, "Start Method Tracing");
+		menu.add(Menu.NONE, MENU_TRACE, Menu.NONE, "Save formations");
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -63,9 +67,6 @@ public abstract class BaseBoard extends BaseGameActivity {
 	// Methods
 	// ===========================================================
 
-	public abstract void addPlayer();
-	
-	public abstract void addBall();
 	// ===========================================================
 	// Inner and Anonymous Classes
 	// ===========================================================

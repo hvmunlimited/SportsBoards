@@ -24,9 +24,7 @@ public class Launcher extends ListActivity{
 	@Override
 	protected void onListItemClick(ListView lv, View v, int position, long id){
 		super.onListItemClick(lv, v, position, id);
-		
 		Activity act = (Activity) this.getListAdapter().getItem(position);
-		
 		this.startActivity(new Intent(this, act.Class));
 	}
 }

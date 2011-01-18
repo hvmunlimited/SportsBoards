@@ -16,6 +16,7 @@ public class Player extends Sprite{
 	
 	@Override
 	public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY) {
+		System.out.println(this.getX() + " " + this.getY());
 		this.setPosition(pSceneTouchEvent.getX() - this.getWidth() / 2, pSceneTouchEvent.getY() - this.getHeight() / 2);
 		return true;
 	}

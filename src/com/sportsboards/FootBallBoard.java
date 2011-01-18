@@ -33,9 +33,6 @@ public class FootBallBoard extends BaseBoard implements IOnSceneTouchListener, I
 	// Constants
 	// ===========================================================
 
-	private static final int CAMERA_WIDTH = 1024;
-	private static final int CAMERA_HEIGHT = 600;
-	
 	private static final int RED_START_X = 1;
 	private static final int RED_START_Y = 512;
 	
@@ -223,14 +220,7 @@ public class FootBallBoard extends BaseBoard implements IOnSceneTouchListener, I
 	// Methods
 	// ===========================================================
 
-	@Override
-	public void addPlayer(){
-	}
-	@Override
-	public void addBall(){
-		
-	}
-	
+
 	
 
 	// ===========================================================

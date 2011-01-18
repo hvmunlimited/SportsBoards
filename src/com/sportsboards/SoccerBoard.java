@@ -10,35 +10,33 @@ import org.anddev.andengine.engine.options.EngineOptions;
 import org.anddev.andengine.engine.options.EngineOptions.ScreenOrientation;
 import org.anddev.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
 import org.anddev.andengine.entity.scene.Scene;
-import org.anddev.andengine.entity.scene.Scene.IOnSceneTouchListener;
 import org.anddev.andengine.entity.sprite.Sprite;
 import org.anddev.andengine.extension.input.touch.controller.MultiTouch;
 import org.anddev.andengine.extension.input.touch.controller.MultiTouchException;
 import org.anddev.andengine.extension.input.touch.detector.PinchZoomDetector;
-import org.anddev.andengine.extension.input.touch.detector.PinchZoomDetector.IPinchZoomDetectorListener;
 import org.anddev.andengine.input.touch.TouchEvent;
 import org.anddev.andengine.input.touch.detector.ScrollDetector;
 import org.anddev.andengine.input.touch.detector.SurfaceScrollDetector;
-import org.anddev.andengine.input.touch.detector.ScrollDetector.IScrollDetectorListener;
 import org.anddev.andengine.opengl.texture.Texture;
 import org.anddev.andengine.opengl.texture.TextureOptions;
 import org.anddev.andengine.opengl.texture.region.TextureRegion;
 import org.anddev.andengine.opengl.texture.region.TextureRegionFactory;
 
+import android.view.Menu;
+
+import com.sportsboards.sprites.Ball;
 import com.sportsboards.sprites.Player;
 
 /**
  * @author Mike Bonar
  * 
  */
-public class SoccerBoard extends BaseBoard implements IOnSceneTouchListener, IScrollDetectorListener, IPinchZoomDetectorListener {
+public class SoccerBoard extends BaseBoard{
+	
 	// ===========================================================
 	// Constants
 	// ===========================================================
 
-	private static final int CAMERA_WIDTH = 1024;
-	private static final int CAMERA_HEIGHT = 600;
-	
 	private static final int RED_START_X = 1;
 	private static final int RED_START_Y = 512;
 
@@ -61,8 +59,8 @@ public class SoccerBoard extends BaseBoard implements IOnSceneTouchListener, ISc
 	private TextureRegion mRedPlayerTextureRegion;
 	private TextureRegion mBluePlayerTextureRegion;
 	
-	private List<Player> mRedSpritesList = new ArrayList<Player>();
-	private List<Player> mBlueSpritesList = new ArrayList<Player>();
+	private List<Player> mRedTeam = new ArrayList<Player>();
+	private List<Player> mBlueTeam = new ArrayList<Player>();
 	// ===========================================================
 	// Constructors
 	// ===========================================================
@@ -80,13 +78,6 @@ public class SoccerBoard extends BaseBoard implements IOnSceneTouchListener, ISc
 	public Engine onLoadEngine() {
 		this.mZoomCamera = new ZoomCamera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
 		final Engine engine = new Engine(new EngineOptions(true, ScreenOrientation.LANDSCAPE, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), this.mZoomCamera));
-
-		
-		
-		
-		
-		
-
 		return engine;
 	}
 
@@ -120,15 +111,8 @@ public class SoccerBoard extends BaseBoard implements IOnSceneTouchListener, ISc
 		
 		final int centerX = (CAMERA_WIDTH - this.mBallTextureRegion.getWidth()) / 2 - 100;
 		final int centerY = (CAMERA_HEIGHT - this.mBallTextureRegion.getHeight()) / 2;
-		final Sprite ball = new Sprite(centerX, centerY, this.mBallTextureRegion){
+		final Ball ball = new Ball(centerX, centerY, this.mBallTextureRegion);
 					
-		@Override
-		public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY) {
-			this.setPosition(pSceneTouchEvent.getX() - this.getWidth() / 2, pSceneTouchEvent.getY() - this.getHeight() / 2);
-			return true;
-		}
-		};
-		
 		int startx = RED_START_X;
 		int starty = RED_START_Y;
 		
@@ -139,7 +123,7 @@ public class SoccerBoard extends BaseBoard implements IOnSceneTouchListener, ISc
 			final Player red_player = new Player(0, "", startx, starty, this.mRedPlayerTextureRegion);
 			scene.getTopLayer().addEntity(red_player);
 			scene.registerTouchArea(red_player);
-			mRedSpritesList.add(red_player);
+			mRedTeam.add(red_player);
 			startx += interval;
 		}
 		
@@ -148,7 +132,7 @@ public class SoccerBoard extends BaseBoard implements IOnSceneTouchListener, ISc
 			final Player blue_player = new Player(0, "", startx, starty, this.mBluePlayerTextureRegion);
 			scene.getTopLayer().addEntity(blue_player);
 			scene.registerTouchArea(blue_player);
-			mBlueSpritesList.add(blue_player);
+			mBlueTeam.add(blue_player);
 			startx += interval;
 		}
 		
@@ -177,9 +161,14 @@ public class SoccerBoard extends BaseBoard implements IOnSceneTouchListener, ISc
 			@Override
 			public void onUpdate(final float pSecondsElapsed){
 				
-				for(Player p: mRedSpritesList){
+				for(Player p: mRedTeam){
 					if(ball.collidesWith(p)){
-						//ball.setColor
+						ball.setColor(1, 0, 0);
+					}
+				}
+				for(Player p: mBlueTeam){
+					if(ball.collidesWith(p)){
+						ball.setColor(0, 0, 1);
 					}
 				}
 			}
@@ -216,6 +205,7 @@ public class SoccerBoard extends BaseBoard implements IOnSceneTouchListener, ISc
 
 	@Override
 	public boolean onSceneTouchEvent(final Scene pScene, final TouchEvent pSceneTouchEvent) {
+		
 		if(this.mPinchZoomDetector != null) {
 			this.mPinchZoomDetector.onTouchEvent(pSceneTouchEvent);
 
@@ -233,21 +223,21 @@ public class SoccerBoard extends BaseBoard implements IOnSceneTouchListener, ISc
 
 		return true;
 	}
-
+	
 	// ===========================================================
 	// Methods
 	// ===========================================================
 
-	@Override
-	public void addPlayer(){
-	}
-	@Override
-	public void addBall(){
+	public void saveFormation(){
+		
+		for(Player p:mRedTeam){
+			System.out.println(p.getX() + " " + p.getY());
+		}
+		
+		
 		
 	}
 	
-	
-
 	// ===========================================================
 	// Inner and Anonymous Classes
 	// ===========================================================
