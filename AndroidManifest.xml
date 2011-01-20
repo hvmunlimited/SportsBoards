@@ -2,20 +2,21 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 package="com.sportsboards" android:versionCode="1"
 android:versionName="1.0">
-<application android:icon="@drawable/icon" android:label="@string/app_name">
+<application android:icon="@drawable/soccer_ball_48_48" android:label="@string/app_name">
 
 <activity android:name="com.sportsboards.launcher.Launcher"
-android:label="@string/app_name">
+android:label="@string/app_name" android:screenOrientation="landscape">
 <intent-filter>
 <action android:name="android.intent.action.MAIN" />
 <category android:name="android.intent.category.LAUNCHER" />
 </intent-filter>
 </activity>
 
-<activity android:configChanges="orientation" android:name="com.sportsboards.SoccerBoard"/>
-<activity android:configChanges="orientation" android:name="com.sportsboards.FootBallBoard"/>
+<activity android:name="com.sportsboards.SoccerBoard" android:screenOrientation="landscape"/>
+<activity android:name="com.sportsboards.FootBallBoard" android:screenOrientation="landscape"/>
 </application>
 <supports-screens android:largeScreens="true"></supports-screens>
 <uses-sdk android:targetSdkVersion="8" android:minSdkVersion="7"></uses-sdk>
 <uses-permission android:name="android.permission.WAKE_LOCK"/>
+<uses-permission android:name="android.permission.CAMERA"></uses-permission>
 </manifest> 
