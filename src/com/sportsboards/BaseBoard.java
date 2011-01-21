@@ -1,9 +1,30 @@
 package com.sportsboards;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.anddev.andengine.engine.Engine;
+import org.anddev.andengine.engine.camera.ZoomCamera;
+import org.anddev.andengine.engine.options.EngineOptions;
+import org.anddev.andengine.engine.options.EngineOptions.ScreenOrientation;
+import org.anddev.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
+import org.anddev.andengine.entity.scene.Scene;
 import org.anddev.andengine.entity.scene.Scene.IOnSceneTouchListener;
+import org.anddev.andengine.extension.input.touch.controller.MultiTouch;
+import org.anddev.andengine.extension.input.touch.controller.MultiTouchException;
+import org.anddev.andengine.extension.input.touch.detector.PinchZoomDetector;
 import org.anddev.andengine.extension.input.touch.detector.PinchZoomDetector.IPinchZoomDetectorListener;
+import org.anddev.andengine.input.touch.TouchEvent;
+import org.anddev.andengine.input.touch.detector.ScrollDetector;
+import org.anddev.andengine.input.touch.detector.SurfaceScrollDetector;
 import org.anddev.andengine.input.touch.detector.ScrollDetector.IScrollDetectorListener;
+import org.anddev.andengine.opengl.texture.Texture;
+import org.anddev.andengine.opengl.texture.TextureOptions;
+import org.anddev.andengine.opengl.texture.region.TextureRegion;
+import org.anddev.andengine.opengl.texture.region.TextureRegionFactory;
 import org.anddev.andengine.ui.activity.BaseGameActivity;
+
+import com.sportsboards.sprites.Player;
 
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,6 +39,26 @@ public abstract class BaseBoard extends BaseGameActivity implements IOnSceneTouc
 	// ===========================================================
 	public static final int CAMERA_WIDTH = 1024;
 	public static final int CAMERA_HEIGHT = 600;
+	
+	protected int NUM_PLAYERS;
+	protected Texture mBackgroundTexture;
+	protected Texture mBallTexture;
+	protected Texture mRedPlayerTexture;
+	protected Texture mBluePlayerTexture;
+	
+	protected TextureRegion mBackGroundTextureRegion;
+	protected TextureRegion mBallTextureRegion;
+	protected TextureRegion mRedPlayerTextureRegion;
+	protected TextureRegion mBluePlayerTextureRegion;
+	
+	protected List<Player> mRedTeam = new ArrayList<Player>();
+	protected List<Player> mBlueTeam = new ArrayList<Player>();
+	
+	private ZoomCamera mZoomCamera;
+	private SurfaceScrollDetector mScrollDetector;
+	private PinchZoomDetector mPinchZoomDetector;
+	private float mPinchZoomStartedCameraZoomFactor;
+	
 	private static final int MENU_TRACE = Menu.FIRST;
 
 	// ===========================================================
@@ -35,6 +76,99 @@ public abstract class BaseBoard extends BaseGameActivity implements IOnSceneTouc
 	// ===========================================================
 	// Methods for/from SuperClass/Interfaces
 	// ===========================================================
+	
+	@Override
+	public Engine onLoadEngine() {
+		this.mZoomCamera = new ZoomCamera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
+		final Engine engine = new Engine(new EngineOptions(true, ScreenOrientation.LANDSCAPE, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), this.mZoomCamera));
+		return engine;
+	}
+	@Override
+	public void onLoadResources(){
+		TextureRegionFactory.setAssetBasePath("gfx/");
+		this.mBackgroundTexture = new Texture(1024, 1024, TextureOptions.DEFAULT);
+		this.mBallTexture = new Texture(64, 64, TextureOptions.BILINEAR);
+		this.mRedPlayerTexture = new Texture(64, 64, TextureOptions.BILINEAR);
+		this.mBluePlayerTexture = new Texture(64, 64, TextureOptions.BILINEAR);
+		this.mRedPlayerTextureRegion = TextureRegionFactory.createFromAsset(this.mRedPlayerTexture, this, "red_player.png", 0, 0);
+		this.mBluePlayerTextureRegion = TextureRegionFactory.createFromAsset(this.mBluePlayerTexture, this, "blue_player.png", 0, 0);
+		this.mEngine.getTextureManager().loadTextures(this.mBackgroundTexture, this.mBluePlayerTexture, this.mRedPlayerTexture, this.mBallTexture);
+	}
+	@Override
+	public Scene onLoadScene(){
+		
+		final Scene scene = new Scene(1);
+		
+		
+		this.mScrollDetector = new SurfaceScrollDetector(this);
+		if(MultiTouch.isSupportedByAndroidVersion()) {
+			try {
+				this.mPinchZoomDetector = new PinchZoomDetector(this);
+			} catch (final MultiTouchException e) {
+				this.mPinchZoomDetector = null;
+			}
+		} else {
+			this.mPinchZoomDetector = null;
+		}
+		scene.setOnSceneTouchListener(this);
+		scene.setTouchAreaBindingEnabled(true);
+		
+		return scene;
+	}
+	
+	public void saveFormation(){
+		
+	
+	}
+	
+	public void loadFormation(){
+		
+	}
+	
+	@Override
+	public void onScroll(final ScrollDetector pScollDetector, final TouchEvent pTouchEvent, final float pDistanceX, final float pDistanceY) {
+		final float zoomFactor = this.mZoomCamera.getZoomFactor();
+		this.mZoomCamera.offsetCenter(-pDistanceX / zoomFactor, -pDistanceY / zoomFactor);
+	}
+
+	@Override
+	public void onPinchZoomStarted(final PinchZoomDetector pPinchZoomDetector, final TouchEvent pTouchEvent) {
+		this.mPinchZoomStartedCameraZoomFactor = this.mZoomCamera.getZoomFactor();
+	}
+
+	@Override
+	public void onPinchZoom(final PinchZoomDetector pPinchZoomDetector, final TouchEvent pTouchEvent, final float pZoomFactor) {
+		this.mZoomCamera.setZoomFactor(this.mPinchZoomStartedCameraZoomFactor * pZoomFactor);
+	}
+
+	@Override
+	public void onPinchZoomFinished(final PinchZoomDetector pPinchZoomDetector, final TouchEvent pTouchEvent, final float pZoomFactor) {
+		this.mZoomCamera.setZoomFactor(this.mPinchZoomStartedCameraZoomFactor * pZoomFactor);
+		if(this.mZoomCamera.getZoomFactor() > 2.0f){
+			this.mZoomCamera.setZoomFactor(1.0f);
+		}
+	}
+
+	@Override
+	public boolean onSceneTouchEvent(final Scene pScene, final TouchEvent pSceneTouchEvent) {
+		
+		if(this.mPinchZoomDetector != null) {
+			this.mPinchZoomDetector.onTouchEvent(pSceneTouchEvent);
+
+			if(this.mPinchZoomDetector.isZooming()) {
+				this.mScrollDetector.setEnabled(false);
+			} else {
+				if(pSceneTouchEvent.getAction() == TouchEvent.ACTION_DOWN) {
+					this.mScrollDetector.setEnabled(true);
+				}
+				this.mScrollDetector.onTouchEvent(pSceneTouchEvent);
+			}
+		} else {
+			this.mScrollDetector.onTouchEvent(pSceneTouchEvent);
+		}
+
+		return true;
+	}
 	
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
