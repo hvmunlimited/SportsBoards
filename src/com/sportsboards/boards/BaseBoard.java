@@ -1,4 +1,4 @@
-package com.sportsboards;
+package com.sportsboards.boards;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,9 +25,6 @@ import org.anddev.andengine.opengl.texture.region.TextureRegionFactory;
 import org.anddev.andengine.ui.activity.BaseGameActivity;
 
 import com.sportsboards.sprites.Player;
-
-import android.view.Menu;
-import android.view.MenuItem;
 
 /**
  * @author Mike Bonar
@@ -59,8 +56,6 @@ public abstract class BaseBoard extends BaseGameActivity implements IOnSceneTouc
 	private PinchZoomDetector mPinchZoomDetector;
 	private float mPinchZoomStartedCameraZoomFactor;
 	
-	private static final int MENU_TRACE = Menu.FIRST;
-
 	// ===========================================================
 	// Fields
 	// ===========================================================
@@ -86,7 +81,7 @@ public abstract class BaseBoard extends BaseGameActivity implements IOnSceneTouc
 	@Override
 	public void onLoadResources(){
 		TextureRegionFactory.setAssetBasePath("gfx/");
-		this.mBackgroundTexture = new Texture(1024, 1024, TextureOptions.DEFAULT);
+		this.mBackgroundTexture = new Texture(2048, 1024, TextureOptions.DEFAULT);
 		this.mBallTexture = new Texture(64, 64, TextureOptions.BILINEAR);
 		this.mRedPlayerTexture = new Texture(64, 64, TextureOptions.BILINEAR);
 		this.mBluePlayerTexture = new Texture(64, 64, TextureOptions.BILINEAR);
@@ -125,6 +120,11 @@ public abstract class BaseBoard extends BaseGameActivity implements IOnSceneTouc
 		
 	}
 	
+	public void addPlayer(){
+		
+		
+	}
+	
 	@Override
 	public void onScroll(final ScrollDetector pScollDetector, final TouchEvent pTouchEvent, final float pDistanceX, final float pDistanceY) {
 		final float zoomFactor = this.mZoomCamera.getZoomFactor();
@@ -151,7 +151,7 @@ public abstract class BaseBoard extends BaseGameActivity implements IOnSceneTouc
 
 	@Override
 	public boolean onSceneTouchEvent(final Scene pScene, final TouchEvent pSceneTouchEvent) {
-		
+		/*
 		if(this.mPinchZoomDetector != null) {
 			this.mPinchZoomDetector.onTouchEvent(pSceneTouchEvent);
 
@@ -166,42 +166,8 @@ public abstract class BaseBoard extends BaseGameActivity implements IOnSceneTouc
 		} else {
 			this.mScrollDetector.onTouchEvent(pSceneTouchEvent);
 		}
-
+		*/
 		return true;
 	}
-	
-	@Override
-	public boolean onCreateOptionsMenu(final Menu menu) {
-		menu.add(Menu.NONE, MENU_TRACE, Menu.NONE, "Save formations");
-		return super.onCreateOptionsMenu(menu);
-	}
 
-	@Override
-	public boolean onPrepareOptionsMenu(final Menu pMenu) {
-		pMenu.findItem(MENU_TRACE).setTitle(this.mEngine.isMethodTracing() ? "Stop Method Tracing" : "Start Method Tracing");
-		return super.onPrepareOptionsMenu(pMenu);
-	}
-
-	@Override
-	public boolean onMenuItemSelected(final int pFeatureId, final MenuItem pItem) {
-		switch(pItem.getItemId()) {
-			case MENU_TRACE:
-				if(this.mEngine.isMethodTracing()) {
-					this.mEngine.stopMethodTracing();
-				} else {
-					this.mEngine.startMethodTracing("AndEngine_" + System.currentTimeMillis() + ".trace");
-				}
-				return true;
-			default:
-				return super.onMenuItemSelected(pFeatureId, pItem);
-		}
-	}
-
-	// ===========================================================
-	// Methods
-	// ===========================================================
-
-	// ===========================================================
-	// Inner and Anonymous Classes
-	// ===========================================================
 }

@@ -1,4 +1,4 @@
-package com.sportsboards;
+package com.sportsboards.boards;
 
 import org.anddev.andengine.engine.Engine;
 import org.anddev.andengine.engine.handler.IUpdateHandler;

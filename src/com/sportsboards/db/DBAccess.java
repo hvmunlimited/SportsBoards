@@ -11,20 +11,39 @@ import com.sportsboards.db.PlayerEntry;
 
 public class DBAccess{
 	
+	private Context context;
+	
 	private static final String DATABASE_NAME = "database.db";
 	private static final int DATABASE_VERSION = 1;
 	
-	//private static final String TABLE_FORMATIONS = "Formations";
-	//private static final String TABLE_LINEUPS = "Line-ups";
- 	
-	private final Context context;
+	private static final String TABLE_PLAYERS = "Players";
+	private static final String TABLE_FORMATION = "Default";
+	private static final String TABLE_LINEUP = "Lineups";
+	
+	private static final String INITIAL_SOCCER_FORMATION = "Default";
+
 	private final SQLiteDatabase db;
 	
-	private static final String TABLE_PLAYERS = "Players";
+
 	private static final String PLAYER_TABLE_CREATE = "CREATE TABLE " + TABLE_PLAYERS + 
-															"(pID INTEGER PRIMARY KEY, "
-														   +"FIRST TEXT NOT NULL, LAST TEXT NOT NULL," 
-														   +"JNUM INTEGER NOT NULL)";
+		"(pID INTEGER PRIMARY KEY autoincrement, " +
+		"FIRST TEXT NOT NULL, LAST TEXT NOT NULL, " +
+		"JNUM INTEGER NOT NULL)";
+	
+	private static final String FORMATIONS_TABLE_CREATE = "CREATE TABLE " + TABLE_FORMATION + 
+		"(pID INTEGER PRIMARY KEY autoincrement, " +
+		"X INTEGER NOT NULL, Y INTEGER NOT NULL, " +
+		"jNum INTEGER, " +
+		"FOREIGN KEY(jNum) REFERENCES PLAYERS(jNum))";
+															
+	private static final String LINEUPS_TABLE_CREATE = "CREATE TABLE " + TABLE_LINEUP + 
+		"(pID INTEGER PRIMARY KEY autoincrement, " +
+		"pos TEXT, first TEXT, last TEXT, jNum INTEGER, " +
+		"FOREIGN KEY(pos) REFERENCES PLAYERS(pos) " +
+		"FOREIGN KEY(first) REFERENCES PLAYERS(fName) " +
+		"FOREIGN KEY(last) REFERENCES PLAYERS(lName) " +
+		"FOREIGN KEY(jNum) REFERENCES PLAYERS(jNum))";
+	
 	
 	private static String TABLE_NAME = TABLE_PLAYERS;
 	//rows and columns indices
@@ -55,18 +74,31 @@ public class DBAccess{
 		}
 	}
 	
-	public void createRow(PlayerEntry player){
+	public void createPlayer(PlayerEntry player){
 		ContentValues initialValue = new ContentValues();
-		initialValue.put("pID", player.pID);
+		initialValue.put("POSITION", player.pos);
 		initialValue.put("FIRST", player.fName);
 		initialValue.put("LAST", player.lName);
 		initialValue.put("JNUM", player.jNum);
-
-		db.insertOrThrow("Players", null, initialValue);
+		db.insert("Players", null, initialValue);
 	}
 	
-	public void deleteRow(long rowID){
-		db.delete(TABLE_NAME, "pID=" + rowID, null);
+	public void deletePlayer(PlayerEntry p){
+		db.delete("Players", "fName=" + p.fName, null);
+	}
+	public Cursor getAllPlayers(){
+		
+		//return db.query(table, columns, selection, selectionArgs, groupBy, having, orderBy)
+		return null;
+	}
+	
+	public void createLineup(PlayerEntry[] players){
+		
+	}
+	
+	public void createFormation(PlayerEntry[] players, int[] coords){
+		
+		
 	}
 	
 	public Cursor GetAllRows(){
@@ -103,9 +135,21 @@ public class DBAccess{
 				Log.i("error", "error making database");
 				e.printStackTrace();
 			}
-			
+			try {
+				db.execSQL(FORMATIONS_TABLE_CREATE);
+				Log.i("create", "created player table");
+			}catch(SQLException e){
+				Log.i("error", "error making database");
+				e.printStackTrace();
+			}
+			try {
+				db.execSQL(LINEUPS_TABLE_CREATE);
+				Log.i("create", "created player table");
+			}catch(SQLException e){
+				Log.i("error", "error making database");
+				e.printStackTrace();
+			}
 		}
-	
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 			db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);

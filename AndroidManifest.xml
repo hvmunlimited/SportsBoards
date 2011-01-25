@@ -14,8 +14,11 @@ android:label="@string/app_name" android:screenOrientation="landscape">
 </intent-filter>
 </activity>
 
-<activity android:name="com.sportsboards.SoccerBoard" android:screenOrientation="landscape"/>
-<activity android:name="com.sportsboards.FootBallBoard" android:screenOrientation="landscape"/>
+<activity android:name="com.sportsboards.boards.SoccerBoard" android:screenOrientation="landscape"/>
+<activity android:name="com.sportsboards.boards.FootBallBoard" android:screenOrientation="landscape"/>
+<activity android:name="com.sportsboards.boards.BBallBoard" android:screenOrientation="landscape"/>
+<activity android:name="com.sportsboards.db.DBTest" android:screenOrientation="landscape"/>
+
 </application>
 <supports-screens android:largeScreens="true"></supports-screens>
 <uses-sdk android:targetSdkVersion="8" android:minSdkVersion="7"></uses-sdk>
