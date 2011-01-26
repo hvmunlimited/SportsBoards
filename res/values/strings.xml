@@ -6,4 +6,6 @@
 <string name="football_string">Football</string>
 <string name="basketball_string">Basketball</string>
 <string name="dbtest_string">dbtest</string>
+<string name="allow">Allow</string>
+<string name="dont_allow">DontAllow</string>
 </resources>
