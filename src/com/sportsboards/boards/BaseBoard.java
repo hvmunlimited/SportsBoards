@@ -11,6 +11,7 @@ import org.anddev.andengine.engine.options.resolutionpolicy.RatioResolutionPolic
 import org.anddev.andengine.entity.scene.Scene;
 import org.anddev.andengine.entity.scene.Scene.IOnSceneTouchListener;
 import org.anddev.andengine.extension.input.touch.controller.MultiTouch;
+import org.anddev.andengine.extension.input.touch.controller.MultiTouchController;
 import org.anddev.andengine.extension.input.touch.controller.MultiTouchException;
 import org.anddev.andengine.extension.input.touch.detector.PinchZoomDetector;
 import org.anddev.andengine.extension.input.touch.detector.PinchZoomDetector.IPinchZoomDetectorListener;
@@ -23,6 +24,8 @@ import org.anddev.andengine.opengl.texture.TextureOptions;
 import org.anddev.andengine.opengl.texture.region.TextureRegion;
 import org.anddev.andengine.opengl.texture.region.TextureRegionFactory;
 import org.anddev.andengine.ui.activity.BaseGameActivity;
+
+import android.widget.Toast;
 
 import com.sportsboards.sprites.Player;
 
@@ -76,6 +79,16 @@ public abstract class BaseBoard extends BaseGameActivity implements IOnSceneTouc
 	public Engine onLoadEngine() {
 		this.mZoomCamera = new ZoomCamera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
 		final Engine engine = new Engine(new EngineOptions(true, ScreenOrientation.LANDSCAPE, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), this.mZoomCamera));
+		
+		try {
+			if(MultiTouch.isSupported(this)) {
+				engine.setTouchController(new MultiTouchController());
+				
+			} else {
+				
+			}
+		} catch (final MultiTouchException e) {
+		}
 		return engine;
 	}
 	@Override
@@ -85,8 +98,8 @@ public abstract class BaseBoard extends BaseGameActivity implements IOnSceneTouc
 		this.mBallTexture = new Texture(64, 64, TextureOptions.BILINEAR);
 		this.mRedPlayerTexture = new Texture(64, 64, TextureOptions.BILINEAR);
 		this.mBluePlayerTexture = new Texture(64, 64, TextureOptions.BILINEAR);
-		this.mRedPlayerTextureRegion = TextureRegionFactory.createFromAsset(this.mRedPlayerTexture, this, "red_player.png", 0, 0);
-		this.mBluePlayerTextureRegion = TextureRegionFactory.createFromAsset(this.mBluePlayerTexture, this, "blue_player.png", 0, 0);
+		this.mRedPlayerTextureRegion = TextureRegionFactory.createFromAsset(this.mRedPlayerTexture, this, "48x48BLUE.png", 0, 0);
+		this.mBluePlayerTextureRegion = TextureRegionFactory.createFromAsset(this.mBluePlayerTexture, this, "48x48RED.png", 0, 0);
 		this.mEngine.getTextureManager().loadTextures(this.mBackgroundTexture, this.mBluePlayerTexture, this.mRedPlayerTexture, this.mBallTexture);
 	}
 	@Override
