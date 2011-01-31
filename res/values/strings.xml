@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	
-<string name="soccer_string">Soccer</string><string name="app_name">SportsBoards</string>
+<string name="soccer_string">Soccer</string><string name="app_name">SportsBoards2D</string>
 
 <string name="football_string">Football</string>
 <string name="basketball_string">Basketball</string>

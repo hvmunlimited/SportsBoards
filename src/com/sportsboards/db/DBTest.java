@@ -3,7 +3,7 @@ import java.util.ArrayList;
 
 import org.anddev.andengine.engine.Engine;
 import org.anddev.andengine.entity.scene.Scene;
-
+import com.sportsboards.db.CoordInfo;
 import com.sportsboards.boards.BaseBoard;
 
 public class DBTest extends BaseBoard{

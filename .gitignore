@@ -1,2 +1,5 @@
 /bin
-/com_android_vending_licensing_src
+/gen
+/cmd.bat
+/RUN-DEVICE.bat
+/local.properties
