@@ -46,8 +46,8 @@ public class BBallBoard extends BaseBoard{
 	@Override
 	public void onLoadResources() {
 		super.onLoadResources();		
-		this.mBackGroundTextureRegion = TextureRegionFactory.createFromAsset(this.mBackgroundTexture, this, "test_basketball.jpg", 0, 0);
-		this.mBallTextureRegion = TextureRegionFactory.createFromAsset(this.mBallTexture, this, "soccer_ball_48_48.png", 0, 0);
+		this.mBackGroundTextureRegion = TextureRegionFactory.createFromAsset(this.mBackgroundTexture, this, "Basketball_court0078.jpg", 0, 0);
+		this.mBallTextureRegion = TextureRegionFactory.createFromAsset(this.mBallTexture, this, "Basketball_Ball_48.png", 0, 0);
 		this.mEngine.getTextureManager().loadTextures(this.mBackgroundTexture);
 	}
 	
@@ -57,8 +57,8 @@ public class BBallBoard extends BaseBoard{
 		final Scene scene = super.onLoadScene();
 		scene.getLayer(0).addEntity(new Sprite(0, 0, this.mBackGroundTextureRegion));
 
-		final int centerX = (CAMERA_WIDTH - this.mBallTextureRegion.getWidth()) / 2 - 100;
-		final int centerY = (CAMERA_HEIGHT - this.mBallTextureRegion.getHeight()) / 2;
+		final int centerX = CAMERA_WIDTH / 2 -25;
+		final int centerY = CAMERA_HEIGHT / 2 -40;
 		final Ball ball = new Ball(centerX, centerY, this.mBallTextureRegion);
 
 		int startx = 1;
@@ -87,7 +87,7 @@ public class BBallBoard extends BaseBoard{
 		scene.getTopLayer().addEntity(ball);
 		scene.setOnAreaTouchTraversalFrontToBack();
 		scene.registerTouchArea(ball);
-
+		/*
 		scene.registerUpdateHandler(new IUpdateHandler(){
 			@Override
 			public void reset(){}
@@ -105,7 +105,7 @@ public class BBallBoard extends BaseBoard{
 					}
 				}
 			}
-		});
+		});*/
 
 		return scene;
 	}

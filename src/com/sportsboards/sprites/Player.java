@@ -25,6 +25,7 @@ public class Player extends Sprite{
 			case TouchEvent.ACTION_MOVE:
 				if(this.mGrabbed) {
 					this.setPosition(pSceneTouchEvent.getX() - 48 / 2, pSceneTouchEvent.getY() - 48 / 2);
+					System.out.println(this.getX() + " , " + this.getY());
 				}
 				break;
 			case TouchEvent.ACTION_UP:

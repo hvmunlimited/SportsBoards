@@ -14,9 +14,9 @@ class MenuAdapter extends BaseAdapter{
 
 	private static final Activity[] Activities = {
 		Activity.SOCCER,
-		Activity.FOOTBALL,
+		//Activity.FOOTBALL,
 		Activity.BBALL,
-		Activity.DBTEST,
+		//Activity.DBTEST,
 	};
 	
 	private final Context mContext;
@@ -42,7 +42,7 @@ class MenuAdapter extends BaseAdapter{
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		// TODO Auto-generated method stub
+		
 		View view = null;
 		
 		if(convertView!=null){

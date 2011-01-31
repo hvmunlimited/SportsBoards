@@ -1,4 +1,4 @@
-<map version="0.9.0">
+<map version="0.8.1">
 <!-- To view this file, download free mind mapping software FreeMind from http://freemind.sourceforge.net -->
 <node CREATED="1294758692018" ID="ID_614637739" MODIFIED="1294758702065" TEXT="Boards">
 <node CREATED="1294758703397" ID="ID_477908555" MODIFIED="1294758709031" POSITION="right" TEXT="User Stories">
@@ -34,6 +34,20 @@
 <node CREATED="1294758972998" ID="ID_1361187285" MODIFIED="1294758979370" TEXT="Load formations"/>
 <node CREATED="1294760165219" ID="ID_283159053" MODIFIED="1294760179798" TEXT="Display formation controls">
 <node CREATED="1294760257640" ID="ID_1936898967" MODIFIED="1294760318120" TEXT="Popup menu or frame controls"/>
+<node CREATED="1296227622454" ID="_" MODIFIED="1296227632788" TEXT="Menus">
+<node CREATED="1296227783845" ID="Freemind_Link_1998886400" MODIFIED="1296227787368" TEXT="change ball size"/>
+<node CREATED="1296227632737" ID="Freemind_Link_1483982746" MODIFIED="1296227638435" TEXT="change player size"/>
+<node CREATED="1296227643659" ID="Freemind_Link_1627560048" MODIFIED="1296227656236" TEXT="reset player positions"/>
+<node CREATED="1296227659514" ID="Freemind_Link_835152832" MODIFIED="1296227664826" TEXT="save formations"/>
+<node CREATED="1296227675629" ID="Freemind_Link_530211465" MODIFIED="1296227682737" TEXT="load formations"/>
+<node CREATED="1296227710767" ID="Freemind_Link_1852565098" MODIFIED="1296227717898" TEXT="create a player">
+<node CREATED="1296227719376" ID="Freemind_Link_1069399010" MODIFIED="1296227728723" TEXT="player menu">
+<node CREATED="1296227730099" ID="Freemind_Link_440461899" MODIFIED="1296227740786" TEXT="enter info"/>
+</node>
+</node>
+<node CREATED="1296227773245" ID="Freemind_Link_554152795" MODIFIED="1296227776793" TEXT="zoom toggle"/>
+<node CREATED="1296227796390" ID="Freemind_Link_214353550" MODIFIED="1296227800701" TEXT="create a lineup"/>
+</node>
 </node>
 <node CREATED="1294758761339" ID="ID_1117077565" MODIFIED="1294758849443" TEXT="Reset formation"/>
 </node>

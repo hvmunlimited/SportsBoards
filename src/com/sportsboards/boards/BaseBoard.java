@@ -151,13 +151,21 @@ public abstract class BaseBoard extends BaseGameActivity implements IOnSceneTouc
 
 	@Override
 	public void onPinchZoom(final PinchZoomDetector pPinchZoomDetector, final TouchEvent pTouchEvent, final float pZoomFactor) {
-		this.mZoomCamera.setZoomFactor(this.mPinchZoomStartedCameraZoomFactor * pZoomFactor);
+		if(this.mZoomCamera.getZoomFactor() < 1.0f){
+			this.mZoomCamera.setZoomFactor(1.0f);
+		}
+		else{
+			this.mZoomCamera.setZoomFactor(this.mPinchZoomStartedCameraZoomFactor * pZoomFactor);
+		}
 	}
 
 	@Override
 	public void onPinchZoomFinished(final PinchZoomDetector pPinchZoomDetector, final TouchEvent pTouchEvent, final float pZoomFactor) {
 		this.mZoomCamera.setZoomFactor(this.mPinchZoomStartedCameraZoomFactor * pZoomFactor);
-		if(this.mZoomCamera.getZoomFactor() > 2.0f){
+		if(this.mZoomCamera.getZoomFactor() > 3.0f){
+			this.mZoomCamera.setZoomFactor(1.0f);
+		}
+		else if(this.mZoomCamera.getZoomFactor() < 1.0f){
 			this.mZoomCamera.setZoomFactor(1.0f);
 		}
 	}
