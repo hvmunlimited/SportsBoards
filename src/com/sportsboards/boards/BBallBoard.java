@@ -46,7 +46,7 @@ public class BBallBoard extends BaseBoard{
 	@Override
 	public void onLoadResources() {
 		super.onLoadResources();		
-		this.mBackGroundTextureRegion = TextureRegionFactory.createFromAsset(this.mBackgroundTexture, this, "Basketball_court0078.jpg", 0, 0);
+		this.mBackGroundTextureRegion = TextureRegionFactory.createFromAsset(this.mBackgroundTexture, this, "Basketball_cour_final.jpg", 0, 0);
 		this.mBallTextureRegion = TextureRegionFactory.createFromAsset(this.mBallTexture, this, "Basketball_Ball_48.png", 0, 0);
 		this.mEngine.getTextureManager().loadTextures(this.mBackgroundTexture);
 	}
@@ -54,60 +54,30 @@ public class BBallBoard extends BaseBoard{
 	@Override
 	public Scene onLoadScene() {
 		
-		final Scene scene = super.onLoadScene();
-		scene.getLayer(0).addEntity(new Sprite(0, 0, this.mBackGroundTextureRegion));
+		final Scene mMainScene = super.onLoadScene();
+		mMainScene.getLayer(0).addEntity(new Sprite(0, 0, this.mBackGroundTextureRegion));
 
-		final int centerX = CAMERA_WIDTH / 2 -25;
-		final int centerY = CAMERA_HEIGHT / 2 -40;
+		final int centerX = CAMERA_WIDTH / 2 -24;
+		final int centerY = CAMERA_HEIGHT / 2 -24;
 		final Ball ball = new Ball(centerX, centerY, this.mBallTextureRegion);
+		
+		addPlayer(new Player(0, "GK", 518, 177, this.mRedPlayerTextureRegion), mRedTeam);
+		addPlayer(new Player(0, "GK", 581, 229, this.mRedPlayerTextureRegion), mRedTeam);
+		addPlayer(new Player(0, "GK", 538, 276, this.mRedPlayerTextureRegion), mRedTeam);
+		addPlayer(new Player(0, "GK", 581, 323, this.mRedPlayerTextureRegion), mRedTeam);
+		addPlayer(new Player(0, "GK", 518, 370, this.mRedPlayerTextureRegion), mRedTeam);
 
-		int startx = 1;
-		int starty = 512;
+		addPlayer(new Player(0, "GK", 457, 177, this.mBluePlayerTextureRegion), mBlueTeam);
+		addPlayer(new Player(0, "GK", 397, 229, this.mBluePlayerTextureRegion), mBlueTeam);
+		addPlayer(new Player(0, "GK", 440, 276, this.mBluePlayerTextureRegion), mBlueTeam);
+		addPlayer(new Player(0, "GK", 397, 323, this.mBluePlayerTextureRegion), mBlueTeam);
+		addPlayer(new Player(0, "GK", 457, 370, this.mBluePlayerTextureRegion), mBlueTeam);
+		
+		mMainScene.getTopLayer().addEntity(ball);
+		mMainScene.setOnAreaTouchTraversalFrontToBack();
+		mMainScene.registerTouchArea(ball);
 
-		int interval = 102;
-
-		for(int i = 0; i < NUM_PLAYERS; i++){
-
-			final Player red_player = new Player(0, "", startx, starty, this.mRedPlayerTextureRegion);
-			scene.getTopLayer().addEntity(red_player);
-			scene.registerTouchArea(red_player);
-			mRedTeam.add(red_player);
-			startx += interval;
-		}
-
-		for(int i = 0; i < NUM_PLAYERS; i++){
-
-			final Player blue_player = new Player(0, "", startx, starty, this.mBluePlayerTextureRegion);
-			scene.getTopLayer().addEntity(blue_player);
-			scene.registerTouchArea(blue_player);
-			mBlueTeam.add(blue_player);
-			startx += interval;
-		}
-
-		scene.getTopLayer().addEntity(ball);
-		scene.setOnAreaTouchTraversalFrontToBack();
-		scene.registerTouchArea(ball);
-		/*
-		scene.registerUpdateHandler(new IUpdateHandler(){
-			@Override
-			public void reset(){}
-			@Override
-			public void onUpdate(final float pSecondsElapsed){
-
-				for(Player p: mRedTeam){
-					if(ball.collidesWith(p)){
-						ball.setColor(1, 0, 0);
-					}
-				}
-				for(Player p: mBlueTeam){
-					if(ball.collidesWith(p)){
-						ball.setColor(0, 0, 1);
-					}
-				}
-			}
-		});*/
-
-		return scene;
+		return mMainScene;
 	}
 
 
@@ -122,21 +92,6 @@ public class BBallBoard extends BaseBoard{
 	// Methods
 	// ===========================================================
 	
-	public void saveFormation(){
-		
-		for(Player p:mRedTeam){
-			System.out.println(p.getX() + " " + p.getY());
-		}
-		
-		
-		
-	}
-	
-	public void loadFormation(){
-		
-		
-		
-	}
 	
 	// ===========================================================
 	// Inner and Anonymous Classes
