@@ -1,9 +1,6 @@
 package com.sportsboards.boards;
 
-import java.util.List;
-
 import org.anddev.andengine.engine.Engine;
-import org.anddev.andengine.engine.handler.IUpdateHandler;
 import org.anddev.andengine.entity.scene.Scene;
 import org.anddev.andengine.entity.sprite.Sprite;
 import org.anddev.andengine.opengl.texture.region.TextureRegionFactory;
