@@ -20,18 +20,21 @@ public class Player extends Sprite{
 		switch(pSceneTouchEvent.getAction()) {
 			case TouchEvent.ACTION_DOWN:
 				this.setScale(2.0f);
+				//System.out.println(this.getX() + " , " + this.getY());
+
 				this.mGrabbed = true;
 				break;
 			case TouchEvent.ACTION_MOVE:
 				if(this.mGrabbed) {
 					this.setPosition(pSceneTouchEvent.getX() - 48 / 2, pSceneTouchEvent.getY() - 48 / 2);
-					System.out.println(this.getX() + " , " + this.getY());
+					//System.out.println(this.getX() + " , " + this.getY());
 				}
 				break;
 			case TouchEvent.ACTION_UP:
 				if(this.mGrabbed) {
 					this.mGrabbed = false;
 					this.setScale(1.0f);
+					//System.out.println(this.getX() + " , " + this.getY());
 				}
 				break;
 		}
