@@ -7,7 +7,7 @@
 	<application android:icon="@drawable/sb_launcher"
 		android:label="@string/app_name" android:debuggable="true">
 
-		<activity android:name="launcher.Splash"
+		<activity android:name="com.sportsboards.launcher.Splash"
 
 			android:label="@string/app_name" android:screenOrientation="landscape">
 			<intent-filter>
