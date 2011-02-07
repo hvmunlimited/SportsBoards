@@ -21,8 +21,8 @@ import org.anddev.andengine.extension.input.touch.detector.PinchZoomDetector;
 import org.anddev.andengine.extension.input.touch.detector.PinchZoomDetector.IPinchZoomDetectorListener;
 import org.anddev.andengine.input.touch.TouchEvent;
 import org.anddev.andengine.input.touch.detector.ScrollDetector;
-import org.anddev.andengine.input.touch.detector.SurfaceScrollDetector;
 import org.anddev.andengine.input.touch.detector.ScrollDetector.IScrollDetectorListener;
+import org.anddev.andengine.input.touch.detector.SurfaceScrollDetector;
 import org.anddev.andengine.opengl.texture.Texture;
 import org.anddev.andengine.opengl.texture.TextureOptions;
 import org.anddev.andengine.opengl.texture.region.TextureRegion;
@@ -152,8 +152,10 @@ public abstract class BaseBoard extends BaseGameActivity implements IOnSceneTouc
 		} else {
 			this.mPinchZoomDetector = null;
 		}
-		mMainScene.setOnSceneTouchListener(this);
-		mMainScene.setTouchAreaBindingEnabled(true);
+		this.mMainScene.setOnSceneTouchListener(this);
+		this.mMainScene.setTouchAreaBindingEnabled(true);
+		this.mPinchZoomDetector.setEnabled(false);
+		this.mScrollDetector.setEnabled(false);
 		
 		return mMainScene;
 	}
@@ -192,7 +194,7 @@ public abstract class BaseBoard extends BaseGameActivity implements IOnSceneTouc
 
 	@Override
 	public boolean onSceneTouchEvent(final Scene pScene, final TouchEvent pSceneTouchEvent) {
-		/*
+		
 		if(this.mPinchZoomDetector != null) {
 			this.mPinchZoomDetector.onTouchEvent(pSceneTouchEvent);
 
@@ -200,14 +202,14 @@ public abstract class BaseBoard extends BaseGameActivity implements IOnSceneTouc
 				this.mScrollDetector.setEnabled(false);
 			} else {
 				if(pSceneTouchEvent.getAction() == TouchEvent.ACTION_DOWN) {
-					this.mScrollDetector.setEnabled(true);
+					//this.mScrollDetector.setEnabled(true);
 				}
 				this.mScrollDetector.onTouchEvent(pSceneTouchEvent);
 			}
 		} else {
 			this.mScrollDetector.onTouchEvent(pSceneTouchEvent);
 		}
-		*/
+		
 		return true;
 	}
 

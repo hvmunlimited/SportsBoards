@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	
-<string name="soccer_string">Soccer</string><string name="app_name">SportsBoards2D</string>
-
-<string name="football_string">Football</string>
-<string name="basketball_string">Basketball</string>
-<string name="dbtest_string">dbtest</string>
+	<string name="app_name">SportsBoards2D</string>
+	<string name="soccer_string">Soccer</string>
+	<string name="football_string">Football</string>
+	<string name="basketball_string">Basketball</string>
+	<string name="dbtest_string">dbtest</string>
+	
+	<string name="reset_players">Reset Player Formation</string>
+	<string name="save_formation">Save Player Formation</string>
+	<string name="load_formation">Load Player Formation</string>
+	<string name="zoom_enable"> Enable Zoom</string>
+	<string name="zoom_disable"> Disable Zoom</string>
+	
 
 	<string name="check_license">Check license</string>
     <string name="checking_license">Checking license...</string>
