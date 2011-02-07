@@ -15,21 +15,32 @@
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
+		
+		
 		<activity android:name="com.sportsboards.launcher.LicenseCheck"
 			android:screenOrientation="landscape" />
+			
+			
 		<activity android:name="com.sportsboards.boards.SoccerBoard"
 			android:screenOrientation="landscape" />
 		<activity android:name="com.sportsboards.boards.FootBallBoard"
 			android:screenOrientation="landscape" />
 		<activity android:name="com.sportsboards.boards.BBallBoard"
 			android:screenOrientation="landscape" />
+			
+		<activity android:name="com.sportsboards.settings.Launcher"
+			android:screenOrientation="landscape" />	
+			
+			
+			
+			
 		<activity android:name="com.sportsboards.db.DBTest"
 			android:screenOrientation="landscape" />
 
 	</application>
 
 	<supports-screens android:largeScreens="true"></supports-screens>
-	<uses-sdk android:targetSdkVersion="4" android:minSdkVersion="4"></uses-sdk>
+	<uses-sdk android:targetSdkVersion="8" android:minSdkVersion="4"></uses-sdk>
 
 	<uses-permission android:name="android.permission.WAKE_LOCK" />
 	<uses-permission android:name="android.permission.CAMERA" />

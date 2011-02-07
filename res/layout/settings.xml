@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/reset"
+          android:icon="@drawable/sb_launcher"
+          android:title="@string/reset" />
+    <item android:id="@+id/save"
+          android:icon="@drawable/sb_launcher"
+          android:title="@string/save" />
+    <item android:id="@+id/load"
+          android:icon="@drawable/sb_launcher"
+          android:title="@string/load" />
+    <item android:id="@+id/enable"
+          android:icon="@drawable/sb_launcher"
+          android:title="@string/enable" />
+    <item android:id="@+id/disable"
+          android:icon="@drawable/sb_launcher"
+          android:title="@string/disable" />
+   
+</menu>

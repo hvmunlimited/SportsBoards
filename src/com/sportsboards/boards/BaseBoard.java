@@ -10,10 +10,6 @@ import org.anddev.andengine.engine.options.EngineOptions.ScreenOrientation;
 import org.anddev.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
 import org.anddev.andengine.entity.scene.Scene;
 import org.anddev.andengine.entity.scene.Scene.IOnSceneTouchListener;
-import org.anddev.andengine.entity.scene.menu.MenuScene;
-import org.anddev.andengine.entity.scene.menu.MenuScene.IOnMenuItemClickListener;
-import org.anddev.andengine.entity.scene.menu.item.IMenuItem;
-import org.anddev.andengine.entity.scene.menu.item.SpriteMenuItem;
 import org.anddev.andengine.extension.input.touch.controller.MultiTouch;
 import org.anddev.andengine.extension.input.touch.controller.MultiTouchController;
 import org.anddev.andengine.extension.input.touch.controller.MultiTouchException;
@@ -21,33 +17,32 @@ import org.anddev.andengine.extension.input.touch.detector.PinchZoomDetector;
 import org.anddev.andengine.extension.input.touch.detector.PinchZoomDetector.IPinchZoomDetectorListener;
 import org.anddev.andengine.input.touch.TouchEvent;
 import org.anddev.andengine.input.touch.detector.ScrollDetector;
-import org.anddev.andengine.input.touch.detector.ScrollDetector.IScrollDetectorListener;
 import org.anddev.andengine.input.touch.detector.SurfaceScrollDetector;
+import org.anddev.andengine.input.touch.detector.ScrollDetector.IScrollDetectorListener;
 import org.anddev.andengine.opengl.texture.Texture;
 import org.anddev.andengine.opengl.texture.TextureOptions;
 import org.anddev.andengine.opengl.texture.region.TextureRegion;
 import org.anddev.andengine.opengl.texture.region.TextureRegionFactory;
 import org.anddev.andengine.ui.activity.BaseGameActivity;
 
-import android.view.KeyEvent;
+import android.content.Intent;
 import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
+import com.sportsboards.R;
 import com.sportsboards.sprites.Player;
 
 /**
  * @author Mike Bonar
  * 
  */
-public abstract class BaseBoard extends BaseGameActivity implements IOnSceneTouchListener, IScrollDetectorListener, IPinchZoomDetectorListener, IOnMenuItemClickListener {
+public abstract class BaseBoard extends BaseGameActivity implements IOnSceneTouchListener, IScrollDetectorListener, IPinchZoomDetectorListener{
 	// ===========================================================
 	// Constants
 	// ===========================================================
 	public static final int CAMERA_WIDTH = 1024;
 	public static final int CAMERA_HEIGHT = 600;
-	
-	private static final int MENU_TRACE = Menu.FIRST;
-	protected static final int MENU_RESET = 0;
-	protected static final int MENU_QUIT = MENU_RESET + 1;
 	
 	protected int NUM_PLAYERS;
 	protected Texture mBackgroundTexture;
@@ -69,9 +64,6 @@ public abstract class BaseBoard extends BaseGameActivity implements IOnSceneTouc
 	private float mPinchZoomStartedCameraZoomFactor;
 	
 	protected Scene mMainScene;
-	protected MenuScene mMenuScene;
-	private Texture mMenuTexture;
-	private TextureRegion mMenuResetTextureRegion;
 	
 	// ===========================================================
 	// Fields
@@ -108,39 +100,18 @@ public abstract class BaseBoard extends BaseGameActivity implements IOnSceneTouc
 	@Override
 	public void onLoadResources(){
 		TextureRegionFactory.setAssetBasePath("gfx/");
-		this.mBackgroundTexture = new Texture(2048, 1024, TextureOptions.DEFAULT);
+		this.mBackgroundTexture = new Texture(1024, 1024, TextureOptions.DEFAULT);
 		this.mBallTexture = new Texture(64, 64, TextureOptions.BILINEAR);
 		this.mRedPlayerTexture = new Texture(64, 64, TextureOptions.BILINEAR);
 		this.mBluePlayerTexture = new Texture(64, 64, TextureOptions.BILINEAR);
 		this.mRedPlayerTextureRegion = TextureRegionFactory.createFromAsset(this.mRedPlayerTexture, this, "48x48BLUE.png", 0, 0);
 		this.mBluePlayerTextureRegion = TextureRegionFactory.createFromAsset(this.mBluePlayerTexture, this, "48x48RED.png", 0, 0);
 		
-		this.mMenuTexture = new Texture(2048, 1024, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
-		//this.mMenuResetTextureRegion = TextureRegionFactory.createFromAsset(this.mMenuTexture, this, "Soccer_Field_Final.jpg", 0, 0);		
-		this.mEngine.getTextureManager().loadTexture(this.mMenuTexture);
-
-		
-		
 		this.mEngine.getTextureManager().loadTextures(this.mBackgroundTexture, this.mBluePlayerTexture, this.mRedPlayerTexture, this.mBallTexture);
-	}
-	protected void createMenuScene() {
-		
-		this.mMenuScene = new MenuScene(this.mZoomCamera);
-		
-		//final SpriteMenuItem resetMenuItem = new SpriteMenuItem(MENU_RESET, this.mMenuResetTextureRegion);
-		//resetMenuItem.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-		//this.mMenuScene.addMenuItem(resetMenuItem);
-		
-		this.mMenuScene.buildAnimations();
-
-		this.mMenuScene.setBackgroundEnabled(false);
-
-		this.mMenuScene.setOnMenuItemClickListener(this);
 	}
 	@Override
 	public Scene onLoadScene(){
 		
-		this.createMenuScene();
 		this.mMainScene = new Scene(1);
 		this.mScrollDetector = new SurfaceScrollDetector(this);
 		if(MultiTouch.isSupportedByAndroidVersion()) {
@@ -224,38 +195,29 @@ public abstract class BaseBoard extends BaseGameActivity implements IOnSceneTouc
 
 	@Override
 	public boolean onCreateOptionsMenu(final Menu pMenu) {
-		pMenu.add(Menu.NONE, MENU_TRACE, Menu.NONE, "Start Method Tracing");
-		return super.onCreateOptionsMenu(pMenu);
-	}
-
-	@Override
-	public boolean onPrepareOptionsMenu(final Menu pMenu) {
-		pMenu.findItem(MENU_TRACE).setTitle(this.mEngine.isMethodTracing() ? "Stop Method Tracing" : "Start Method Tracing");
-		return super.onPrepareOptionsMenu(pMenu);
+		 MenuInflater inflater = getMenuInflater();
+		 inflater.inflate(R.layout.settings, pMenu);
+		 return true;
 	}
 	
 	@Override
-	public boolean onMenuItemClicked(final MenuScene pMenuScene, final IMenuItem pMenuItem, final float pMenuItemLocalX, final float pMenuItemLocalY) {
-		switch(pMenuItem.getID()) {
-			
+	public boolean onOptionsItemSelected(MenuItem item){
+		switch(item.getItemId()) {
+			case R.id.reset:
+				Intent intent = getIntent();
+				finish();
+				startActivity(intent);
+			case R.id.save:
+				
+			case R.id.load:
+				
+			case R.id.enable:
+				
+			case R.id.disable:
+				
+				
 			default:
 				return false;
-		}
-	}
-	
-	@Override
-	public boolean onKeyDown(final int pKeyCode, final KeyEvent pEvent) {
-		if(pKeyCode == KeyEvent.KEYCODE_MENU && pEvent.getAction() == KeyEvent.ACTION_DOWN) {
-			if(this.mMainScene.hasChildScene()) {
-				/* Remove the menu and reset it. */
-				this.mMenuScene.back();
-			} else {
-				/* Attach the menu. */
-				this.mMainScene.setChildScene(this.mMenuScene, false, true, true);
-			}
-			return true;
-		} else {
-			return super.onKeyDown(pKeyCode, pEvent);
 		}
 	}
 	

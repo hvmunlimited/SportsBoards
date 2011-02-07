@@ -6,13 +6,19 @@
 	<string name="football_string">Football</string>
 	<string name="basketball_string">Basketball</string>
 	<string name="dbtest_string">dbtest</string>
+	<string name="reset">Reset</string>
+	<string name="save">Save</string>
+	<string name="load">Load</string>
+	<string name="enable">Enable Zoom</string>
+	<string name="disable">Disable Zoom</string>
 	
-	<string name="reset_players">Reset Player Formation</string>
-	<string name="save_formation">Save Player Formation</string>
-	<string name="load_formation">Load Player Formation</string>
-	<string name="zoom_enable"> Enable Zoom</string>
-	<string name="zoom_disable"> Disable Zoom</string>
-	
+	<string-array name="settings_array">
+		<item>Reset Player Formation</item>
+		<item>Save Player Formation</item>
+		<item>Load Player Formation</item>
+		<item>Enable Zoom</item>
+		<item>Disable Zoom</item>
+	</string-array>
 
 	<string name="check_license">Check license</string>
     <string name="checking_license">Checking license...</string>
