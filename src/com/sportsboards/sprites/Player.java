@@ -34,7 +34,7 @@ public class Player extends Sprite{
 				if(this.mGrabbed) {
 					this.mGrabbed = false;
 					this.setScale(1.0f);
-					//System.out.println(this.getX() + " , " + this.getY());
+					System.out.println(this.getX() + " , " + this.getY());
 				}
 				break;
 		}

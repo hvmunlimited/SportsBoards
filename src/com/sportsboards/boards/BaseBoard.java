@@ -3,8 +3,6 @@ package com.sportsboards.boards;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.microedition.khronos.opengles.GL10;
-
 import org.anddev.andengine.engine.Engine;
 import org.anddev.andengine.engine.camera.ZoomCamera;
 import org.anddev.andengine.engine.options.EngineOptions;
@@ -118,7 +116,7 @@ public abstract class BaseBoard extends BaseGameActivity implements IOnSceneTouc
 		this.mBluePlayerTextureRegion = TextureRegionFactory.createFromAsset(this.mBluePlayerTexture, this, "48x48RED.png", 0, 0);
 		
 		this.mMenuTexture = new Texture(2048, 1024, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
-		this.mMenuResetTextureRegion = TextureRegionFactory.createFromAsset(this.mMenuTexture, this, "Soccer_Field_Final.jpg", 0, 0);		
+		//this.mMenuResetTextureRegion = TextureRegionFactory.createFromAsset(this.mMenuTexture, this, "Soccer_Field_Final.jpg", 0, 0);		
 		this.mEngine.getTextureManager().loadTexture(this.mMenuTexture);
 
 		
@@ -129,9 +127,9 @@ public abstract class BaseBoard extends BaseGameActivity implements IOnSceneTouc
 		
 		this.mMenuScene = new MenuScene(this.mZoomCamera);
 		
-		final SpriteMenuItem resetMenuItem = new SpriteMenuItem(MENU_RESET, this.mMenuResetTextureRegion);
-		resetMenuItem.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-		this.mMenuScene.addMenuItem(resetMenuItem);
+		//final SpriteMenuItem resetMenuItem = new SpriteMenuItem(MENU_RESET, this.mMenuResetTextureRegion);
+		//resetMenuItem.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+		//this.mMenuScene.addMenuItem(resetMenuItem);
 		
 		this.mMenuScene.buildAnimations();
 

@@ -1,10 +1,8 @@
 package com.sportsboards.boards;
 
-import java.util.List;
-
 import org.anddev.andengine.engine.Engine;
-import org.anddev.andengine.engine.handler.IUpdateHandler;
 import org.anddev.andengine.entity.scene.Scene;
+import org.anddev.andengine.entity.scene.background.ColorBackground;
 import org.anddev.andengine.entity.sprite.Sprite;
 import org.anddev.andengine.opengl.texture.region.TextureRegionFactory;
 
@@ -47,46 +45,67 @@ public class SoccerBoard extends BaseBoard{
 
 	@Override
 	public void onLoadResources() {
-		super.onLoadResources();		
+		super.onLoadResources();	
 		this.mBackGroundTextureRegion = TextureRegionFactory.createFromAsset(this.mBackgroundTexture, this, "Soccer_Field_Final.jpg", 0, 0);
 		this.mBallTextureRegion = TextureRegionFactory.createFromAsset(this.mBallTexture, this, "Soccer_Ball_48.png", 0, 0);
-		this.mEngine.getTextureManager().loadTextures(this.mBackgroundTexture);
+		//this.mEngine.getTextureManager().loadTextures(this.mBackgroundTexture);
 	}
 	
 	@Override
 	public Scene onLoadScene() {
 		
-		this.mMainScene = super.onLoadScene();
-		mMainScene.getLayer(0).addEntity(new Sprite(0, 0, this.mBackGroundTextureRegion));
+		super.onLoadScene();
+		//this.mMainScene.setBackground(new ColorBackground(0.09804f, 0.6274f, 0.8784f));
+
+		this.mMainScene.getLayer(0).addEntity(new Sprite(0, 0, this.mBackGroundTextureRegion));
 
 		final int centerX = CAMERA_WIDTH / 2 -25;
 		final int centerY = CAMERA_HEIGHT / 2 -30;
 		final Ball ball = new Ball(centerX, centerY, this.mBallTextureRegion);
-
+		int x, y, interval;
+		interval = 120;
 		//red team
-		addPlayer(new Player(0, "GK", 106, 281, this.mRedPlayerTextureRegion), mRedTeam);
-		addPlayer(new Player(0, "", 317, 131, this.mRedPlayerTextureRegion), mRedTeam);
-		addPlayer(new Player(0, "", 272, 204, this.mRedPlayerTextureRegion), mRedTeam);
-		addPlayer(new Player(0, "", 230, 273, this.mRedPlayerTextureRegion), mRedTeam);
-		addPlayer(new Player(0, "", 272, 347, this.mRedPlayerTextureRegion), mRedTeam);
-		addPlayer(new Player(0, "", 317, 425, this.mRedPlayerTextureRegion), mRedTeam);
-		addPlayer(new Player(0, "", 410, 280, this.mRedPlayerTextureRegion), mRedTeam);
-		addPlayer(new Player(0, "", 460, 95, this.mRedPlayerTextureRegion),  mRedTeam);
-		addPlayer(new Player(0, "", 460, 210, this.mRedPlayerTextureRegion), mRedTeam);
-		addPlayer(new Player(0, "", 460, 325, this.mRedPlayerTextureRegion), mRedTeam);
-		addPlayer(new Player(0, "", 460, 440, this.mRedPlayerTextureRegion), mRedTeam);
+		x = 235;
+		y = 90;
+		
+		addPlayer(new Player(0, "GK", 83, 269, this.mRedPlayerTextureRegion), mRedTeam);
+		
+		for(int i = 0; i < 4; i++){
+			addPlayer(new Player(0, "GK", x, y, this.mRedPlayerTextureRegion), mRedTeam);
+			y+=interval;
+		}
+		x = x + 110;
+		y = 90;
+		for(int i = 0; i < 4; i++){
+			addPlayer(new Player(0, "GK", x, y, this.mRedPlayerTextureRegion), mRedTeam);
+			y+=interval;
+		}
+		x = x + 80;
+		y = 210;
+		addPlayer(new Player(0, "GK", x, y, this.mRedPlayerTextureRegion), mRedTeam);
+		addPlayer(new Player(0, "GK", x, y+interval, this.mRedPlayerTextureRegion), mRedTeam);
 
-		addPlayer(new Player(0, "GK", 875, 281, this.mBluePlayerTextureRegion), mBlueTeam);
-		addPlayer(new Player(0, "GK", 748, 277, this.mBluePlayerTextureRegion), mBlueTeam);
-		addPlayer(new Player(0, "GK", 703, 206, this.mBluePlayerTextureRegion), mBlueTeam);
-		addPlayer(new Player(0, "GK", 703, 345, this.mBluePlayerTextureRegion), mBlueTeam);
-		addPlayer(new Player(0, "GK", 656, 138, this.mBluePlayerTextureRegion), mBlueTeam);
-		addPlayer(new Player(0, "GK", 656, 420, this.mBluePlayerTextureRegion), mBlueTeam);
-		addPlayer(new Player(0, "GK", 571, 275, this.mBluePlayerTextureRegion), mBlueTeam);
-		addPlayer(new Player(0, "GK", 517, 95, this.mBluePlayerTextureRegion), mBlueTeam);
-		addPlayer(new Player(0, "GK", 517, 210, this.mBluePlayerTextureRegion), mBlueTeam);
-		addPlayer(new Player(0, "GK", 517, 325, this.mBluePlayerTextureRegion), mBlueTeam);
-		addPlayer(new Player(0, "GK", 517, 440, this.mBluePlayerTextureRegion), mBlueTeam);
+		
+		x = 740;
+		y = 90;
+		interval = 120;
+		
+		addPlayer(new Player(0, "GK", 897, 264, this.mBluePlayerTextureRegion), mBlueTeam);
+		
+		for(int i = 0; i < 4; i++){
+			addPlayer(new Player(0, "GK", x, y, this.mBluePlayerTextureRegion), mBlueTeam);
+			y+=interval;
+		}
+		x = 630;
+		y = 90;
+		
+		for(int i = 0; i < 4; i++){
+			addPlayer(new Player(0, "GK", x, y, this.mBluePlayerTextureRegion), mBlueTeam);
+			y+=interval;
+		}
+		
+		addPlayer(new Player(0, "GK", 530, 210, this.mBluePlayerTextureRegion), mBlueTeam);
+		addPlayer(new Player(0, "GK", 530, 210 + interval, this.mBluePlayerTextureRegion), mBlueTeam);
 
 		mMainScene.getTopLayer().addEntity(ball);
 		mMainScene.setOnAreaTouchTraversalFrontToBack();

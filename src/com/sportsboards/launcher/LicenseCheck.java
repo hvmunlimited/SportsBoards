@@ -39,7 +39,7 @@ public class LicenseCheck extends Activity{
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		 super.onCreate(savedInstanceState);
-		 requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		 //requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		 this.setContentView(R.layout.license);
 		 mStatusText = (TextView) findViewById(R.id.status_text);
 		 
@@ -86,7 +86,7 @@ public class LicenseCheck extends Activity{
 	Toast.makeText(this, string, Toast.LENGTH_SHORT).show();
 	}
 	private void doCheck() {
-        setProgressBarIndeterminateVisibility(true);
+        //setProgressBarIndeterminateVisibility(true);
         mStatusText.setText("checking license");
         mChecker.checkAccess(mLicenseCheckerCallback);
     }
@@ -125,8 +125,8 @@ public class LicenseCheck extends Activity{
             }
             displayResult(getString(R.string.dont_allow));
             showDialog(0);
-            startActivity(new Intent(LicenseCheck.this, Launcher.class));
-            finish();
+            //startActivity(new Intent(LicenseCheck.this, Launcher.class));
+            //finish();
             
         }
 
