@@ -3,8 +3,14 @@ package com.sportsboards.boards;
 import org.anddev.andengine.engine.Engine;
 import org.anddev.andengine.entity.scene.Scene;
 import org.anddev.andengine.entity.sprite.Sprite;
+import org.anddev.andengine.opengl.texture.Texture;
+import org.anddev.andengine.opengl.texture.TextureOptions;
 import org.anddev.andengine.opengl.texture.region.TextureRegionFactory;
 
+import android.content.Intent;
+import android.view.MenuItem;
+
+import com.sportsboards.R;
 import com.sportsboards.sprites.Ball;
 import com.sportsboards.sprites.Player;
 
@@ -60,6 +66,18 @@ public class SoccerBoard extends BaseBoard{
 		final int centerX = CAMERA_WIDTH / 2 -25;
 		final int centerY = CAMERA_HEIGHT / 2 -30;
 		final Ball ball = new Ball(centerX, centerY, this.mBallTextureRegion);
+		
+		loadPlayers();
+
+		mMainScene.getTopLayer().addEntity(ball);
+		mMainScene.setOnAreaTouchTraversalFrontToBack();
+		mMainScene.registerTouchArea(ball);
+
+		return mMainScene;
+	}
+
+	@Override
+	public void loadPlayers(){
 		int x, y, interval;
 		interval = 120;
 		//red team
@@ -104,14 +122,9 @@ public class SoccerBoard extends BaseBoard{
 		
 		addPlayer(new Player(0, "GK", 530, 210, this.mBluePlayerTextureRegion), mBlueTeam);
 		addPlayer(new Player(0, "GK", 530, 210 + interval, this.mBluePlayerTextureRegion), mBlueTeam);
-
-		mMainScene.getTopLayer().addEntity(ball);
-		mMainScene.setOnAreaTouchTraversalFrontToBack();
-		mMainScene.registerTouchArea(ball);
-
-		return mMainScene;
+		
 	}
-
+	
 	@Override
 	public void onLoadComplete() {
 

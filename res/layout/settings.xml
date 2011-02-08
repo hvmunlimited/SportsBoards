@@ -15,5 +15,8 @@
     <item android:id="@+id/disable"
           android:icon="@drawable/sb_launcher"
           android:title="@string/disable" />
+    <item android:id="@+id/change_player_size"
+          android:icon="@drawable/sb_launcher"
+          android:title="@string/change_player_size" />
    
 </menu>

@@ -16,7 +16,7 @@ class MenuAdapter extends BaseAdapter{
 		Activity.SOCCER,
 		//Activity.FOOTBALL,
 		Activity.BBALL,
-		//Activity.DBTEST,
+		//Activity.XMLPARSETEST,
 	};
 	
 	private final Context mContext;

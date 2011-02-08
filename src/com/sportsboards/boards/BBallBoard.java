@@ -3,8 +3,14 @@ package com.sportsboards.boards;
 import org.anddev.andengine.engine.Engine;
 import org.anddev.andengine.entity.scene.Scene;
 import org.anddev.andengine.entity.sprite.Sprite;
+import org.anddev.andengine.opengl.texture.Texture;
+import org.anddev.andengine.opengl.texture.TextureOptions;
 import org.anddev.andengine.opengl.texture.region.TextureRegionFactory;
 
+import android.content.Intent;
+import android.view.MenuItem;
+
+import com.sportsboards.R;
 import com.sportsboards.sprites.Ball;
 import com.sportsboards.sprites.Player;
 
@@ -60,17 +66,7 @@ public class BBallBoard extends BaseBoard{
 		final int centerY = CAMERA_HEIGHT / 2 -24;
 		final Ball ball = new Ball(centerX, centerY, this.mBallTextureRegion);
 		
-		addPlayer(new Player(0, "GK", 518, 177, this.mRedPlayerTextureRegion), mRedTeam);
-		addPlayer(new Player(0, "GK", 581, 229, this.mRedPlayerTextureRegion), mRedTeam);
-		addPlayer(new Player(0, "GK", 538, 276, this.mRedPlayerTextureRegion), mRedTeam);
-		addPlayer(new Player(0, "GK", 581, 323, this.mRedPlayerTextureRegion), mRedTeam);
-		addPlayer(new Player(0, "GK", 518, 370, this.mRedPlayerTextureRegion), mRedTeam);
-
-		addPlayer(new Player(0, "GK", 457, 177, this.mBluePlayerTextureRegion), mBlueTeam);
-		addPlayer(new Player(0, "GK", 397, 229, this.mBluePlayerTextureRegion), mBlueTeam);
-		addPlayer(new Player(0, "GK", 440, 276, this.mBluePlayerTextureRegion), mBlueTeam);
-		addPlayer(new Player(0, "GK", 397, 323, this.mBluePlayerTextureRegion), mBlueTeam);
-		addPlayer(new Player(0, "GK", 457, 370, this.mBluePlayerTextureRegion), mBlueTeam);
+		loadPlayers();
 		
 		mMainScene.getTopLayer().addEntity(ball);
 		mMainScene.setOnAreaTouchTraversalFrontToBack();
@@ -79,12 +75,27 @@ public class BBallBoard extends BaseBoard{
 		return mMainScene;
 	}
 
+	@Override
+	public void loadPlayers(){
+		
+		addPlayer(new Player(0, "GK", 518, 177, this.mBluePlayerTextureRegion), mBlueTeam);
+		addPlayer(new Player(0, "GK", 581, 229, this.mBluePlayerTextureRegion), mBlueTeam);
+		addPlayer(new Player(0, "GK", 538, 276, this.mBluePlayerTextureRegion), mBlueTeam);
+		addPlayer(new Player(0, "GK", 581, 323, this.mBluePlayerTextureRegion), mBlueTeam);
+		addPlayer(new Player(0, "GK", 518, 370, this.mBluePlayerTextureRegion), mBlueTeam);
+
+		addPlayer(new Player(0, "GK", 457, 177, this.mRedPlayerTextureRegion), mRedTeam);
+		addPlayer(new Player(0, "GK", 397, 229, this.mRedPlayerTextureRegion), mRedTeam);
+		addPlayer(new Player(0, "GK", 440, 276, this.mRedPlayerTextureRegion), mRedTeam);
+		addPlayer(new Player(0, "GK", 397, 323, this.mRedPlayerTextureRegion), mRedTeam);
+		addPlayer(new Player(0, "GK", 457, 370, this.mRedPlayerTextureRegion), mRedTeam);
+		
+	}
 
 	@Override
 	public void onLoadComplete() {
 
 	}
-	
 	
 	
 	// ===========================================================

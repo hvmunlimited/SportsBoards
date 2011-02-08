@@ -5,12 +5,13 @@
 	<string name="soccer_string">Soccer</string>
 	<string name="football_string">Football</string>
 	<string name="basketball_string">Basketball</string>
-	<string name="dbtest_string">dbtest</string>
+	<string name="xmltest_string">xml test</string>
 	<string name="reset">Reset</string>
 	<string name="save">Save</string>
 	<string name="load">Load</string>
 	<string name="enable">Enable Zoom</string>
 	<string name="disable">Disable Zoom</string>
+	<string name="change_player_size">Change Player Size</string>
 	
 	<string-array name="settings_array">
 		<item>Reset Player Formation</item>

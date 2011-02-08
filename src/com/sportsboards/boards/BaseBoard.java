@@ -104,8 +104,8 @@ public abstract class BaseBoard extends BaseGameActivity implements IOnSceneTouc
 		this.mBallTexture = new Texture(64, 64, TextureOptions.BILINEAR);
 		this.mRedPlayerTexture = new Texture(64, 64, TextureOptions.BILINEAR);
 		this.mBluePlayerTexture = new Texture(64, 64, TextureOptions.BILINEAR);
-		this.mRedPlayerTextureRegion = TextureRegionFactory.createFromAsset(this.mRedPlayerTexture, this, "48x48BLUE.png", 0, 0);
-		this.mBluePlayerTextureRegion = TextureRegionFactory.createFromAsset(this.mBluePlayerTexture, this, "48x48RED.png", 0, 0);
+		this.mRedPlayerTextureRegion = TextureRegionFactory.createFromAsset(this.mRedPlayerTexture, this, "48x48RED.png", 0, 0);
+		this.mBluePlayerTextureRegion = TextureRegionFactory.createFromAsset(this.mBluePlayerTexture, this, "48x48BLUE.png", 0, 0);
 		
 		this.mEngine.getTextureManager().loadTextures(this.mBackgroundTexture, this.mBluePlayerTexture, this.mRedPlayerTexture, this.mBallTexture);
 	}
@@ -187,6 +187,8 @@ public abstract class BaseBoard extends BaseGameActivity implements IOnSceneTouc
 	public void saveFormation(){}
 	public void loadFormation(){}
 	
+	public abstract void loadPlayers();
+	
 	public void addPlayer(Player p, List<Player> list){
 		mMainScene.getTopLayer().addEntity(p);
 		mMainScene.registerTouchArea(p);
@@ -208,18 +210,38 @@ public abstract class BaseBoard extends BaseGameActivity implements IOnSceneTouc
 				finish();
 				startActivity(intent);
 			case R.id.save:
-				
+				return false;
 			case R.id.load:
-				
+				return false;
 			case R.id.enable:
-				
+				return false;
 			case R.id.disable:
+				return false;
+			case R.id.change_player_size:
+				
+				this.mRedPlayerTexture = new Texture(64, 64, TextureOptions.BILINEAR);
+				this.mRedPlayerTextureRegion = TextureRegionFactory.createFromAsset(this.mRedPlayerTexture, this, "32x32RED.png", 0, 0);
+				this.mBluePlayerTexture = new Texture(64, 64, TextureOptions.BILINEAR);
+				this.mBluePlayerTextureRegion = TextureRegionFactory.createFromAsset(this.mBluePlayerTexture, this, "32x32BLUE.png", 0, 0);			
+				this.mEngine.getTextureManager().loadTextures(this.mRedPlayerTexture, this.mBluePlayerTexture);
+				
+				List<Player> tempList = new ArrayList<Player>();
+				
+				for(Player p: mRedTeam){
+					this.mMainScene.getTopLayer().removeEntity(p);	
+					tempList.add(p);
+				}
+				for(Player p: mBlueTeam){
+					this.mMainScene.getTopLayer().removeEntity(p);
+				}
+				mBlueTeam.clear();
+				mRedTeam.clear();
+				loadPlayers();
 				
 				
 			default:
 				return false;
 		}
 	}
-	
 }
 

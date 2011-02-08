@@ -6,13 +6,19 @@ import org.anddev.andengine.opengl.texture.region.TextureRegion;
 
 public class Player extends Sprite{
 	
-	private int number;
-	private String name;
-	private String initials;
-	private boolean mGrabbed;
+	public int number;
+	public String name;
+	public String initials;
+	protected boolean mGrabbed;
 	
-	public Player(int num, String name, int startx, int starty, TextureRegion tex){
+	public Player(int num, String name, float startx, float starty, TextureRegion tex){
 		super(startx, starty, tex);
+	}
+	
+	public void setTexture(TextureRegion tex){
+		
+		this.setTexture(tex);
+		
 	}
 	
 	@Override

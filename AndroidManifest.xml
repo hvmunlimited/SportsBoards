@@ -23,18 +23,14 @@
 			
 		<activity android:name="com.sportsboards.boards.SoccerBoard"
 			android:screenOrientation="landscape" />
-		<activity android:name="com.sportsboards.boards.FootBallBoard"
-			android:screenOrientation="landscape" />
 		<activity android:name="com.sportsboards.boards.BBallBoard"
 			android:screenOrientation="landscape" />
 			
 		<activity android:name="com.sportsboards.settings.Launcher"
 			android:screenOrientation="landscape" />	
 			
-			
-			
-			
-		<activity android:name="com.sportsboards.db.DBTest"
+		
+		<activity android:name="com.sportsboards.db.XMLParseTest"
 			android:screenOrientation="landscape" />
 
 	</application>
