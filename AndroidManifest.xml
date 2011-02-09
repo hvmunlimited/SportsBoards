@@ -7,7 +7,7 @@
 	<application android:icon="@drawable/sb_launcher"
 		android:label="@string/app_name">
 
-		<activity android:name="com.sportsboards.launcher.Launcher"
+		<activity android:name="com.sportsboards.db.XMLParseTest"
 
 			android:label="@string/app_name" android:screenOrientation="landscape">
 			<intent-filter>
@@ -30,8 +30,6 @@
 			android:screenOrientation="landscape" />	
 			
 		
-		<activity android:name="com.sportsboards.db.XMLParseTest"
-			android:screenOrientation="landscape" />
 
 	</application>
 

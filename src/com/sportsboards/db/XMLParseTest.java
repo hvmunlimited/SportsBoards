@@ -2,6 +2,8 @@ package com.sportsboards.db;
 
 import java.io.BufferedInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -17,19 +19,22 @@ import android.widget.TextView;
 
 public class XMLParseTest extends Activity{
 	
-	FormsList formsList = null;
+	List<Formation> forms = null;
+	Formation fn = null;
+	
+	ArrayList<Position> positions = null;
+	Position pos = null;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		String path = "C:/Users/nate/workspace/sportsboards/res/values/strings.xml";
+		
 		setContentView(R.layout.simple_list_item_1);
 		LinearLayout layout = new LinearLayout(this);
 		layout.setOrientation(1);
 		
-		TextView form[];
-		TextView name[];
-		TextView sport[];
+		TextView name;
+		TextView sport;
 		
 		try{
 			SAXParserFactory spf = SAXParserFactory.newInstance();
@@ -38,24 +43,44 @@ public class XMLParseTest extends Activity{
 			
 			XMLParser myParser = new XMLParser();
 			xr.setContentHandler(myParser);
-			InputStream inputStream = this.getAssets().open(path);
+			InputStream inputStream = this.getAssets().open("formations.xml");
 			xr.parse(new InputSource(new BufferedInputStream(inputStream)));
 		}
 		catch (Exception e) {
 			System.out.println("XML Passing Exception = " + e);
 		}
 		
-		formsList = XMLParser.forms;
-		
-		form = new TextView[formsList.getForm().size()];
-		
-		for(int i = 0; i < formsList.getForm().size(); i++){
+		forms = XMLParser.forms;
+
+		for(int i = 0; i < forms.size(); i++){
+			fn = forms.get(i);
+			System.out.println(fn.getName());
+			System.out.println(fn.getSport());
 			
-			form[i] = new TextView(this);
-			form[i].setText("Name = " + formsList.getForm().get(i));
-			layout.addView(form[i]);
+			positions = (ArrayList<Position>)fn.getPositions();
+			
+			if(positions != null){
+			
+				for(int j = 0; j < positions.size(); j++){
+					pos = positions.get(j);
+					System.out.println(pos.getType());
+					System.out.println(pos.getPlayerName());
+					
+				}
+			}
+			
+			name = new TextView(this);
+			name.setText("Name = " + fn.getName());
+			
+			sport = new TextView(this);
+			sport.setText("Sport = " + fn.getSport());
+			
+			layout.addView(name);
+			layout.addView(sport);
+
 		}
 		setContentView(layout);
+		
 	}
 	
 }
