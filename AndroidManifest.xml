@@ -7,7 +7,7 @@
 	<application android:icon="@drawable/sb_launcher"
 		android:label="@string/app_name">
 
-		<activity android:name="com.sportsboards.db.XMLParseTest"
+		<activity android:name="com.sportsboards.launcher.Launcher"
 
 			android:label="@string/app_name" android:screenOrientation="landscape">
 			<intent-filter>
@@ -15,17 +15,12 @@
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
-		
-		
 		<activity android:name="com.sportsboards.launcher.LicenseCheck"
 			android:screenOrientation="landscape" />
-			
-			
 		<activity android:name="com.sportsboards.boards.SoccerBoard"
 			android:screenOrientation="landscape" />
 		<activity android:name="com.sportsboards.boards.BBallBoard"
 			android:screenOrientation="landscape" />
-			
 		<activity android:name="com.sportsboards.settings.Launcher"
 			android:screenOrientation="landscape" />	
 			

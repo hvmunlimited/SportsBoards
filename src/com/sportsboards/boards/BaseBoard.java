@@ -10,6 +10,7 @@ import org.anddev.andengine.engine.options.EngineOptions.ScreenOrientation;
 import org.anddev.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
 import org.anddev.andengine.entity.scene.Scene;
 import org.anddev.andengine.entity.scene.Scene.IOnSceneTouchListener;
+import org.anddev.andengine.entity.sprite.Sprite;
 import org.anddev.andengine.extension.input.touch.controller.MultiTouch;
 import org.anddev.andengine.extension.input.touch.controller.MultiTouchController;
 import org.anddev.andengine.extension.input.touch.controller.MultiTouchException;
@@ -31,7 +32,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.sportsboards.R;
-import com.sportsboards.sprites.Player;
+import com.sportsboards.db.Formation;
+import com.sportsboards.db.Position;
+import com.sportsboards.db.XMLAccess;
+import com.sportsboards.sprites.Ball;
+import com.sportsboards.sprites.PlayerSprite;
+
 
 /**
  * @author Mike Bonar
@@ -41,29 +47,32 @@ public abstract class BaseBoard extends BaseGameActivity implements IOnSceneTouc
 	// ===========================================================
 	// Constants
 	// ===========================================================
-	public static final int CAMERA_WIDTH = 1024;
-	public static final int CAMERA_HEIGHT = 600;
+	protected static final int CAMERA_WIDTH = 1024;
+	protected static final int CAMERA_HEIGHT = 600;
 	
-	protected int NUM_PLAYERS;
+	protected String SPORT_NAME;
+	protected final String DEFAULT_NAME = "DEFAULT";
+		
 	protected Texture mBackgroundTexture;
 	protected Texture mBallTexture;
-	protected Texture mRedPlayerTexture;
-	protected Texture mBluePlayerTexture;
+	private Texture mRedPlayerTexture;
+	private Texture mBluePlayerTexture;
 	
 	protected TextureRegion mBackGroundTextureRegion;
 	protected TextureRegion mBallTextureRegion;
-	protected TextureRegion mRedPlayerTextureRegion;
-	protected TextureRegion mBluePlayerTextureRegion;
+	private TextureRegion mRedPlayerTextureRegion;
+	private TextureRegion mBluePlayerTextureRegion;
 	
-	protected List<Player> mRedTeam = new ArrayList<Player>();
-	protected List<Player> mBlueTeam = new ArrayList<Player>();
+	private List<PlayerSprite> mRedTeam = new ArrayList<PlayerSprite>();
+	private List<PlayerSprite> mBlueTeam = new ArrayList<PlayerSprite>();
 	
 	private ZoomCamera mZoomCamera;
 	private SurfaceScrollDetector mScrollDetector;
 	private PinchZoomDetector mPinchZoomDetector;
 	private float mPinchZoomStartedCameraZoomFactor;
 	
-	protected Scene mMainScene;
+	private Scene mMainScene;
+	private boolean LARGE_PLAYERS = true;
 	
 	// ===========================================================
 	// Fields
@@ -112,6 +121,8 @@ public abstract class BaseBoard extends BaseGameActivity implements IOnSceneTouc
 	@Override
 	public Scene onLoadScene(){
 		
+		Formation fn = null;
+		
 		this.mMainScene = new Scene(1);
 		this.mScrollDetector = new SurfaceScrollDetector(this);
 		if(MultiTouch.isSupportedByAndroidVersion()) {
@@ -128,6 +139,13 @@ public abstract class BaseBoard extends BaseGameActivity implements IOnSceneTouc
 		this.mPinchZoomDetector.setEnabled(false);
 		this.mScrollDetector.setEnabled(false);
 		
+		mMainScene.getLayer(0).addEntity(new Sprite(0, 0, this.mBackGroundTextureRegion));
+		
+		fn = loadFormation();
+		showFormation(fn);
+		
+		mMainScene.setOnAreaTouchTraversalFrontToBack();
+	
 		return mMainScene;
 	}
 	
@@ -185,14 +203,47 @@ public abstract class BaseBoard extends BaseGameActivity implements IOnSceneTouc
 	}
 
 	public void saveFormation(){}
-	public void loadFormation(){}
 	
-	public abstract void loadPlayers();
+	public Formation loadFormation(){
+		
+		XMLAccess xml = new XMLAccess();
+		ArrayList<Formation> formsList = (ArrayList<Formation>) xml.loadFormations(this, SPORT_NAME.toLowerCase());
+		Formation def = null;
+		
+		for(Formation fn:formsList){
+			if(fn.getName().equalsIgnoreCase(DEFAULT_NAME)){
+				def = fn;
+				break;
+			}
+		}
+		return def;
+	}
 	
-	public void addPlayer(Player p, List<Player> list){
+	public void showFormation(Formation fn){
+				
+		addBall(new Ball(fn.getBall().x, fn.getBall().y, this.mBallTextureRegion));
+		
+		for(Position pos:fn.getPositions()){
+			
+			if(pos.getTeamColor().equalsIgnoreCase("blue")){
+				addPlayer(new PlayerSprite(0, pos.getType(), pos.getX(), pos.getY(), 
+							this.mBluePlayerTextureRegion), mBlueTeam);
+			}
+			else{
+				addPlayer(new PlayerSprite(0, pos.getType(), pos.getX(), pos.getY(),
+							this.mRedPlayerTextureRegion), mRedTeam);
+			}			
+		}
+	}
+	
+	public void addPlayer(PlayerSprite p, List<PlayerSprite> list){
 		mMainScene.getTopLayer().addEntity(p);
 		mMainScene.registerTouchArea(p);
 		list.add(p);
+	}
+	public void addBall(Ball ball){
+		mMainScene.getTopLayer().addEntity(ball);
+		mMainScene.registerTouchArea(ball);
 	}
 
 	@Override
@@ -204,6 +255,9 @@ public abstract class BaseBoard extends BaseGameActivity implements IOnSceneTouc
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item){
+		
+		Formation fn = null;
+		
 		switch(item.getItemId()) {
 			case R.id.reset:
 				Intent intent = getIntent();
@@ -219,25 +273,37 @@ public abstract class BaseBoard extends BaseGameActivity implements IOnSceneTouc
 				return false;
 			case R.id.change_player_size:
 				
-				this.mRedPlayerTexture = new Texture(64, 64, TextureOptions.BILINEAR);
-				this.mRedPlayerTextureRegion = TextureRegionFactory.createFromAsset(this.mRedPlayerTexture, this, "32x32RED.png", 0, 0);
-				this.mBluePlayerTexture = new Texture(64, 64, TextureOptions.BILINEAR);
-				this.mBluePlayerTextureRegion = TextureRegionFactory.createFromAsset(this.mBluePlayerTexture, this, "32x32BLUE.png", 0, 0);			
+				if(LARGE_PLAYERS){
+					
+					this.mRedPlayerTexture = new Texture(64, 64, TextureOptions.BILINEAR);
+					this.mRedPlayerTextureRegion = TextureRegionFactory.createFromAsset(this.mRedPlayerTexture, this, "32x32RED.png", 0, 0);
+					this.mBluePlayerTexture = new Texture(64, 64, TextureOptions.BILINEAR);
+					this.mBluePlayerTextureRegion = TextureRegionFactory.createFromAsset(this.mBluePlayerTexture, this, "32x32BLUE.png", 0, 0);
+					LARGE_PLAYERS = false;
+				}
+				else{
+					
+					this.mRedPlayerTexture = new Texture(64, 64, TextureOptions.BILINEAR);
+					this.mBluePlayerTexture = new Texture(64, 64, TextureOptions.BILINEAR);
+					this.mRedPlayerTextureRegion = TextureRegionFactory.createFromAsset(this.mRedPlayerTexture, this, "48x48RED.png", 0, 0);
+					this.mBluePlayerTextureRegion = TextureRegionFactory.createFromAsset(this.mBluePlayerTexture, this, "48x48BLUE.png", 0, 0);
+					LARGE_PLAYERS = true;
+				}
 				this.mEngine.getTextureManager().loadTextures(this.mRedPlayerTexture, this.mBluePlayerTexture);
 				
-				List<Player> tempList = new ArrayList<Player>();
+				List<PlayerSprite> tempList = new ArrayList<PlayerSprite>();
 				
-				for(Player p: mRedTeam){
+				for(PlayerSprite p: mRedTeam){
 					this.mMainScene.getTopLayer().removeEntity(p);	
 					tempList.add(p);
 				}
-				for(Player p: mBlueTeam){
+				for(PlayerSprite p: mBlueTeam){
 					this.mMainScene.getTopLayer().removeEntity(p);
 				}
 				mBlueTeam.clear();
 				mRedTeam.clear();
-				loadPlayers();
-				
+				fn = loadFormation();
+				showFormation(fn);
 				
 			default:
 				return false;

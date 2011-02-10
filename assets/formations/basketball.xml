@@ -1,0 +1,70 @@
+<forms>
+	<form>
+		<name>DEFAULT</name>
+		<ball x="488" y="276"/>
+		
+		<positions>
+			<pos>
+				<team>BLUE</team>
+				<type>C</type>
+				<pName>NATE</pName>
+				<coords x="518" y="177"/>
+			</pos>
+			<pos>
+				<team>BLUE</team>
+				<type>PF</type>
+				<pName>John Smith</pName>
+				<coords x="581" y="229"/>
+			</pos>
+			<pos>
+				<team>BLUE</team>
+				<type>SF</type>
+				<pName>NATE</pName>
+				<coords x="538" y="276"/>
+			</pos>
+			<pos>
+				<team>BLUE</team>
+				<type>SG</type>
+				<pName>NATE</pName>
+				<coords x="581" y="323"/>
+			</pos>
+			<pos>
+				<team>BLUE</team>
+				<type>PG</type>
+				<pName>NATE</pName>
+				<coords x="518" y="370"/>
+			</pos>
+			
+			<pos>
+				<team>RED</team>
+				<type>C</type>
+				<pName>NATE</pName>
+				<coords x="457" y="177"/>
+			</pos>
+			<pos>
+				<team>RED</team>
+				<type>PF</type>
+				<pName>John Smith</pName>
+				<coords x="397" y="229"/>
+			</pos>
+			<pos>
+				<team>RED</team>
+				<type>SF</type>
+				<pName>NATE</pName>
+				<coords x="440" y="276"/>
+			</pos>
+			<pos>
+				<team>RED</team>
+				<type>SG</type>
+				<pName>NATE</pName>
+				<coords x="397" y="323"/>
+			</pos>
+			<pos>
+				<team>RED</team>
+				<type>PG</type>
+				<pName>NATE</pName>
+				<coords x="457" y="370"/>
+			</pos>
+		</positions>
+	</form>
+</forms>

@@ -9,9 +9,9 @@ public class Formation{
 	public String getName(){return name;}
 	public void setName(String name){ this.name = name;}
 	
-	private String sport;
-	public String getSport(){return sport;}
-	public void setSport(String sport){ this.sport = sport;}
+	private Coordinates ballCoords;
+	public Coordinates getBall(){ return ballCoords;}
+	public void setBall(float x, float y){ this.ballCoords = new Coordinates(x, y);}
 	
 	private List<Position> positions;
 	public List<Position> getPositions(){ return positions;}
@@ -19,9 +19,8 @@ public class Formation{
 	
 	public Formation(){}
 	
-	public Formation(String name, String sport, ArrayList<Position> positions){
+	public Formation(String name, ArrayList<Position> positions){
 		this.name = name;
-		this.sport = sport;
 		this.positions = positions;
 	}
 	

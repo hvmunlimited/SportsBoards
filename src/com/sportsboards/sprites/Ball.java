@@ -6,7 +6,7 @@ import org.anddev.andengine.opengl.texture.region.TextureRegion;
 
 public class Ball extends Sprite{
 	private boolean mGrabbed;
-	public Ball(int startx, int starty, TextureRegion tex){
+	public Ball(float startx, float starty, TextureRegion tex){
 		super(startx, starty, tex);
 	}
 	
