@@ -4,15 +4,17 @@ import org.anddev.andengine.entity.sprite.Sprite;
 import org.anddev.andengine.input.touch.TouchEvent;
 import org.anddev.andengine.opengl.texture.region.TextureRegion;
 
+import com.sportsboards.db.PlayerInfo;
+
 public class PlayerSprite extends Sprite{
 	
-	public int number;
-	public String name;
-	public String initials;
+	private PlayerInfo pInfo;
+	public PlayerInfo getPlayerInfo(){ return pInfo;}
 	protected boolean mGrabbed;
 	
-	public PlayerSprite(int num, String name, float startx, float starty, TextureRegion tex){
+	public PlayerSprite(PlayerInfo pInfo, float startx, float starty, TextureRegion tex){
 		super(startx, starty, tex);
+		this.pInfo = pInfo;
 	}
 	
 	public void setTexture(TextureRegion tex){

@@ -1,11 +1,9 @@
 package com.sportsboards.boards;
 
 import org.anddev.andengine.engine.Engine;
-import org.anddev.andengine.entity.scene.Scene;
-import org.anddev.andengine.entity.sprite.Sprite;
 import org.anddev.andengine.opengl.texture.region.TextureRegionFactory;
 
-import com.sportsboards.sprites.Ball;
+import com.sportsboards.R;
 
 /**
  * @author Mike Bonar
@@ -37,6 +35,7 @@ public class SoccerBoard extends BaseBoard{
 	// ===========================================================
 	@Override
 	public Engine onLoadEngine() {
+		resID = R.raw.soccer;
 		SPORT_NAME = "SOCCER";
 		return super.onLoadEngine();
 	}

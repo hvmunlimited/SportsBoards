@@ -1,6 +1,6 @@
 package com.sportsboards.db;
 
-public class Position{
+public class PlayerInfo{
 	
 	private String type;
 	public void setType(String type){ this.type = type;}
@@ -24,9 +24,9 @@ public class Position{
 	public float getX(){ return this.coords.x;}
 	public float getY(){ return this.coords.y;}
 	
-	public Position(){}
+	public PlayerInfo(){}
 	
-	public Position(String type, String pName, String team, Coordinates coords){
+	public PlayerInfo(String type, String pName, String team, Coordinates coords){
 		this.type = type;
 		this.pName = pName;
 		this.team = team;

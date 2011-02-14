@@ -4,10 +4,10 @@ import org.anddev.andengine.entity.sprite.Sprite;
 import org.anddev.andengine.input.touch.TouchEvent;
 import org.anddev.andengine.opengl.texture.region.TextureRegion;
 
-public class Ball extends Sprite{
+public class BallSprite extends Sprite{
 	private boolean mGrabbed;
-	public Ball(float startx, float starty, TextureRegion tex){
-		super(startx, starty, tex);
+	public BallSprite(float x, float y, TextureRegion tex){
+		super(x, y, tex);	
 	}
 	
 	@Override

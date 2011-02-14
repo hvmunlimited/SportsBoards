@@ -8,6 +8,7 @@ import org.anddev.andengine.engine.camera.ZoomCamera;
 import org.anddev.andengine.engine.options.EngineOptions;
 import org.anddev.andengine.engine.options.EngineOptions.ScreenOrientation;
 import org.anddev.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
+import org.anddev.andengine.entity.IEntity;
 import org.anddev.andengine.entity.scene.Scene;
 import org.anddev.andengine.entity.scene.Scene.IOnSceneTouchListener;
 import org.anddev.andengine.entity.sprite.Sprite;
@@ -33,9 +34,10 @@ import android.view.MenuItem;
 
 import com.sportsboards.R;
 import com.sportsboards.db.Formation;
-import com.sportsboards.db.Position;
-import com.sportsboards.db.XMLAccess;
-import com.sportsboards.sprites.Ball;
+import com.sportsboards.db.PlayerInfo;
+import com.sportsboards.db.parsing.XMLAccess;
+import com.sportsboards.db.parsing.XMLWriter;
+import com.sportsboards.sprites.BallSprite;
 import com.sportsboards.sprites.PlayerSprite;
 
 
@@ -51,6 +53,7 @@ public abstract class BaseBoard extends BaseGameActivity implements IOnSceneTouc
 	protected static final int CAMERA_HEIGHT = 600;
 	
 	protected String SPORT_NAME;
+	protected int resID;
 	protected final String DEFAULT_NAME = "DEFAULT";
 		
 	protected Texture mBackgroundTexture;
@@ -202,12 +205,35 @@ public abstract class BaseBoard extends BaseGameActivity implements IOnSceneTouc
 		return true;
 	}
 
-	public void saveFormation(){}
+	public void saveFormation(){
+		
+		Formation fn = new Formation();
+		ArrayList<PlayerInfo> playerList = new ArrayList<PlayerInfo>();
+		PlayerSprite pSprite = null;
+		PlayerInfo pInfo = null;
+		BallSprite ball = null;
+		
+		for(int i = 0; i < mMainScene.getTopLayer().getEntityCount(); i++){
+			if((IEntity) mMainScene.getTopLayer().getEntity(i) instanceof PlayerSprite){
+				pSprite = (PlayerSprite)mMainScene.getTopLayer().getEntity(i);
+				pInfo = pSprite.getPlayerInfo();
+				pInfo.setCoords(pSprite.getX(), pSprite.getY());
+				playerList.add(pInfo);
+			}
+			else if((IEntity) mMainScene.getTopLayer().getEntity(i) instanceof BallSprite){
+				ball = (BallSprite)mMainScene.getTopLayer().getEntity(i);
+			}
+		}
+		fn.setBall(ball.getX(), ball.getY());
+		fn.setPlayers(playerList);
+		fn.setName("testing");
+		XMLWriter.writeFormation(this, fn, SPORT_NAME.toLowerCase());
+	}
 	
 	public Formation loadFormation(){
 		
 		XMLAccess xml = new XMLAccess();
-		ArrayList<Formation> formsList = (ArrayList<Formation>) xml.loadFormations(this, SPORT_NAME.toLowerCase());
+		ArrayList<Formation> formsList = (ArrayList<Formation>) xml.loadFormations(this, resID);
 		Formation def = null;
 		
 		for(Formation fn:formsList){
@@ -217,20 +243,21 @@ public abstract class BaseBoard extends BaseGameActivity implements IOnSceneTouc
 			}
 		}
 		return def;
+		
 	}
 	
 	public void showFormation(Formation fn){
-				
-		addBall(new Ball(fn.getBall().x, fn.getBall().y, this.mBallTextureRegion));
+		//System.out.println(fn.getName());
+		addBall(new BallSprite(fn.getBall().x, fn.getBall().y, this.mBallTextureRegion));
 		
-		for(Position pos:fn.getPositions()){
+		for(PlayerInfo p:fn.getPlayers()){
 			
-			if(pos.getTeamColor().equalsIgnoreCase("blue")){
-				addPlayer(new PlayerSprite(0, pos.getType(), pos.getX(), pos.getY(), 
+			if(p.getTeamColor().equalsIgnoreCase("blue")){
+				addPlayer(new PlayerSprite(p, p.getX(), p.getY(), 
 							this.mBluePlayerTextureRegion), mBlueTeam);
 			}
 			else{
-				addPlayer(new PlayerSprite(0, pos.getType(), pos.getX(), pos.getY(),
+				addPlayer(new PlayerSprite(p, p.getX(), p.getY(),
 							this.mRedPlayerTextureRegion), mRedTeam);
 			}			
 		}
@@ -241,7 +268,7 @@ public abstract class BaseBoard extends BaseGameActivity implements IOnSceneTouc
 		mMainScene.registerTouchArea(p);
 		list.add(p);
 	}
-	public void addBall(Ball ball){
+	public void addBall(BallSprite ball){
 		mMainScene.getTopLayer().addEntity(ball);
 		mMainScene.registerTouchArea(ball);
 	}
@@ -264,6 +291,10 @@ public abstract class BaseBoard extends BaseGameActivity implements IOnSceneTouc
 				finish();
 				startActivity(intent);
 			case R.id.save:
+				
+				saveFormation();
+				
+				
 				return false;
 			case R.id.load:
 				return false;

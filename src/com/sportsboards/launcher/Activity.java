@@ -5,7 +5,7 @@ import org.anddev.andengine.ui.activity.BaseGameActivity;
 import com.sportsboards.R;
 import com.sportsboards.boards.BBallBoard;
 import com.sportsboards.boards.SoccerBoard;
-import com.sportsboards.db.XMLAccess;
+import com.sportsboards.db.parsing.XMLAccess;
 
 enum Activity{
 

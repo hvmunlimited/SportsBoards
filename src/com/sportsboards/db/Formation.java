@@ -13,16 +13,14 @@ public class Formation{
 	public Coordinates getBall(){ return ballCoords;}
 	public void setBall(float x, float y){ this.ballCoords = new Coordinates(x, y);}
 	
-	private List<Position> positions;
-	public List<Position> getPositions(){ return positions;}
-	public void setPositions(List<Position> positions){ this.positions = positions;}
+	private List<PlayerInfo> players;
+	public List<PlayerInfo> getPlayers(){ return players;}
+	public void setPlayers(List<PlayerInfo> players){ this.players = players;}
 	
 	public Formation(){}
 	
-	public Formation(String name, ArrayList<Position> positions){
+	public Formation(String name, ArrayList<PlayerInfo> players){
 		this.name = name;
-		this.positions = positions;
+		this.players = players;
 	}
-	
-	
 }
