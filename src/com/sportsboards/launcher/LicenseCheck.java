@@ -17,8 +17,12 @@ import com.android.vending.licensing.AESObfuscator;
 import com.android.vending.licensing.LicenseChecker;
 import com.android.vending.licensing.LicenseCheckerCallback;
 import com.android.vending.licensing.ServerManagedPolicy;
+
 import com.sportsboards.R;
 
+/**
+ * Coded by Nathan King
+ */
 
 public class LicenseCheck extends Activity{
 	
@@ -38,25 +42,22 @@ public class LicenseCheck extends Activity{
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		 super.onCreate(savedInstanceState);
-		 //requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		 this.setContentView(R.layout.license);
 		 mStatusText = (TextView) findViewById(R.id.status_text);
 		 
 	     mHandler = new Handler();
 		 mLicenseCheckerCallback = new MyLicenseCheckerCallback();
 		 android_id = Secure.getString(this.getContentResolver(), Secure.ANDROID_ID);
-	        // Construct the LicenseChecker with a Policy.
 	     mChecker = new LicenseChecker(this, 
 	    		 new ServerManagedPolicy(this,
 	    				 new AESObfuscator(SALT, getPackageName(), android_id)),
-	            BASE64_PUBLIC_KEY  // Your public licensing key.
+	            BASE64_PUBLIC_KEY 
 	     );
 	     
 	     doCheck();
 	}
 	@Override
 	protected Dialog onCreateDialog(int id) {
-		// We have only one dialog.
 		return new AlertDialog.Builder(this)
 		.setTitle("Application Not Licensed")
 		.setCancelable(false)
@@ -85,7 +86,6 @@ public class LicenseCheck extends Activity{
 	Toast.makeText(this, string, Toast.LENGTH_SHORT).show();
 	}
 	private void doCheck() {
-        //setProgressBarIndeterminateVisibility(true);
         mStatusText.setText("checking license");
         mChecker.checkAccess(mLicenseCheckerCallback);
     }
@@ -100,7 +100,6 @@ public class LicenseCheck extends Activity{
 	            public void run() {
 	                mStatusText.setText(result);
 	                setProgressBarIndeterminateVisibility(false);
-	                //mCheckLicenseButton.setEnabled(true);
 	            }
 	        });
 	 }

@@ -6,34 +6,19 @@ import org.anddev.andengine.opengl.texture.region.TextureRegionFactory;
 import com.sportsboards.R;
 
 /**
- * @author Mike Bonar
- * 
+ * Coded by Nathan King
  */
+
 public class BBallBoard extends BaseBoard{
 	
-	// ===========================================================
-	// Constants
-	// ===========================================================
 	
-	private final int NUM_PLAYERS = 5;
-	// ===========================================================
-	// Fields
-	// ===========================================================
-
-	// ===========================================================
-	// Constructors
-	// ===========================================================
-	
-
-	// ===========================================================
-	// Getter & Setter
-	// ===========================================================/
-
 	// ===========================================================
 	// Methods for/from SuperClass/Interfaces
 	// ===========================================================
+	
 	@Override
 	public Engine onLoadEngine() {
+		NUM_PLAYERS = 5;
 		resID = R.raw.basketball;
 		SPORT_NAME = "BASKETBALL";
 		return super.onLoadEngine();
@@ -43,7 +28,7 @@ public class BBallBoard extends BaseBoard{
 	@Override
 	public void onLoadResources() {
 		super.onLoadResources();		
-		this.mBackGroundTextureRegion = TextureRegionFactory.createFromAsset(this.mBackgroundTexture, this, "Basketball_cour_final.jpg", 0, 0);
+		this.mBackGroundTextureRegion = TextureRegionFactory.createFromAsset(this.mBackgroundTexture, this, "basketball_court.jpg", 0, 0);
 		this.mBallTextureRegion = TextureRegionFactory.createFromAsset(this.mBallTexture, this, "Basketball_Ball_48.png", 0, 0);
 		this.mEngine.getTextureManager().loadTextures(this.mBackgroundTexture);
 	}
@@ -52,14 +37,4 @@ public class BBallBoard extends BaseBoard{
 	public void onLoadComplete() {
 
 	}
-	
-	
-	// ===========================================================
-	// Methods
-	// ===========================================================
-	
-	
-	// ===========================================================
-	// Inner and Anonymous Classes
-	// ===========================================================
 }

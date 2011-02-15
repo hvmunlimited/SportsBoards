@@ -1,6 +1,8 @@
 package com.sportsboards.db.parsing;
 
-
+/**
+ * Coded by Nathan King
+ */
 
 public abstract class BaseFeedParser implements FeedParser{
 	

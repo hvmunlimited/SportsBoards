@@ -2,13 +2,14 @@ package com.sportsboards.db.parsing;
 
 import java.io.InputStream;
 import java.util.ArrayList;
-
 import org.xmlpull.v1.XmlPullParser;
-
 import android.util.Xml;
-
 import com.sportsboards.db.Formation;
 import com.sportsboards.db.PlayerInfo;
+
+/**
+ * Coded by Nathan King
+ */
 
 public class XMLPullFeedParser extends BaseFeedParser{
 	
@@ -38,7 +39,6 @@ public class XMLPullFeedParser extends BaseFeedParser{
                 switch (eventType){
                     case XmlPullParser.START_DOCUMENT:
                         forms = new ArrayList<Formation>();
-
                         break;
                     case XmlPullParser.START_TAG:
                     	
@@ -46,6 +46,7 @@ public class XMLPullFeedParser extends BaseFeedParser{
                         
                         if (name.equalsIgnoreCase(FORM)){
                             newForm = new Formation();
+                            players = null;
                         } 
                         else if (newForm != null){
                         	
@@ -53,15 +54,16 @@ public class XMLPullFeedParser extends BaseFeedParser{
 
                             	newForm.setName(parser.nextText());
                             	
-                            } else if (name.equalsIgnoreCase(BALL)){
-                            	
-                            	
+                            } else if (name.equalsIgnoreCase(BALL)){                           	
                             	x = Float.parseFloat(parser.getAttributeValue(0));
                             	y = Float.parseFloat(parser.getAttributeValue(1));
                             	newForm.setBall(x, y);
                             	
                             } else if (name.equalsIgnoreCase(PLAYER)){
                             	
+                            	if(players == null){
+                            		players = new ArrayList<PlayerInfo>();
+                            	}
                             	newPlayer = new PlayerInfo();
                             	
                             } else if (name.equalsIgnoreCase(TEAM)){
@@ -77,7 +79,6 @@ public class XMLPullFeedParser extends BaseFeedParser{
                         		newPlayer.setPlayerName(parser.nextText());
                         		
                				} else if (name.equalsIgnoreCase(COORDS)){
-               					//System.out.println(parser.getAttributeCount());
                             	x = Float.parseFloat(parser.getAttributeValue(0));
                             	y = Float.parseFloat(parser.getAttributeValue(1));
                             	newPlayer.setCoords(x,y);
@@ -95,13 +96,8 @@ public class XMLPullFeedParser extends BaseFeedParser{
                             forms.add(newForm);
                         }
                         else if (name.equalsIgnoreCase(PLAYER)){
-                        	
-                        	if(players == null){
-                        		players = new ArrayList<PlayerInfo>();
-                        	}
-                        	else{
-                        		players.add(newPlayer);
-                        	}
+
+                        	players.add(newPlayer); 	
                         }
                         
                         break;

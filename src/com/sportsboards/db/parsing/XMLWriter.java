@@ -1,6 +1,5 @@
 package com.sportsboards.db.parsing;
 
-
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -15,10 +14,12 @@ import org.xmlpull.v1.XmlSerializer;
 import android.content.Context;
 import android.util.Xml;
 
-import com.sportsboards.R;
 import com.sportsboards.db.Formation;
 import com.sportsboards.db.PlayerInfo;
 
+/**
+ * Coded by Nathan King
+ */
 
 public class XMLWriter{
 		
@@ -39,8 +40,8 @@ public class XMLWriter{
     		serializer.endTag("", "name");
 
 	    	serializer.startTag("", "ball");
-    		serializer.attribute("", "x", String.valueOf(fn.getBall().x));
-    		serializer.attribute("", "y", String.valueOf(fn.getBall().x));
+    		serializer.attribute("", "x", String.valueOf(fn.getBall().getX()));
+    		serializer.attribute("", "y", String.valueOf(fn.getBall().getY()));
     		serializer.endTag("", "ball");
     		serializer.startTag("", "players");
 
@@ -85,6 +86,7 @@ public class XMLWriter{
 
 	}
 	
+	@SuppressWarnings("unused")
 	private static String convertStreamToString(InputStream input) throws IOException{
 		
 		if(input != null){
