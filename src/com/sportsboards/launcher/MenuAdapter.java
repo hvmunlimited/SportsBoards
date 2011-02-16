@@ -9,6 +9,9 @@ import android.widget.TextView;
 
 import com.sportsboards.R;
 
+/**
+ * Coded by Nathan King
+ */
 
 class MenuAdapter extends BaseAdapter{
 

@@ -4,11 +4,29 @@ import org.anddev.andengine.entity.sprite.Sprite;
 import org.anddev.andengine.input.touch.TouchEvent;
 import org.anddev.andengine.opengl.texture.region.TextureRegion;
 
+/**
+ * Coded by Nathan King
+ */
+
 public class BallSprite extends Sprite{
+	
+	/*
+	 * Variables
+	 */
+	
 	private boolean mGrabbed;
+	
+	/*
+	 * Constructors
+	 */
+	
 	public BallSprite(float x, float y, TextureRegion tex){
 		super(x, y, tex);	
 	}
+	
+	/*
+	 * @see org.anddev.andengine.entity.shape.Shape#onAreaTouched(org.anddev.andengine.input.touch.TouchEvent, float, float)
+	 */
 	
 	@Override
 	public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY) {

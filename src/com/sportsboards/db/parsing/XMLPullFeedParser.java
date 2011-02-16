@@ -2,13 +2,14 @@ package com.sportsboards.db.parsing;
 
 import java.io.InputStream;
 import java.util.ArrayList;
-
 import org.xmlpull.v1.XmlPullParser;
-
 import android.util.Xml;
-
 import com.sportsboards.db.Formation;
 import com.sportsboards.db.PlayerInfo;
+
+/**
+ * Coded by Nathan King
+ */
 
 public class XMLPullFeedParser extends BaseFeedParser{
 	
@@ -37,50 +38,56 @@ public class XMLPullFeedParser extends BaseFeedParser{
                 String name = null;
                 switch (eventType){
                     case XmlPullParser.START_DOCUMENT:
-                        forms = new ArrayList<Formation>();
-
+                        
                         break;
                     case XmlPullParser.START_TAG:
                     	
                         name = parser.getName();
                         
-                        if (name.equalsIgnoreCase(FORM)){
+                        if(name.equalsIgnoreCase(TAG_ROOT)){
+                        	forms = new ArrayList<Formation>();
+                        }
+                        
+                        else if (name.equalsIgnoreCase(TAG_FORM)){
                             newForm = new Formation();
+                            players = null;
                         } 
                         else if (newForm != null){
                         	
-                            if (name.equalsIgnoreCase(NAME)){
+                            if (name.equalsIgnoreCase(TAG_FORM_NAME)){
 
                             	newForm.setName(parser.nextText());
                             	
-                            } else if (name.equalsIgnoreCase(BALL)){
-                            	
-                            	
-                            	x = Float.parseFloat(parser.getAttributeValue(0));
-                            	y = Float.parseFloat(parser.getAttributeValue(1));
+                            } else if (name.equalsIgnoreCase(TAG_FORM_BALL)){   
+                            
+                            	x = Float.parseFloat(parser.getAttributeValue(null, TAG_FORM_BALL_ATTRIBUTE_X));
+                            	y = Float.parseFloat(parser.getAttributeValue(null, TAG_FORM_BALL_ATTRIBUTE_Y));
                             	newForm.setBall(x, y);
                             	
-                            } else if (name.equalsIgnoreCase(PLAYER)){
+                            } else if (name.equalsIgnoreCase(TAG_PLAYER)){
                             	
+                            	if(players == null){
+                            		players = new ArrayList<PlayerInfo>();
+                            	}
                             	newPlayer = new PlayerInfo();
                             	
-                            } else if (name.equalsIgnoreCase(TEAM)){
+                            } else if (name.equalsIgnoreCase(TAG_PLAYER_TEAM)){
                             	
                             	newPlayer.setTeamColor(parser.nextText());
                             
-                        	} else if (name.equalsIgnoreCase(TYPE)){
+                        	} else if (name.equalsIgnoreCase(TAG_PLAYER_TYPE)){
                         		
                         		newPlayer.setType(parser.nextText());
                         	
-                        	} else if (name.equalsIgnoreCase(PNAME)){
+                        	} else if (name.equalsIgnoreCase(TAG_PLAYER_PNAME)){
                     		
                         		newPlayer.setPlayerName(parser.nextText());
                         		
-               				} else if (name.equalsIgnoreCase(COORDS)){
-               					//System.out.println(parser.getAttributeCount());
-                            	x = Float.parseFloat(parser.getAttributeValue(0));
-                            	y = Float.parseFloat(parser.getAttributeValue(1));
+               				} else if (name.equalsIgnoreCase(TAG_PLAYER_COORDS)){
+                            	x = Float.parseFloat(parser.getAttributeValue(null, TAG_PLAYER_ATTRIBUTE_X));
+                            	y = Float.parseFloat(parser.getAttributeValue(null, TAG_PLAYER_ATTRIBUTE_Y));
                             	newPlayer.setCoords(x,y);
+                       
                				}
                         }
                         break;
@@ -89,19 +96,18 @@ public class XMLPullFeedParser extends BaseFeedParser{
                     	
                         name = parser.getName();
                         
-                        if (name.equalsIgnoreCase(FORM) && newForm != null){
+                        if(name.equalsIgnoreCase(TAG_ROOT)){
+                        	done = true;
+                        }
+                        
+                        else if (name.equalsIgnoreCase(TAG_FORM) && newForm != null){
                         	newForm.setPlayers(players);
                         	System.out.println("end form");
                             forms.add(newForm);
                         }
-                        else if (name.equalsIgnoreCase(PLAYER)){
-                        	
-                        	if(players == null){
-                        		players = new ArrayList<PlayerInfo>();
-                        	}
-                        	else{
-                        		players.add(newPlayer);
-                        	}
+                        else if (name.equalsIgnoreCase(TAG_PLAYER)){
+
+                        	players.add(newPlayer); 	
                         }
                         
                         break;

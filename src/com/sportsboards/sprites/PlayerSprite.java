@@ -6,23 +6,31 @@ import org.anddev.andengine.opengl.texture.region.TextureRegion;
 
 import com.sportsboards.db.PlayerInfo;
 
+/**
+ * Coded by Nathan King
+ */
+
 public class PlayerSprite extends Sprite{
+	
+	/*
+	 * Variables + Setters
+	 */
 	
 	private PlayerInfo pInfo;
 	public PlayerInfo getPlayerInfo(){ return pInfo;}
 	protected boolean mGrabbed;
 	
+	/*
+	 * Constructors
+	 */
+	
 	public PlayerSprite(PlayerInfo pInfo, float startx, float starty, TextureRegion tex){
 		super(startx, starty, tex);
 		this.pInfo = pInfo;
 	}
-	
-	public void setTexture(TextureRegion tex){
-		
-		this.setTexture(tex);
-		
-	}
-	
+	/* Overrides
+	 * @see org.anddev.andengine.entity.shape.Shape#onAreaTouched(org.anddev.andengine.input.touch.TouchEvent, float, float)
+	 */
 	@Override
 	public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY) {
 		switch(pSceneTouchEvent.getAction()) {
@@ -42,7 +50,7 @@ public class PlayerSprite extends Sprite{
 				if(this.mGrabbed) {
 					this.mGrabbed = false;
 					this.setScale(1.0f);
-					System.out.println(this.getX() + " , " + this.getY());
+					//System.out.println(this.getX() + " , " + this.getY());
 				}
 				break;
 		}

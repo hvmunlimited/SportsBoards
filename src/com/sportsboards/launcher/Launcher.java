@@ -1,4 +1,5 @@
 package com.sportsboards.launcher;
+
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,6 +8,9 @@ import android.widget.ListView;
 
 import com.sportsboards.R;
 
+/**
+ * Coded by Nathan King
+ */
 
 public class Launcher extends ListActivity{
 	
@@ -15,7 +19,6 @@ public class Launcher extends ListActivity{
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		 super.onCreate(savedInstanceState);
-		 
 		 this.setContentView(R.layout.launcher_menu);
 		 mListAdapter = new MenuAdapter(this); 
 		 this.setListAdapter(mListAdapter);

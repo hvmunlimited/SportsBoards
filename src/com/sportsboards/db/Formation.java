@@ -3,7 +3,15 @@ package com.sportsboards.db;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Coded by Nathan King
+ */
+
 public class Formation{
+	
+	/*
+	 * Variables + Getters/Setters
+	 */
 	
 	private String name;
 	public String getName(){return name;}
@@ -16,6 +24,10 @@ public class Formation{
 	private List<PlayerInfo> players;
 	public List<PlayerInfo> getPlayers(){ return players;}
 	public void setPlayers(List<PlayerInfo> players){ this.players = players;}
+	
+	/*
+	 * Constructors
+	 */
 	
 	public Formation(){}
 	

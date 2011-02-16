@@ -1,6 +1,14 @@
 package com.sportsboards.db;
 
+/**
+ * Coded by Nathan King
+ */
+
 public class PlayerInfo{
+	
+	/*
+	 * Variables + Getters/Setters
+	 */
 	
 	private String type;
 	public void setType(String type){ this.type = type;}
@@ -15,14 +23,14 @@ public class PlayerInfo{
 	public String getTeamColor(){ return this.team;}
 	
 	private Coordinates coords;
+	public void setCoords(float x, float y){ this.coords = new Coordinates(x, y);}
 	
-	public void setCoords(float x, float y){
-		this.coords = new Coordinates(x, y);
-	}
-	public Coordinates getCoords(){ return coords;}
+	public float getX(){ return this.coords.getX();}
+	public float getY(){ return this.coords.getY();}
 	
-	public float getX(){ return this.coords.x;}
-	public float getY(){ return this.coords.y;}
+	/*
+	 * Constructors
+	 */
 	
 	public PlayerInfo(){}
 	
