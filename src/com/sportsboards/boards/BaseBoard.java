@@ -43,6 +43,10 @@ import com.sportsboards.sprites.PlayerSprite;
  * Coded by Nathan King
  */
 
+/**
+ * Copyright 2011 5807400 Manitoba Inc. All rights reserved.
+ */
+
 public abstract class BaseBoard extends BaseGameActivity implements IOnSceneTouchListener, IScrollDetectorListener, IPinchZoomDetectorListener{
 	
 	// ===========================================================

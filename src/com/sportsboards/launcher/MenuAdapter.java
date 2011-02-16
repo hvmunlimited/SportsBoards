@@ -13,6 +13,10 @@ import com.sportsboards.R;
  * Coded by Nathan King
  */
 
+/**
+ * Copyright 2011 5807400 Manitoba Inc. All rights reserved.
+ */
+
 class MenuAdapter extends BaseAdapter{
 
 	private static final Activity[] Activities = {

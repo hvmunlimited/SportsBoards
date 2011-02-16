@@ -18,6 +18,10 @@ import org.anddev.andengine.ui.activity.BaseGameActivity;
  * Coded by Nathan King
  */
 
+/**
+ * Copyright 2011 5807400 Manitoba Inc. All rights reserved.
+ */
+
 public abstract class Interface extends BaseGameActivity implements IOnSceneTouchListener, IScrollDetectorListener, IPinchZoomDetectorListener{
 	
 	// ===========================================================

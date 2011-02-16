@@ -4,6 +4,10 @@ package com.sportsboards.db.parsing;
  * Coded by Nathan King
  */
 
+/**
+ * Copyright 2011 5807400 Manitoba Inc. All rights reserved.
+ */
+
 public abstract class BaseFeedParser implements FeedParser{
 	
 	//XML tag names
