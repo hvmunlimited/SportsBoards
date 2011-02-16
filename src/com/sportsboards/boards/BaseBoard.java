@@ -10,14 +10,22 @@ import org.anddev.andengine.engine.options.EngineOptions.ScreenOrientation;
 import org.anddev.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
 import org.anddev.andengine.entity.IEntity;
 import org.anddev.andengine.entity.scene.Scene;
+import org.anddev.andengine.entity.scene.Scene.IOnSceneTouchListener;
 import org.anddev.andengine.entity.sprite.Sprite;
 import org.anddev.andengine.extension.input.touch.controller.MultiTouch;
 import org.anddev.andengine.extension.input.touch.controller.MultiTouchController;
 import org.anddev.andengine.extension.input.touch.controller.MultiTouchException;
+import org.anddev.andengine.extension.input.touch.detector.PinchZoomDetector;
+import org.anddev.andengine.extension.input.touch.detector.PinchZoomDetector.IPinchZoomDetectorListener;
+import org.anddev.andengine.input.touch.TouchEvent;
+import org.anddev.andengine.input.touch.detector.ScrollDetector;
+import org.anddev.andengine.input.touch.detector.SurfaceScrollDetector;
+import org.anddev.andengine.input.touch.detector.ScrollDetector.IScrollDetectorListener;
 import org.anddev.andengine.opengl.texture.Texture;
 import org.anddev.andengine.opengl.texture.TextureOptions;
 import org.anddev.andengine.opengl.texture.region.TextureRegion;
 import org.anddev.andengine.opengl.texture.region.TextureRegionFactory;
+import org.anddev.andengine.ui.activity.BaseGameActivity;
 
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -35,7 +43,13 @@ import com.sportsboards.sprites.PlayerSprite;
  * Coded by Nathan King
  */
 
-public abstract class BaseBoard extends Interface{
+public abstract class BaseBoard extends BaseGameActivity implements IOnSceneTouchListener, IScrollDetectorListener, IPinchZoomDetectorListener{
+	
+	// ===========================================================
+	// Constants
+	// ===========================================================
+	protected static final int CAMERA_WIDTH = 1024;
+	protected static final int CAMERA_HEIGHT = 600;
 	
 	// ===========================================================
 	// Fields
@@ -45,9 +59,6 @@ public abstract class BaseBoard extends Interface{
 	protected String SPORT_NAME;
 	protected int resID;
 	protected final String DEFAULT_NAME = "DEFAULT";
-	private boolean LARGE_PLAYERS = true;
-	
-	private Scene mMainScene;
 		
 	protected Texture mBackgroundTexture;
 	protected Texture mBallTexture;
@@ -63,6 +74,14 @@ public abstract class BaseBoard extends Interface{
 	private List<PlayerSprite> mBlueTeam = new ArrayList<PlayerSprite>();
 	private BallSprite ball;
 	
+	private ZoomCamera mZoomCamera;
+	private SurfaceScrollDetector mScrollDetector;
+	private PinchZoomDetector mPinchZoomDetector;
+	private float mPinchZoomStartedCameraZoomFactor;
+	
+	private Scene mMainScene;
+	private boolean LARGE_PLAYERS = true;
+
 	// ===========================================================
 	// Methods for/from SuperClass/Interfaces
 	// ===========================================================
@@ -86,12 +105,10 @@ public abstract class BaseBoard extends Interface{
 	@Override
 	public void onLoadResources(){
 		TextureRegionFactory.setAssetBasePath("gfx/");
-		
 		this.mBackgroundTexture = new Texture(1024, 1024, TextureOptions.DEFAULT);
 		this.mBallTexture = new Texture(64, 64, TextureOptions.BILINEAR);
 		this.mRedPlayerTexture = new Texture(64, 64, TextureOptions.BILINEAR);
 		this.mBluePlayerTexture = new Texture(64, 64, TextureOptions.BILINEAR);
-		
 		this.mRedPlayerTextureRegion = TextureRegionFactory.createFromAsset(this.mRedPlayerTexture, this, "48x48RED.png", 0, 0);
 		this.mBluePlayerTextureRegion = TextureRegionFactory.createFromAsset(this.mBluePlayerTexture, this, "48x48BLUE.png", 0, 0);
 		
@@ -101,10 +118,23 @@ public abstract class BaseBoard extends Interface{
 	public Scene onLoadScene(){
 		
 		Formation fn = null;
-		super.onLoadScene();
+		
 		this.mMainScene = new Scene(1);
+		this.mScrollDetector = new SurfaceScrollDetector(this);
+		if(MultiTouch.isSupportedByAndroidVersion()) {
+			try {
+				this.mPinchZoomDetector = new PinchZoomDetector(this);
+			} catch (final MultiTouchException e) {
+				this.mPinchZoomDetector = null;
+			}
+		} else {
+			this.mPinchZoomDetector = null;
+		}
 		this.mMainScene.setOnSceneTouchListener(this);
 		this.mMainScene.setTouchAreaBindingEnabled(true);
+		this.mPinchZoomDetector.setEnabled(false);
+		this.mScrollDetector.setEnabled(false);
+		
 		mMainScene.getLayer(0).addEntity(new Sprite(0, 0, this.mBackGroundTextureRegion));
 		
 		fn = loadFormation();
@@ -114,6 +144,61 @@ public abstract class BaseBoard extends Interface{
 	
 		return mMainScene;
 	}
+	
+	@Override
+	public void onScroll(final ScrollDetector pScollDetector, final TouchEvent pTouchEvent, final float pDistanceX, final float pDistanceY) {
+		final float zoomFactor = this.mZoomCamera.getZoomFactor();
+		this.mZoomCamera.offsetCenter(-pDistanceX / zoomFactor, -pDistanceY / zoomFactor);
+	}
+
+	@Override
+	public void onPinchZoomStarted(final PinchZoomDetector pPinchZoomDetector, final TouchEvent pTouchEvent) {
+		this.mPinchZoomStartedCameraZoomFactor = this.mZoomCamera.getZoomFactor();
+	}
+
+	@Override
+	public void onPinchZoom(final PinchZoomDetector pPinchZoomDetector, final TouchEvent pTouchEvent, final float pZoomFactor) {
+		if(this.mZoomCamera.getZoomFactor() < 1.0f){
+			this.mZoomCamera.setZoomFactor(1.0f);
+		}
+		else{
+			this.mZoomCamera.setZoomFactor(this.mPinchZoomStartedCameraZoomFactor * pZoomFactor);
+		}
+	}
+
+	@Override
+	public void onPinchZoomFinished(final PinchZoomDetector pPinchZoomDetector, final TouchEvent pTouchEvent, final float pZoomFactor) {
+		this.mZoomCamera.setZoomFactor(this.mPinchZoomStartedCameraZoomFactor * pZoomFactor);
+		if(this.mZoomCamera.getZoomFactor() > 3.0f){
+			this.mZoomCamera.setZoomFactor(1.0f);
+		}
+		else if(this.mZoomCamera.getZoomFactor() < 1.0f){
+			this.mZoomCamera.setZoomFactor(1.0f);
+		}
+	}
+
+	@Override
+	public boolean onSceneTouchEvent(final Scene pScene, final TouchEvent pSceneTouchEvent) {
+		
+		if(this.mPinchZoomDetector != null) {
+			this.mPinchZoomDetector.onTouchEvent(pSceneTouchEvent);
+
+			if(this.mPinchZoomDetector.isZooming()) {
+				this.mScrollDetector.setEnabled(false);
+			} else {
+				if(pSceneTouchEvent.getAction() == TouchEvent.ACTION_DOWN) {
+					//this.mScrollDetector.setEnabled(true);
+				}
+				this.mScrollDetector.onTouchEvent(pSceneTouchEvent);
+			}
+		} else {
+			this.mScrollDetector.onTouchEvent(pSceneTouchEvent);
+		}
+		
+		return true;
+	}
+
+	
 
 	@Override
 	public boolean onCreateOptionsMenu(final Menu pMenu) {
@@ -143,7 +228,7 @@ public abstract class BaseBoard extends Interface{
 				this.mRedTeam.clear();
 				fn = loadFormation();
 				showFormation(fn);
-				break;
+				return true;
 			/*case R.id.save:
 				
 				saveFormation();
@@ -194,12 +279,11 @@ public abstract class BaseBoard extends Interface{
 				this.mRedTeam.clear();
 				fn = loadFormation();
 				showFormation(fn);
-				break;
+				return true;
 				
 			default:
 				return false;
 		}
-		return true;
 	}
 	
 	// ===========================================================
@@ -236,10 +320,6 @@ public abstract class BaseBoard extends Interface{
 		XMLWriter.writeFormation(this, fn, SPORT_NAME.toLowerCase());
 	}
 	
-	/*
-	 * Load formation from storage
-	 */
-	
 	public Formation loadFormation(){
 		
 		ArrayList<Formation> formsList = (ArrayList<Formation>) XMLAccess.loadFormations(this, resID);
@@ -255,10 +335,6 @@ public abstract class BaseBoard extends Interface{
 		
 	}
 	
-	/*
-	 * Display players and sprites
-	 */
-	
 	public void showFormation(Formation fn){
 		addBall(new BallSprite(fn.getBall().getX(), fn.getBall().getY(), this.mBallTextureRegion));
 		for(PlayerInfo p:fn.getPlayers()){
@@ -273,17 +349,12 @@ public abstract class BaseBoard extends Interface{
 			}			
 		}
 	}
-	/*
-	 * Add a player sprite to the scene
-	 */
+	
 	public void addPlayer(PlayerSprite p, List<PlayerSprite> list){
 		mMainScene.getTopLayer().addEntity(p);
 		mMainScene.registerTouchArea(p);
 		list.add(p);
 	}
-	/*
-	 * Add a ball sprite to the scene
-	 */
 	public void addBall(BallSprite ball){
 		this.ball = ball;
 		mMainScene.getTopLayer().addEntity(ball);
