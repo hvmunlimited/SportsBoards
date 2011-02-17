@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
 
-import com.sportsboards.R;
+import com.sportsboards2d.R;
 
 /**
  * Coded by Nathan King

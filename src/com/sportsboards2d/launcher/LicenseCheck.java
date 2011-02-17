@@ -18,7 +18,7 @@ import com.android.vending.licensing.LicenseChecker;
 import com.android.vending.licensing.LicenseCheckerCallback;
 import com.android.vending.licensing.ServerManagedPolicy;
 
-import com.sportsboards.R;
+import com.sportsboards2d.R;
 
 /**
  * Coded by Nathan King

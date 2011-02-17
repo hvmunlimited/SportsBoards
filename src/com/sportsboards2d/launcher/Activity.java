@@ -2,7 +2,7 @@ package com.sportsboards2d.launcher;
 
 import org.anddev.andengine.ui.activity.BaseGameActivity;
 
-import com.sportsboards.R;
+import com.sportsboards2d.R;
 import com.sportsboards2d.boards.BBallBoard;
 import com.sportsboards2d.boards.SoccerBoard;
 
