@@ -1,4 +1,4 @@
-package com.sportsboards.launcher;
+package com.sportsboards2d.launcher;
 
 import android.app.Activity;
 import android.app.AlertDialog;

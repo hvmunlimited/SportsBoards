@@ -1,4 +1,4 @@
-package com.sportsboards.db;
+package com.sportsboards2d.db;
 
 import java.util.ArrayList;
 import java.util.List;

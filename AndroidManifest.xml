@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 
-	package="com.sportsboards" 
+	package="com.sportsboards2d" 
 	android:versionCode="1" 
-	android:versionName="1.0">
+	android:versionName="1.1">
 	<application android:icon="@drawable/icon"
 		android:label="@string/app_name">
 
@@ -21,7 +21,7 @@
 			android:screenOrientation="landscape" />
 		<activity android:name="com.sportsboards.boards.BBallBoard"
 			android:screenOrientation="landscape" />
-		<activity android:name="com.sportsboards.settings.Launcher"
+		<activity android:name="settings.Launcher"
 			android:screenOrientation="landscape" />	
 			
 		
@@ -32,7 +32,6 @@
 	<uses-sdk android:targetSdkVersion="8" android:minSdkVersion="8"></uses-sdk>
 
 	<uses-permission android:name="android.permission.WAKE_LOCK" />
-	<uses-permission android:name="android.permission.CAMERA" />
 	<uses-permission android:name="com.android.vending.CHECK_LICENSE">
 
 	</uses-permission>

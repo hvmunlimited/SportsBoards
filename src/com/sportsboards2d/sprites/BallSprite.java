@@ -1,10 +1,8 @@
-package com.sportsboards.sprites;
+package com.sportsboards2d.sprites;
 
 import org.anddev.andengine.entity.sprite.Sprite;
 import org.anddev.andengine.input.touch.TouchEvent;
 import org.anddev.andengine.opengl.texture.region.TextureRegion;
-
-import com.sportsboards.db.PlayerInfo;
 
 /**
  * Coded by Nathan King
@@ -14,51 +12,45 @@ import com.sportsboards.db.PlayerInfo;
  * Copyright 2011 5807400 Manitoba Inc. All rights reserved.
  */
 
-public class PlayerSprite extends Sprite{
+public class BallSprite extends Sprite{
 	
 	/*
-	 * Variables + Setters
+	 * Variables
 	 */
 	
-	private PlayerInfo pInfo;
-	public PlayerInfo getPlayerInfo(){ return pInfo;}
-	protected boolean mGrabbed;
+	private boolean mGrabbed;
 	
 	/*
 	 * Constructors
 	 */
 	
-	public PlayerSprite(PlayerInfo pInfo, float startx, float starty, TextureRegion tex){
-		super(startx, starty, tex);
-		this.pInfo = pInfo;
+	public BallSprite(float x, float y, TextureRegion tex){
+		super(x, y, tex);	
 	}
-	/* Overrides
+	
+	/*
 	 * @see org.anddev.andengine.entity.shape.Shape#onAreaTouched(org.anddev.andengine.input.touch.TouchEvent, float, float)
 	 */
+	
 	@Override
 	public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY) {
 		switch(pSceneTouchEvent.getAction()) {
 			case TouchEvent.ACTION_DOWN:
 				this.setScale(2.0f);
-				//System.out.println(this.getX() + " , " + this.getY());
-
 				this.mGrabbed = true;
 				break;
 			case TouchEvent.ACTION_MOVE:
 				if(this.mGrabbed) {
 					this.setPosition(pSceneTouchEvent.getX() - 48 / 2, pSceneTouchEvent.getY() - 48 / 2);
-					//System.out.println(this.getX() + " , " + this.getY());
 				}
 				break;
 			case TouchEvent.ACTION_UP:
 				if(this.mGrabbed) {
 					this.mGrabbed = false;
 					this.setScale(1.0f);
-					//System.out.println(this.getX() + " , " + this.getY());
 				}
 				break;
 		}
 		return true;
 	}
-	
 }

@@ -1,4 +1,4 @@
-package com.sportsboards.boards;
+package com.sportsboards2d.boards;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,12 +32,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.sportsboards.R;
-import com.sportsboards.db.Formation;
-import com.sportsboards.db.PlayerInfo;
-import com.sportsboards.db.parsing.XMLAccess;
-import com.sportsboards.db.parsing.XMLWriter;
-import com.sportsboards.sprites.BallSprite;
-import com.sportsboards.sprites.PlayerSprite;
+import com.sportsboards2d.db.Formation;
+import com.sportsboards2d.db.PlayerInfo;
+import com.sportsboards2d.db.parsing.XMLAccess;
+import com.sportsboards2d.db.parsing.XMLWriter;
+import com.sportsboards2d.sprites.BallSprite;
+import com.sportsboards2d.sprites.PlayerSprite;
 
 /**
  * Coded by Nathan King

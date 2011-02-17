@@ -1,11 +1,12 @@
-package com.sportsboards.db.parsing;
+package com.sportsboards2d.db.parsing;
 
 import java.io.InputStream;
 import java.util.ArrayList;
 import org.xmlpull.v1.XmlPullParser;
 import android.util.Xml;
-import com.sportsboards.db.Formation;
-import com.sportsboards.db.PlayerInfo;
+
+import com.sportsboards2d.db.Formation;
+import com.sportsboards2d.db.PlayerInfo;
 
 /**
  * Coded by Nathan King

@@ -1,4 +1,4 @@
-package com.sportsboards.db;
+package com.sportsboards2d.db;
 
 /**
  * Coded by Nathan King

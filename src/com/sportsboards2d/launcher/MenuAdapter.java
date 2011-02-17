@@ -1,4 +1,4 @@
-package com.sportsboards.launcher;
+package com.sportsboards2d.launcher;
 
 import android.content.Context;
 import android.view.LayoutInflater;

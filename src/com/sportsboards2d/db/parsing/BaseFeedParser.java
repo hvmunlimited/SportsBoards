@@ -1,4 +1,4 @@
-package com.sportsboards.db.parsing;
+package com.sportsboards2d.db.parsing;
 
 /**
  * Coded by Nathan King

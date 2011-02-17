@@ -1,4 +1,4 @@
-package com.sportsboards.boards;
+package com.sportsboards2d.boards;
 
 import org.anddev.andengine.engine.Engine;
 import org.anddev.andengine.engine.camera.ZoomCamera;

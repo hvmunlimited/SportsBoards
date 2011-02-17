@@ -1,9 +1,10 @@
-package com.sportsboards.db.parsing;
+package com.sportsboards2d.db.parsing;
 
 import java.io.InputStream;
 import java.util.List;
 import android.content.Context;
-import com.sportsboards.db.Formation;
+
+import com.sportsboards2d.db.Formation;
 
 /**
  * Coded by Nathan King
