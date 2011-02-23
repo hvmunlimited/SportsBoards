@@ -42,22 +42,6 @@ public abstract class Interface extends BaseGameActivity implements IOnSceneTouc
 	private PinchZoomDetector mPinchZoomDetector;
 	private float mPinchZoomStartedCameraZoomFactor;
 	
-	protected HoldDetector mHold = new HoldDetector(new IHoldDetectorListener() {
-
-		@Override
-		public void onHold(HoldDetector arg0, long arg1, float arg2, float arg3) {
-			//System.out.println("yay");
-			
-		}
-
-		@Override
-		public void onHoldFinished(HoldDetector arg0, long arg1, float arg2, float arg3) {
-			//	System.out.println("yay");
-			
-		}
-		
-	});
-	
 	@Override
 	public void onScroll(final ScrollDetector pScollDetector, final TouchEvent pTouchEvent, final float pDistanceX, final float pDistanceY) {
 		final float zoomFactor = this.mZoomCamera.getZoomFactor();
@@ -92,7 +76,7 @@ public abstract class Interface extends BaseGameActivity implements IOnSceneTouc
 
 	@Override
 	public boolean onSceneTouchEvent(final Scene pScene, final TouchEvent pSceneTouchEvent) {
-		mHold.onSceneTouchEvent(pScene, pSceneTouchEvent);
+		
 		if(this.mPinchZoomDetector != null) {
 			this.mPinchZoomDetector.onTouchEvent(pSceneTouchEvent);
 
@@ -106,7 +90,7 @@ public abstract class Interface extends BaseGameActivity implements IOnSceneTouc
 			}
 		} else {
 			this.mScrollDetector.onTouchEvent(pSceneTouchEvent);
-		}
+		}//
 		
 		return true;
 	}

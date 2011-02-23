@@ -3,6 +3,8 @@ package com.sportsboards2d.boards;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.microedition.khronos.opengles.GL10;
+
 import org.anddev.andengine.engine.Engine;
 import org.anddev.andengine.engine.camera.Camera;
 import org.anddev.andengine.engine.camera.ZoomCamera;
@@ -10,12 +12,19 @@ import org.anddev.andengine.engine.options.EngineOptions;
 import org.anddev.andengine.engine.options.EngineOptions.ScreenOrientation;
 import org.anddev.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
 import org.anddev.andengine.entity.IEntity;
+import org.anddev.andengine.entity.primitive.Line;
 import org.anddev.andengine.entity.scene.Scene;
 import org.anddev.andengine.entity.scene.menu.MenuScene;
+import org.anddev.andengine.entity.scene.menu.item.IMenuItem;
+import org.anddev.andengine.entity.scene.menu.item.TextMenuItem;
+import org.anddev.andengine.entity.scene.menu.item.decorator.ColorMenuItemDecorator;
 import org.anddev.andengine.entity.sprite.Sprite;
 import org.anddev.andengine.extension.input.touch.controller.MultiTouch;
 import org.anddev.andengine.extension.input.touch.controller.MultiTouchController;
 import org.anddev.andengine.extension.input.touch.controller.MultiTouchException;
+import org.anddev.andengine.input.touch.TouchEvent;
+import org.anddev.andengine.input.touch.detector.HoldDetector;
+import org.anddev.andengine.input.touch.detector.HoldDetector.IHoldDetectorListener;
 import org.anddev.andengine.opengl.font.Font;
 import org.anddev.andengine.opengl.font.FontFactory;
 import org.anddev.andengine.opengl.texture.Texture;
@@ -51,7 +60,7 @@ public abstract class BaseBoard extends Interface{
 	// ===========================================================
 	protected static final int CAMERA_WIDTH = 1024;
 	protected static final int CAMERA_HEIGHT = 600;
-	
+	protected static final int MENU_RESET = 0;
 	// ===========================================================
 	// Fields
 	// ===========================================================
@@ -75,8 +84,8 @@ public abstract class BaseBoard extends Interface{
 	private TextureRegion mRedPlayerTextureRegion;
 	private TextureRegion mBluePlayerTextureRegion;
 	
-	private List<PlayerSprite> mRedTeam = new ArrayList<PlayerSprite>();
-	private List<PlayerSprite> mBlueTeam = new ArrayList<PlayerSprite>();
+	private List<PlayerSprite> players = new ArrayList<PlayerSprite>();
+	
 	private BallSprite ball;
 	
 	private ZoomCamera mZoomCamera;
@@ -113,7 +122,7 @@ public abstract class BaseBoard extends Interface{
 		//load menu textures
 		this.mPlayerMenuFont = new Texture(64, 64, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
 		FontFactory.setAssetBasePath("font/");
-		this.mFont = FontFactory.createFromAsset(this.mPlayerMenuFont, this, "Droid.ttf", 48, true, Color.WHITE);
+		this.mFont = FontFactory.createFromAsset(this.mPlayerMenuFont, this, "Droid.ttf", 48, true, Color.RED);
 		this.mEngine.getTextureManager().loadTexture(this.mPlayerMenuFont);
 		this.mEngine.getFontManager().loadFont(this.mFont);
 		
@@ -143,25 +152,18 @@ public abstract class BaseBoard extends Interface{
 		fn = loadFormation();
 		showFormation(fn);
 		
-		mMainScene.registerUpdateHandler(this.mHold);
-
 		return mMainScene;
 	}
 	
 	public void reset(){
 		Formation fn = null;
-		for(PlayerSprite p: mRedTeam){
+		for(PlayerSprite p: players){
 			this.mMainScene.getTopLayer().removeEntity(p);	
 		}
-		for(PlayerSprite p: mBlueTeam){
-			this.mMainScene.getTopLayer().removeEntity(p);
-		}
-		
 		this.mMainScene.getTopLayer().removeEntity(this.ball);
 		
 		this.ball = null;
-		this.mBlueTeam.clear();
-		this.mRedTeam.clear();
+		this.players.clear();
 		fn = loadFormation();
 		showFormation(fn);
 	}
@@ -265,25 +267,83 @@ public abstract class BaseBoard extends Interface{
 	}
 	
 	public void showFormation(Formation fn){
+		
+		TextureRegion tex = null;
 		addBall(new BallSprite(fn.getBall().getX(), fn.getBall().getY(), this.mBallTextureRegion));
 		for(PlayerInfo p:fn.getPlayers()){
 			
 			if(p.getTeamColor().equalsIgnoreCase("blue")){
-				addPlayer(new PlayerSprite(p, p.getX(), p.getY(), this.mBluePlayerTextureRegion), mBlueTeam);
+				tex = this.mBluePlayerTextureRegion;
 			}
 			else if(p.getTeamColor().equalsIgnoreCase("red")){
-				addPlayer(new PlayerSprite(p, p.getX(), p.getY(), this.mRedPlayerTextureRegion), mRedTeam);
-			}			
+				tex = this.mRedPlayerTextureRegion;
+			}		
+			addPlayer(p, tex);
+
 		}
 	}
 	
-	public void addPlayer(final PlayerSprite p, List<PlayerSprite> list){
+	public void addPlayer(PlayerInfo p, TextureRegion tex){
 		
-		mMainScene.getTopLayer().addEntity(p);
-		mMainScene.registerTouchArea(p);
+		Line line;
+		
+		PlayerSprite newPlayer = new PlayerSprite(p, p.getX(), p.getY(), tex){
+			@Override
+			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY) {
+				float x1, y1, x2, y2;
+				Line line = null;
+				mHold.onTouchEvent(pSceneTouchEvent);
+				switch(pSceneTouchEvent.getAction()) {
+					case TouchEvent.ACTION_DOWN:
+						x1 = this.getX();
+						y1 = this.getY();
+						this.setScale(2.0f);	
+						this.mGrabbed = true;
+						System.out.println(this.getX() + " , " + this.getY());
 
-		//mMainScene.registerUpdateHandler(p.getHoldDetector());
-		list.add(p);
+						break;
+					case TouchEvent.ACTION_MOVE:
+						if(this.mGrabbed) {
+
+							this.setPosition(pSceneTouchEvent.getX() - 48 / 2, pSceneTouchEvent.getY() - 48 / 2);
+							//System.out.println(this.getX() + " , " + this.getY());
+						}
+						break;
+					case TouchEvent.ACTION_UP:
+						if(this.mGrabbed) {
+							x2 = this.getX();
+							y2 = this.getY();
+							this.mGrabbed = false;
+							this.setScale(1.0f);					
+						}
+						break;
+				}
+				return true;
+			}
+		};
+		
+		newPlayer.setHoldDetector(new HoldDetector(new IHoldDetectorListener() {
+			
+			@Override
+			public void onHold(HoldDetector arg0, long arg1, float arg2, float arg3) {
+				
+				//mPlayerMenu.back();
+			}
+
+			@Override
+			public void onHoldFinished(HoldDetector arg0, long arg1, float arg2, float arg3) {
+				
+				mPlayerMenu = createPlayerMenu();
+				//mPlayerMenu.setOnMenuItemClickListener(p);
+				mMainScene.setChildScene(mPlayerMenu, false, true, true);
+			}
+		}));
+		//mPlayerMenu.setOnMenuItemClickListener(newPlayer);
+		mMainScene.getTopLayer().addEntity(newPlayer);
+		mMainScene.registerTouchArea(newPlayer);
+		mMainScene.registerUpdateHandler(newPlayer.getHoldDetector());
+		//createPlayerMenu(newPlayer);
+		players.add(newPlayer);
 	}
 	
 	public void addBall(BallSprite ball){
@@ -291,6 +351,23 @@ public abstract class BaseBoard extends Interface{
 		this.ball = ball;
 		mMainScene.getTopLayer().addEntity(ball);
 		mMainScene.registerTouchArea(ball);
+	}
+	
+	public MenuScene createPlayerMenu(){
+		
+		
+		
+		mPlayerMenu = new MenuScene(mZoomCamera);
+		
+		final IMenuItem resetMenuItem = new ColorMenuItemDecorator(new TextMenuItem(MENU_RESET, this.mFont, "DELETE"), 1.0f,0.0f,0.0f, 0.0f,0.0f,0.0f);
+		resetMenuItem.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+		mPlayerMenu.addMenuItem(resetMenuItem);
+		
+		mPlayerMenu.buildAnimations();
+
+		mPlayerMenu.setBackgroundEnabled(false);
+
+		return mPlayerMenu;
 	}
 	
 }
