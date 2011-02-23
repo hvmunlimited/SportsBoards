@@ -182,7 +182,7 @@ public abstract class BaseBoard extends Interface{
 				return true;
 			
 			case R.id.change_player_size:
-				reset();
+				
 				if(LARGE_PLAYERS){
 					
 					this.mRedPlayerTexture = new Texture(64, 64, TextureOptions.BILINEAR);
@@ -206,7 +206,7 @@ public abstract class BaseBoard extends Interface{
 				}
 				this.mEngine.getTextureManager().loadTextures(this.mRedPlayerTexture, this.mBluePlayerTexture, this.mBallTexture);
 				
-				
+				reset();
 				
 				return true;
 				
