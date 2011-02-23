@@ -5,7 +5,7 @@
 	<string name="soccer_string">Soccer</string>
 	<string name="football_string">Football</string>
 	<string name="basketball_string">Basketball</string>
-	<string name="xmltest_string">xml test</string>
+	
 	<string name="reset">Reset</string>
 	<string name="save">Save</string>
 	<string name="load">Load</string>
@@ -13,13 +13,7 @@
 	<string name="disable">Disable Zoom</string>
 	<string name="change_player_size">Change Player Size</string>
 	
-	<string-array name="settings_array">
-		<item>Reset Player Formation</item>
-		<item>Save Player Formation</item>
-		<item>Load Player Formation</item>
-		<item>Enable Zoom</item>
-		<item>Disable Zoom</item>
-	</string-array>
+	<string name="delete_player">Remove this player</string>
 
 	<string name="check_license">Check license</string>
     <string name="checking_license">Checking license...</string>
@@ -32,5 +26,6 @@
     <string name="unlicensed_dialog_body">This application is not licensed. Please purchase it from Android Market.</string>
     <string name="buy_button">Buy app</string>
     <string name="quit_button">Exit</string>
+    <string name="help_string">Help</string>
 
 </resources>

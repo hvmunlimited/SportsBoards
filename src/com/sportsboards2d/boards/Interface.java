@@ -9,8 +9,10 @@ import org.anddev.andengine.extension.input.touch.controller.MultiTouchException
 import org.anddev.andengine.extension.input.touch.detector.PinchZoomDetector;
 import org.anddev.andengine.extension.input.touch.detector.PinchZoomDetector.IPinchZoomDetectorListener;
 import org.anddev.andengine.input.touch.TouchEvent;
+import org.anddev.andengine.input.touch.detector.HoldDetector;
 import org.anddev.andengine.input.touch.detector.ScrollDetector;
 import org.anddev.andengine.input.touch.detector.SurfaceScrollDetector;
+import org.anddev.andengine.input.touch.detector.HoldDetector.IHoldDetectorListener;
 import org.anddev.andengine.input.touch.detector.ScrollDetector.IScrollDetectorListener;
 import org.anddev.andengine.ui.activity.BaseGameActivity;
 
@@ -40,6 +42,21 @@ public abstract class Interface extends BaseGameActivity implements IOnSceneTouc
 	private PinchZoomDetector mPinchZoomDetector;
 	private float mPinchZoomStartedCameraZoomFactor;
 	
+	protected HoldDetector mHold = new HoldDetector(new IHoldDetectorListener() {
+
+		@Override
+		public void onHold(HoldDetector arg0, long arg1, float arg2, float arg3) {
+			//System.out.println("yay");
+			
+		}
+
+		@Override
+		public void onHoldFinished(HoldDetector arg0, long arg1, float arg2, float arg3) {
+			//	System.out.println("yay");
+			
+		}
+		
+	});
 	
 	@Override
 	public void onScroll(final ScrollDetector pScollDetector, final TouchEvent pTouchEvent, final float pDistanceX, final float pDistanceY) {
@@ -75,7 +92,7 @@ public abstract class Interface extends BaseGameActivity implements IOnSceneTouc
 
 	@Override
 	public boolean onSceneTouchEvent(final Scene pScene, final TouchEvent pSceneTouchEvent) {
-		
+		mHold.onSceneTouchEvent(pScene, pSceneTouchEvent);
 		if(this.mPinchZoomDetector != null) {
 			this.mPinchZoomDetector.onTouchEvent(pSceneTouchEvent);
 
@@ -126,7 +143,6 @@ public abstract class Interface extends BaseGameActivity implements IOnSceneTouc
 	 */
 	@Override
 	public Scene onLoadScene() {
-		
 		this.mScrollDetector = new SurfaceScrollDetector(this);
 		if(MultiTouch.isSupportedByAndroidVersion()) {
 			try {

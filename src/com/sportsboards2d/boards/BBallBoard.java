@@ -1,6 +1,8 @@
 package com.sportsboards2d.boards;
 
 import org.anddev.andengine.engine.Engine;
+import org.anddev.andengine.entity.scene.menu.MenuScene;
+import org.anddev.andengine.entity.scene.menu.item.IMenuItem;
 import org.anddev.andengine.opengl.texture.region.TextureRegionFactory;
 
 import com.sportsboards2d.R;
@@ -25,6 +27,7 @@ public class BBallBoard extends BaseBoard{
 		NUM_PLAYERS = 5;
 		resID = R.raw.basketball;
 		SPORT_NAME = "BASKETBALL";
+		BALL_PATH = "Basketball_Ball_";
 		return super.onLoadEngine();
 	}
 	
@@ -33,7 +36,7 @@ public class BBallBoard extends BaseBoard{
 	public void onLoadResources() {
 		super.onLoadResources();		
 		this.mBackGroundTextureRegion = TextureRegionFactory.createFromAsset(this.mBackgroundTexture, this, "basketball_court.jpg", 0, 0);
-		this.mBallTextureRegion = TextureRegionFactory.createFromAsset(this.mBallTexture, this, "Basketball_Ball_48.png", 0, 0);
+		this.mBallTextureRegion = TextureRegionFactory.createFromAsset(this.mBallTexture, this, BALL_PATH + "48.png", 0, 0);
 		this.mEngine.getTextureManager().loadTextures(this.mBackgroundTexture);
 	}
 	
@@ -41,4 +44,7 @@ public class BBallBoard extends BaseBoard{
 	public void onLoadComplete() {
 
 	}
+
+
+	
 }

@@ -26,6 +26,8 @@ public class Launcher extends ListActivity{
 		 this.setContentView(R.layout.launcher_menu);
 		 mListAdapter = new MenuAdapter(this); 
 		 this.setListAdapter(mListAdapter);
+		 
+
 	}
 	
 	@Override

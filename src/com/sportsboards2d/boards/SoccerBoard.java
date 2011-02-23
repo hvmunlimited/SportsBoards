@@ -24,13 +24,14 @@ public class SoccerBoard extends BaseBoard{
 		NUM_PLAYERS = 11;
 		resID = R.raw.soccer;
 		SPORT_NAME = "SOCCER";
+		BALL_PATH = "Soccer_Ball_";
 		return super.onLoadEngine();
 	}
 	@Override
 	public void onLoadResources() {
 		super.onLoadResources();	
 		this.mBackGroundTextureRegion = TextureRegionFactory.createFromAsset(this.mBackgroundTexture, this, "soccer_field.jpg", 0, 0);
-		this.mBallTextureRegion = TextureRegionFactory.createFromAsset(this.mBallTexture, this, "Soccer_Ball_48.png", 0, 0);
+		this.mBallTextureRegion = TextureRegionFactory.createFromAsset(this.mBallTexture, this, BALL_PATH + "48.png", 0, 0);
 		this.mEngine.getTextureManager().loadTextures(this.mBackgroundTexture);
 	}
 	@Override
