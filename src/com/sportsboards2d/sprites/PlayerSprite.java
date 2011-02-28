@@ -1,5 +1,7 @@
 package com.sportsboards2d.sprites;
 
+import org.anddev.andengine.engine.camera.hud.controls.AnalogOnScreenControl;
+import org.anddev.andengine.engine.camera.hud.controls.AnalogOnScreenControl.IAnalogOnScreenControlListener;
 import org.anddev.andengine.entity.scene.menu.MenuScene;
 import org.anddev.andengine.entity.scene.menu.MenuScene.IOnMenuItemClickListener;
 import org.anddev.andengine.entity.scene.menu.item.IMenuItem;
@@ -32,16 +34,17 @@ public class PlayerSprite extends Sprite implements IOnMenuItemClickListener{
 	protected boolean mGrabbed;
 	
 	protected HoldDetector mHold;
-	public void setHoldDetector(HoldDetector mHold){ this.mHold = mHold;
-														  mHold.setTriggerHoldMinimumMilliseconds(800);}
+	public void setHoldDetector(HoldDetector mHold){ this.mHold = mHold;}
 	public HoldDetector getHoldDetector(){ return mHold;}
+	
+	protected AnalogOnScreenControl directionControl;
 	
 	/*
 	 * Constructors
 	 */
 	
-	public PlayerSprite(PlayerInfo pInfo, float startx, float starty, TextureRegion tex){
-		super(startx, starty, tex);
+	public PlayerSprite(PlayerInfo pInfo, TextureRegion tex){
+		super(pInfo.getX(), pInfo.getY(), tex);
 		this.pInfo = pInfo;
 	}
 	/* Overrides
@@ -49,26 +52,7 @@ public class PlayerSprite extends Sprite implements IOnMenuItemClickListener{
 	 */
 	@Override
 	public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY) {
-		mHold.onTouchEvent(pSceneTouchEvent);
-		switch(pSceneTouchEvent.getAction()) {
-			case TouchEvent.ACTION_DOWN:
-				this.setScale(2.0f);	
-				this.mGrabbed = true;
-				break;
-			case TouchEvent.ACTION_MOVE:
-				if(this.mGrabbed) {
-
-					this.setPosition(pSceneTouchEvent.getX() - 48 / 2, pSceneTouchEvent.getY() - 48 / 2);
-					//System.out.println(this.getX() + " , " + this.getY());
-				}
-				break;
-			case TouchEvent.ACTION_UP:
-				if(this.mGrabbed) {
-					this.mGrabbed = false;
-					this.setScale(1.0f);					
-				}
-				break;
-		}
+		
 		return true;
 	}
 	/* (non-Javadoc)

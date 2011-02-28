@@ -8,6 +8,9 @@ import javax.microedition.khronos.opengles.GL10;
 import org.anddev.andengine.engine.Engine;
 import org.anddev.andengine.engine.camera.Camera;
 import org.anddev.andengine.engine.camera.ZoomCamera;
+import org.anddev.andengine.engine.camera.hud.controls.AnalogOnScreenControl;
+import org.anddev.andengine.engine.camera.hud.controls.BaseOnScreenControl;
+import org.anddev.andengine.engine.camera.hud.controls.AnalogOnScreenControl.IAnalogOnScreenControlListener;
 import org.anddev.andengine.engine.options.EngineOptions;
 import org.anddev.andengine.engine.options.EngineOptions.ScreenOrientation;
 import org.anddev.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
@@ -31,6 +34,7 @@ import org.anddev.andengine.opengl.texture.Texture;
 import org.anddev.andengine.opengl.texture.TextureOptions;
 import org.anddev.andengine.opengl.texture.region.TextureRegion;
 import org.anddev.andengine.opengl.texture.region.TextureRegionFactory;
+import org.anddev.andengine.util.MathUtils;
 
 import android.graphics.Color;
 import android.view.Menu;
@@ -44,6 +48,7 @@ import com.sportsboards2d.db.parsing.XMLAccess;
 import com.sportsboards2d.db.parsing.XMLWriter;
 import com.sportsboards2d.sprites.BallSprite;
 import com.sportsboards2d.sprites.PlayerSprite;
+import com.sportsboards2d.util.Math;
 
 /**
  * Coded by Nathan King
@@ -84,8 +89,9 @@ public abstract class BaseBoard extends Interface{
 	private TextureRegion mRedPlayerTextureRegion;
 	private TextureRegion mBluePlayerTextureRegion;
 	
+	private Formation currentFormation;
 	private List<PlayerSprite> players = new ArrayList<PlayerSprite>();
-	
+	private List<Line>lines = new ArrayList<Line>();
 	private BallSprite ball;
 	
 	private ZoomCamera mZoomCamera;
@@ -95,7 +101,9 @@ public abstract class BaseBoard extends Interface{
 	private boolean LARGE_PLAYERS = true;
 	
 	private MenuScene mPlayerMenu;
-
+	
+	private AnalogOnScreenControl analog;
+	
 	// ===========================================================
 	// Methods for/from SuperClass/Interfaces
 	// ===========================================================
@@ -122,7 +130,7 @@ public abstract class BaseBoard extends Interface{
 		//load menu textures
 		this.mPlayerMenuFont = new Texture(64, 64, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
 		FontFactory.setAssetBasePath("font/");
-		this.mFont = FontFactory.createFromAsset(this.mPlayerMenuFont, this, "Droid.ttf", 48, true, Color.RED);
+		this.mFont = FontFactory.createFromAsset(this.mPlayerMenuFont, this, "Droid.ttf", 96, true, Color.RED);
 		this.mEngine.getTextureManager().loadTexture(this.mPlayerMenuFont);
 		this.mEngine.getFontManager().loadFont(this.mFont);
 		
@@ -140,7 +148,6 @@ public abstract class BaseBoard extends Interface{
 	@Override
 	public Scene onLoadScene(){
 		
-		Formation fn = null;
 		super.onLoadScene();
 		this.mMainScene = new Scene(1);
 		
@@ -149,23 +156,32 @@ public abstract class BaseBoard extends Interface{
 		
 		mMainScene.getLayer(0).addEntity(new Sprite(0, 0, this.mBackGroundTextureRegion));
 		
-		fn = loadFormation();
-		showFormation(fn);
+		currentFormation = loadFormation();
+		showFormation(currentFormation);
+		
+		//arrowLineWingLeft = new Line(0, 0, 0, 8);
+		//arrowLineWingRight = new Line(0, 0, 0, 8);
 		
 		return mMainScene;
 	}
 	
-	public void reset(){
-		Formation fn = null;
+	public void clearScene(){
+		
 		for(PlayerSprite p: players){
+			
 			this.mMainScene.getTopLayer().removeEntity(p);	
 		}
+		
 		this.mMainScene.getTopLayer().removeEntity(this.ball);
+		
+		for(Line line: lines){
+			this.mMainScene.getTopLayer().removeEntity(line);
+		}
 		
 		this.ball = null;
 		this.players.clear();
-		fn = loadFormation();
-		showFormation(fn);
+		this.lines.clear();
+		
 	}
 
 	@Override
@@ -180,16 +196,26 @@ public abstract class BaseBoard extends Interface{
 		
 		switch(item.getItemId()) {
 			case R.id.reset:
-				reset();
+				
+				this.mMainScene.reset();
+				
+				
 				return true;
 			
 			case R.id.change_player_size:
 				
+				clearScene();
+				this.mRedPlayerTexture.clearTextureSources();
+				this.mBluePlayerTexture.clearTextureSources();
+				this.mBallTexture.clearTextureSources();
+				
+				this.mEngine.getTextureManager().unloadTextures(this.mRedPlayerTexture, this.mBluePlayerTexture, this.mBallTexture);
+				
 				if(LARGE_PLAYERS){
 					
-					this.mRedPlayerTexture = new Texture(64, 64, TextureOptions.BILINEAR);
+					this.mRedPlayerTexture = new Texture(32, 32, TextureOptions.BILINEAR);
 					this.mRedPlayerTextureRegion = TextureRegionFactory.createFromAsset(this.mRedPlayerTexture, this, "32x32RED.png", 0, 0);
-					this.mBluePlayerTexture = new Texture(64, 64, TextureOptions.BILINEAR);
+					this.mBluePlayerTexture = new Texture(32, 32, TextureOptions.BILINEAR);
 					this.mBluePlayerTextureRegion = TextureRegionFactory.createFromAsset(this.mBluePlayerTexture, this, "32x32BLUE.png", 0, 0);
 					this.mBallTextureRegion = TextureRegionFactory.createFromAsset(this.mBallTexture, this, BALL_PATH + "32.png", 0, 0);
 
@@ -206,9 +232,10 @@ public abstract class BaseBoard extends Interface{
 					LARGE_PLAYERS = true;
 					
 				}
+				
 				this.mEngine.getTextureManager().loadTextures(this.mRedPlayerTexture, this.mBluePlayerTexture, this.mBallTexture);
 				
-				reset();
+				showFormation(currentFormation);
 				
 				return true;
 				
@@ -268,6 +295,8 @@ public abstract class BaseBoard extends Interface{
 	
 	public void showFormation(Formation fn){
 		
+		
+		
 		TextureRegion tex = null;
 		addBall(new BallSprite(fn.getBall().getX(), fn.getBall().getY(), this.mBallTextureRegion));
 		for(PlayerInfo p:fn.getPlayers()){
@@ -283,43 +312,154 @@ public abstract class BaseBoard extends Interface{
 		}
 	}
 	
-	public void addPlayer(PlayerInfo p, TextureRegion tex){
+	public void addPlayer(final PlayerInfo p, TextureRegion tex){
 		
-		Line line;
 		
-		PlayerSprite newPlayer = new PlayerSprite(p, p.getX(), p.getY(), tex){
+				
+		PlayerSprite newPlayer = new PlayerSprite(p, tex){
+			
+			float startX, startY, endX, endY;
+			float moveX, moveY;
+			Line arrowLineMain = null;
+			Line arrowLineWingLeft = null;
+			Line arrowLineWingRight = null;
+			float xDiff, yDiff;
+			float diff;
+			float leftWingX, leftWingY;
+			float rightWingX, rightWingY;
+			float angleRad, angleDeg;
+			
+
 			@Override
-			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY) {
-				float x1, y1, x2, y2;
-				Line line = null;
+			
+			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY) throws NullPointerException{
+				
 				mHold.onTouchEvent(pSceneTouchEvent);
 				switch(pSceneTouchEvent.getAction()) {
 					case TouchEvent.ACTION_DOWN:
-						x1 = this.getX();
-						y1 = this.getY();
+						
 						this.setScale(2.0f);	
 						this.mGrabbed = true;
-						System.out.println(this.getX() + " , " + this.getY());
-
+						this.setPosition(pSceneTouchEvent.getX()-24, pSceneTouchEvent.getY()-24);
+						
+						startX = this.getX();
+						startY = this.getY();
+						
+						//arrowLineWingLeft = new Line(startX, startY, startX-30, startY-30, 8);
+						//arrowLineWingRight = new Line(startX, startY, startX+30, startY-30, 8);
+						
+						
 						break;
 					case TouchEvent.ACTION_MOVE:
 						if(this.mGrabbed) {
 
-							this.setPosition(pSceneTouchEvent.getX() - 48 / 2, pSceneTouchEvent.getY() - 48 / 2);
+							this.setPosition(pSceneTouchEvent.getX()-24, pSceneTouchEvent.getY()-24);
+							moveX = this.getX();
+							moveY = this.getY();
+							
+							diff = MathUtils.distance(startX, startY, moveX, moveY);
+							
+							if(diff > 50){
+								
+								arrowLineMain = new Line(startX+24, startY+24, moveX+24, moveY+24, 8);
+								
+								mMainScene.getTopLayer().addEntity(arrowLineMain);
+								lines.add(arrowLineMain);
+								startX = moveX;
+								startY = moveY;
+							}
+							
+							//startX = moveX;
+							//startY = moveY;
 							//System.out.println(this.getX() + " , " + this.getY());
 						}
 						break;
 					case TouchEvent.ACTION_UP:
 						if(this.mGrabbed) {
-							x2 = this.getX();
-							y2 = this.getY();
 							this.mGrabbed = false;
-							this.setScale(1.0f);					
+							this.setScale(1.0f);
+							endX = this.getX()+24;
+							endY = this.getY()+24;
+							
+							diff = MathUtils.distance(startX, startY, endX, endY);
+							
+							System.out.println("Distance between start and end: " + diff);
+							
+							xDiff = Math.calculateDifference(startX, endX) / diff;
+							yDiff = Math.calculateDifference(startY, endY) / diff;
+							
+							angleRad = (float) java.lang.Math.atan2(-xDiff, yDiff);
+							angleDeg = MathUtils.radToDeg(angleRad);
+							
+							//System.out.println("xDiff: " + xDiff)
+							
+							System.out.println("pValueX: " + xDiff);
+							System.out.println("pValueY: " + yDiff);
+							System.out.println("Angle in radians: " + angleRad);
+							System.out.println("Angle in degrees: " + angleDeg);
+							
+							//arrowLineWingLeft.setPosition(endX, endY, endX-30, endY-30);
+							//arrowLineWingRight.setPosition(endX, endY, endX+30, endY-30);
+							
+							//arrowLineWingLeft.setRotation(angleDeg);
+							//arrowLineWingRight.setRotation(angleDeg);
+							
+							//mMainScene.getTopLayer().addEntity(arrowLineWingLeft);
+							//mMainScene.getTopLayer().addEntity(arrowLineWingRight);
+							
+							
+							
+							//diff = Math.calculateRotation(startx, starty, x2, y2);
+							
+							//arrowLineWingLeft.setRotation(diff-90);
+							//arrowLineWingRight.setRotation(diff-60);
+							
+							//arrowLineWingLeft.setPosition(x2, y2, x2-30, y2-30);
+							//arrowLineWingRight.setPosition(x2, y2, x2+30, y2-30);
+							
+							
+							/*
+							if(diff > 90 && diff < 180){ 	//between 90 and 180
+								arrowLineWingLeft.setRotation(diff-90);
+								arrowLineWingRight.setRotation(diff-60);
+							}
+							else if(diff < 90 && diff > 0){ // between 0 and 90
+								arrowLineWingLeft.setRotation(diff+90);
+								arrowLineWingRight.setRotation(diff+60);
+							}
+							else if(diff > -90 && diff < 0){// between 0 and -90
+								arrowLineWingLeft.setRotation(diff+60);
+								arrowLineWingRight.setRotation(diff+90);
+							}
+							else if(diff < -90 && diff > -180){//between -90 and -180
+								arrowLineWingLeft.setRotation(diff-60);
+								arrowLineWingRight.setRotation(diff-90);
+							}*/
+							
+							
+							//if(diff > 10){
+							
+							//	arrowLineMain = new Line(startx, starty, x2, y2, 8);
+								//arrowLineMain.setColor(100, 100, 100);
+								//mMainScene.getTopLayer().addEntity(arrowLineMain);
+								//lines.add(arrowLineMain);
+								
+								
+							
+								//arrowLineWingLeft.setPosition(x2, y2, x2-15, y2-15);
+								//arrowLineWingRight.setPosition(x2, y2, x2+15, y2-15);
+								//if(diff > 0){
+								
+							this.setPosition(pSceneTouchEvent.getX()-24, pSceneTouchEvent.getY()-24);
+
+												
 						}
 						break;
 				}
 				return true;
 			}
+			
+			
 		};
 		
 		newPlayer.setHoldDetector(new HoldDetector(new IHoldDetectorListener() {
@@ -335,7 +475,7 @@ public abstract class BaseBoard extends Interface{
 				
 				mPlayerMenu = createPlayerMenu();
 				//mPlayerMenu.setOnMenuItemClickListener(p);
-				mMainScene.setChildScene(mPlayerMenu, false, true, true);
+				mMainScene.getTopLayer().addEntity(mPlayerMenu);
 			}
 		}));
 		//mPlayerMenu.setOnMenuItemClickListener(newPlayer);
@@ -364,7 +504,7 @@ public abstract class BaseBoard extends Interface{
 		mPlayerMenu.addMenuItem(resetMenuItem);
 		
 		mPlayerMenu.buildAnimations();
-
+		
 		mPlayerMenu.setBackgroundEnabled(false);
 
 		return mPlayerMenu;
