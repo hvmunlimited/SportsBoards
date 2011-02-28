@@ -1,7 +1,7 @@
 package com.sportsboards2d.boards;
 
 import org.anddev.andengine.engine.Engine;
-import org.anddev.andengine.engine.camera.ZoomCamera;
+import org.anddev.andengine.engine.camera.Camera;
 import org.anddev.andengine.entity.scene.Scene;
 import org.anddev.andengine.entity.scene.Scene.IOnSceneTouchListener;
 import org.anddev.andengine.extension.input.touch.controller.MultiTouch;
@@ -9,10 +9,8 @@ import org.anddev.andengine.extension.input.touch.controller.MultiTouchException
 import org.anddev.andengine.extension.input.touch.detector.PinchZoomDetector;
 import org.anddev.andengine.extension.input.touch.detector.PinchZoomDetector.IPinchZoomDetectorListener;
 import org.anddev.andengine.input.touch.TouchEvent;
-import org.anddev.andengine.input.touch.detector.HoldDetector;
 import org.anddev.andengine.input.touch.detector.ScrollDetector;
 import org.anddev.andengine.input.touch.detector.SurfaceScrollDetector;
-import org.anddev.andengine.input.touch.detector.HoldDetector.IHoldDetectorListener;
 import org.anddev.andengine.input.touch.detector.ScrollDetector.IScrollDetectorListener;
 import org.anddev.andengine.ui.activity.BaseGameActivity;
 
@@ -37,41 +35,41 @@ public abstract class Interface extends BaseGameActivity implements IOnSceneTouc
 	// Fields
 	// ===========================================================
 	
-	protected ZoomCamera mZoomCamera;
+	protected Camera mCamera;
 	private SurfaceScrollDetector mScrollDetector;
 	private PinchZoomDetector mPinchZoomDetector;
 	private float mPinchZoomStartedCameraZoomFactor;
 	
 	@Override
 	public void onScroll(final ScrollDetector pScollDetector, final TouchEvent pTouchEvent, final float pDistanceX, final float pDistanceY) {
-		final float zoomFactor = this.mZoomCamera.getZoomFactor();
-		this.mZoomCamera.offsetCenter(-pDistanceX / zoomFactor, -pDistanceY / zoomFactor);
+		//final float zoomFactor = this.mZoomCamera.getZoomFactor();
+		//this.mZoomCamera.offsetCenter(-pDistanceX / zoomFactor, -pDistanceY / zoomFactor);
 	}
 
 	@Override
 	public void onPinchZoomStarted(final PinchZoomDetector pPinchZoomDetector, final TouchEvent pTouchEvent) {
-		this.mPinchZoomStartedCameraZoomFactor = this.mZoomCamera.getZoomFactor();
+		//this.mPinchZoomStartedCameraZoomFactor = this.mZoomCamera.getZoomFactor();
 	}
 
 	@Override
 	public void onPinchZoom(final PinchZoomDetector pPinchZoomDetector, final TouchEvent pTouchEvent, final float pZoomFactor) {
-		if(this.mZoomCamera.getZoomFactor() < 1.0f){
-			this.mZoomCamera.setZoomFactor(1.0f);
-		}
-		else{
-			this.mZoomCamera.setZoomFactor(this.mPinchZoomStartedCameraZoomFactor * pZoomFactor);
-		}
+		//if(this.mZoomCamera.getZoomFactor() < 1.0f){
+		//	this.mZoomCamera.setZoomFactor(1.0f);
+		//}
+		//else{
+		//	this.mZoomCamera.setZoomFactor(this.mPinchZoomStartedCameraZoomFactor * pZoomFactor);
+		//}
 	}
 
 	@Override
 	public void onPinchZoomFinished(final PinchZoomDetector pPinchZoomDetector, final TouchEvent pTouchEvent, final float pZoomFactor) {
-		this.mZoomCamera.setZoomFactor(this.mPinchZoomStartedCameraZoomFactor * pZoomFactor);
-		if(this.mZoomCamera.getZoomFactor() > 3.0f){
-			this.mZoomCamera.setZoomFactor(1.0f);
-		}
-		else if(this.mZoomCamera.getZoomFactor() < 1.0f){
-			this.mZoomCamera.setZoomFactor(1.0f);
-		}
+		//this.mZoomCamera.setZoomFactor(this.mPinchZoomStartedCameraZoomFactor * pZoomFactor);
+		//if(this.mZoomCamera.getZoomFactor() > 3.0f){
+		//	this.mZoomCamera.setZoomFactor(1.0f);
+		//}
+		//else if(this.mZoomCamera.getZoomFactor() < 1.0f){
+		//	this.mZoomCamera.setZoomFactor(1.0f);
+		//}
 	}
 
 	@Override

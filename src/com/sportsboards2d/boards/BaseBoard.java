@@ -7,10 +7,6 @@ import javax.microedition.khronos.opengles.GL10;
 
 import org.anddev.andengine.engine.Engine;
 import org.anddev.andengine.engine.camera.Camera;
-import org.anddev.andengine.engine.camera.ZoomCamera;
-import org.anddev.andengine.engine.camera.hud.controls.AnalogOnScreenControl;
-import org.anddev.andengine.engine.camera.hud.controls.BaseOnScreenControl;
-import org.anddev.andengine.engine.camera.hud.controls.AnalogOnScreenControl.IAnalogOnScreenControlListener;
 import org.anddev.andengine.engine.options.EngineOptions;
 import org.anddev.andengine.engine.options.EngineOptions.ScreenOrientation;
 import org.anddev.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
@@ -63,9 +59,15 @@ public abstract class BaseBoard extends Interface{
 	// ===========================================================
 	// Constants
 	// ===========================================================
-	protected static final int CAMERA_WIDTH = 1024;
-	protected static final int CAMERA_HEIGHT = 600;
-	protected static final int MENU_RESET = 0;
+
+	private static final int BACKGROUND_LAYER = 0;
+	private static final int PLAYER_LAYER = 1;
+	private static final int PMENU_LAYER = 2;
+	
+	private List<IMenuItem> menuItems = new ArrayList<IMenuItem>();
+	private static final int PMENU_DELETE = 0;
+	private static final int PMENU_HIDE = 1;
+
 	// ===========================================================
 	// Fields
 	// ===========================================================
@@ -94,15 +96,16 @@ public abstract class BaseBoard extends Interface{
 	private List<Line>lines = new ArrayList<Line>();
 	private BallSprite ball;
 	
-	private ZoomCamera mZoomCamera;
-	private Camera mPlayerCamera;
+	private PlayerSprite selectedPlayer;
+	
+	
+	//private Camera mCamera;
 	
 	private Scene mMainScene;
 	private boolean LARGE_PLAYERS = true;
 	
 	private MenuScene mPlayerMenu;
 	
-	private AnalogOnScreenControl analog;
 	
 	// ===========================================================
 	// Methods for/from SuperClass/Interfaces
@@ -110,8 +113,8 @@ public abstract class BaseBoard extends Interface{
 	
 	@Override
 	public Engine onLoadEngine() {
-		this.mZoomCamera = new ZoomCamera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
-		final Engine engine = new Engine(new EngineOptions(true, ScreenOrientation.LANDSCAPE, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), this.mZoomCamera));
+		this.mCamera = new Camera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
+		final Engine engine = new Engine(new EngineOptions(true, ScreenOrientation.LANDSCAPE, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), this.mCamera));
 		
 		try {
 			if(MultiTouch.isSupported(this)) {
@@ -128,9 +131,9 @@ public abstract class BaseBoard extends Interface{
 	public void onLoadResources(){
 		
 		//load menu textures
-		this.mPlayerMenuFont = new Texture(64, 64, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
+		this.mPlayerMenuFont = new Texture(256, 256, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
 		FontFactory.setAssetBasePath("font/");
-		this.mFont = FontFactory.createFromAsset(this.mPlayerMenuFont, this, "Droid.ttf", 96, true, Color.RED);
+		this.mFont = FontFactory.createFromAsset(this.mPlayerMenuFont, this, "Plok.ttf", 32, true, Color.RED);
 		this.mEngine.getTextureManager().loadTexture(this.mPlayerMenuFont);
 		this.mEngine.getFontManager().loadFont(this.mFont);
 		
@@ -149,33 +152,33 @@ public abstract class BaseBoard extends Interface{
 	public Scene onLoadScene(){
 		
 		super.onLoadScene();
-		this.mMainScene = new Scene(1);
+		this.mMainScene = new Scene(3);
 		
 		this.mMainScene.setOnSceneTouchListener(this);
 		this.mMainScene.setTouchAreaBindingEnabled(true);
 		
-		mMainScene.getLayer(0).addEntity(new Sprite(0, 0, this.mBackGroundTextureRegion));
-		
+		createPlayerMenu();
+
+		mMainScene.getLayer(BACKGROUND_LAYER).addEntity(new Sprite(0, 0, this.mBackGroundTextureRegion));
 		currentFormation = loadFormation();
 		showFormation(currentFormation);
-		
-		//arrowLineWingLeft = new Line(0, 0, 0, 8);
-		//arrowLineWingRight = new Line(0, 0, 0, 8);
 		
 		return mMainScene;
 	}
 	
 	public void clearScene(){
 		
+		this.mMainScene.clearTouchAreas();
+		this.mMainScene.clearUpdateHandlers();
+		
 		for(PlayerSprite p: players){
-			
-			this.mMainScene.getTopLayer().removeEntity(p);	
+			this.mMainScene.getLayer(PLAYER_LAYER).removeEntity(p);	
 		}
 		
-		this.mMainScene.getTopLayer().removeEntity(this.ball);
+		this.mMainScene.getLayer(PLAYER_LAYER).removeEntity(this.ball);
 		
 		for(Line line: lines){
-			this.mMainScene.getTopLayer().removeEntity(line);
+			this.mMainScene.getLayer(PLAYER_LAYER).removeEntity(line);
 		}
 		
 		this.ball = null;
@@ -195,10 +198,11 @@ public abstract class BaseBoard extends Interface{
 	public boolean onOptionsItemSelected(MenuItem item){
 		
 		switch(item.getItemId()) {
+		
 			case R.id.reset:
 				
-				this.mMainScene.reset();
-				
+				clearScene();
+				showFormation(currentFormation);
 				
 				return true;
 			
@@ -211,11 +215,12 @@ public abstract class BaseBoard extends Interface{
 				
 				this.mEngine.getTextureManager().unloadTextures(this.mRedPlayerTexture, this.mBluePlayerTexture, this.mBallTexture);
 				
+				this.mRedPlayerTexture = new Texture(64, 64, TextureOptions.BILINEAR);
+				this.mBluePlayerTexture = new Texture(64, 64, TextureOptions.BILINEAR);
+				
 				if(LARGE_PLAYERS){
 					
-					this.mRedPlayerTexture = new Texture(32, 32, TextureOptions.BILINEAR);
 					this.mRedPlayerTextureRegion = TextureRegionFactory.createFromAsset(this.mRedPlayerTexture, this, "32x32RED.png", 0, 0);
-					this.mBluePlayerTexture = new Texture(32, 32, TextureOptions.BILINEAR);
 					this.mBluePlayerTextureRegion = TextureRegionFactory.createFromAsset(this.mBluePlayerTexture, this, "32x32BLUE.png", 0, 0);
 					this.mBallTextureRegion = TextureRegionFactory.createFromAsset(this.mBallTexture, this, BALL_PATH + "32.png", 0, 0);
 
@@ -223,9 +228,7 @@ public abstract class BaseBoard extends Interface{
 				}
 				else{
 					
-					this.mRedPlayerTexture = new Texture(64, 64, TextureOptions.BILINEAR);
 					this.mRedPlayerTextureRegion = TextureRegionFactory.createFromAsset(this.mRedPlayerTexture, this, "48x48RED.png", 0, 0);
-					this.mBluePlayerTexture = new Texture(64, 64, TextureOptions.BILINEAR);
 					this.mBluePlayerTextureRegion = TextureRegionFactory.createFromAsset(this.mBluePlayerTexture, this, "48x48BLUE.png", 0, 0);
 					this.mBallTextureRegion = TextureRegionFactory.createFromAsset(this.mBallTexture, this, BALL_PATH + "48.png", 0, 0);
 
@@ -244,6 +247,8 @@ public abstract class BaseBoard extends Interface{
 		}
 	}
 	
+	
+	
 	// ===========================================================
 	// Methods 
 	// ===========================================================
@@ -261,15 +266,15 @@ public abstract class BaseBoard extends Interface{
 		PlayerInfo pInfo = null;
 		BallSprite ball = null;
 		
-		for(int i = 0; i < mMainScene.getTopLayer().getEntityCount(); i++){
-			if((IEntity) mMainScene.getTopLayer().getEntity(i) instanceof PlayerSprite){
-				pSprite = (PlayerSprite)mMainScene.getTopLayer().getEntity(i);
+		for(int i = 0; i < mMainScene.getLayer(PLAYER_LAYER).getEntityCount(); i++){
+			if((IEntity) mMainScene.getLayer(PLAYER_LAYER).getEntity(i) instanceof PlayerSprite){
+				pSprite = (PlayerSprite)mMainScene.getLayer(PLAYER_LAYER).getEntity(i);
 				pInfo = pSprite.getPlayerInfo();
 				pInfo.setCoords(pSprite.getX(), pSprite.getY());
 				playerList.add(pInfo);
 			}
-			else if((IEntity) mMainScene.getTopLayer().getEntity(i) instanceof BallSprite){
-				ball = (BallSprite)mMainScene.getTopLayer().getEntity(i);
+			else if((IEntity) mMainScene.getLayer(PLAYER_LAYER).getEntity(i) instanceof BallSprite){
+				ball = (BallSprite)mMainScene.getLayer(PLAYER_LAYER).getEntity(i);
 			}
 		}
 		fn.setBall(ball.getX(), ball.getY());
@@ -281,15 +286,14 @@ public abstract class BaseBoard extends Interface{
 	public Formation loadFormation(){
 		
 		ArrayList<Formation> formsList = (ArrayList<Formation>) XMLAccess.loadFormations(this, resID);
-		Formation def = null;
 		
 		for(Formation fn:formsList){
 			if(fn.getName().equalsIgnoreCase(DEFAULT_NAME)){
-				def = fn;
+				this.currentFormation = fn;
 				break;
 			}
 		}
-		return def;
+		return this.currentFormation;
 		
 	}
 	
@@ -316,25 +320,27 @@ public abstract class BaseBoard extends Interface{
 		
 		
 				
-		PlayerSprite newPlayer = new PlayerSprite(p, tex){
+		final PlayerSprite newPlayer = new PlayerSprite(p, tex){
 			
 			float startX, startY, endX, endY;
 			float moveX, moveY;
 			Line arrowLineMain = null;
-			Line arrowLineWingLeft = null;
-			Line arrowLineWingRight = null;
+			//Line arrowLineWingLeft = null;
+			//Line arrowLineWingRight = null;
 			float xDiff, yDiff;
 			float diff;
-			float leftWingX, leftWingY;
-			float rightWingX, rightWingY;
 			float angleRad, angleDeg;
 			
 
 			@Override
 			
 			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY) throws NullPointerException{
-				
+				selectedPlayer = this;
+				//mHold.
 				mHold.onTouchEvent(pSceneTouchEvent);
+			
+				
+				
 				switch(pSceneTouchEvent.getAction()) {
 					case TouchEvent.ACTION_DOWN:
 						
@@ -344,6 +350,8 @@ public abstract class BaseBoard extends Interface{
 						
 						startX = this.getX();
 						startY = this.getY();
+						
+						System.out.println(this.getTextureRegion().getHeight());
 						
 						//arrowLineWingLeft = new Line(startX, startY, startX-30, startY-30, 8);
 						//arrowLineWingRight = new Line(startX, startY, startX+30, startY-30, 8);
@@ -363,15 +371,12 @@ public abstract class BaseBoard extends Interface{
 								
 								arrowLineMain = new Line(startX+24, startY+24, moveX+24, moveY+24, 8);
 								
-								mMainScene.getTopLayer().addEntity(arrowLineMain);
+								mMainScene.getLayer(PLAYER_LAYER).addEntity(arrowLineMain);
 								lines.add(arrowLineMain);
 								startX = moveX;
 								startY = moveY;
 							}
 							
-							//startX = moveX;
-							//startY = moveY;
-							//System.out.println(this.getX() + " , " + this.getY());
 						}
 						break;
 					case TouchEvent.ACTION_UP:
@@ -398,117 +403,97 @@ public abstract class BaseBoard extends Interface{
 							System.out.println("Angle in radians: " + angleRad);
 							System.out.println("Angle in degrees: " + angleDeg);
 							
-							//arrowLineWingLeft.setPosition(endX, endY, endX-30, endY-30);
-							//arrowLineWingRight.setPosition(endX, endY, endX+30, endY-30);
-							
-							//arrowLineWingLeft.setRotation(angleDeg);
-							//arrowLineWingRight.setRotation(angleDeg);
-							
-							//mMainScene.getTopLayer().addEntity(arrowLineWingLeft);
-							//mMainScene.getTopLayer().addEntity(arrowLineWingRight);
-							
-							
-							
-							//diff = Math.calculateRotation(startx, starty, x2, y2);
-							
-							//arrowLineWingLeft.setRotation(diff-90);
-							//arrowLineWingRight.setRotation(diff-60);
-							
-							//arrowLineWingLeft.setPosition(x2, y2, x2-30, y2-30);
-							//arrowLineWingRight.setPosition(x2, y2, x2+30, y2-30);
-							
-							
-							/*
-							if(diff > 90 && diff < 180){ 	//between 90 and 180
-								arrowLineWingLeft.setRotation(diff-90);
-								arrowLineWingRight.setRotation(diff-60);
-							}
-							else if(diff < 90 && diff > 0){ // between 0 and 90
-								arrowLineWingLeft.setRotation(diff+90);
-								arrowLineWingRight.setRotation(diff+60);
-							}
-							else if(diff > -90 && diff < 0){// between 0 and -90
-								arrowLineWingLeft.setRotation(diff+60);
-								arrowLineWingRight.setRotation(diff+90);
-							}
-							else if(diff < -90 && diff > -180){//between -90 and -180
-								arrowLineWingLeft.setRotation(diff-60);
-								arrowLineWingRight.setRotation(diff-90);
-							}*/
-							
-							
-							//if(diff > 10){
-							
-							//	arrowLineMain = new Line(startx, starty, x2, y2, 8);
-								//arrowLineMain.setColor(100, 100, 100);
-								//mMainScene.getTopLayer().addEntity(arrowLineMain);
-								//lines.add(arrowLineMain);
-								
-								
-							
-								//arrowLineWingLeft.setPosition(x2, y2, x2-15, y2-15);
-								//arrowLineWingRight.setPosition(x2, y2, x2+15, y2-15);
-								//if(diff > 0){
 								
 							this.setPosition(pSceneTouchEvent.getX()-24, pSceneTouchEvent.getY()-24);
 
 												
 						}
 						break;
+					}
+					return true;
 				}
-				return true;
-			}
-			
-			
-		};
+				@Override
+				public boolean onMenuItemClicked(final MenuScene pMenuScene, final IMenuItem pMenuItem, final float pMenuItemLocalX, final float pMenuItemLocalY){
+					
+					
+					
+					switch(pMenuItem.getID()) {
+	
+					    case PMENU_DELETE:
+					    	
+					    	mMainScene.getLayer(PLAYER_LAYER).removeEntity(selectedPlayer);
+					    	//players.remove(selectedPlayer);
+					        /* Remove the menu and reset it. */
+					        mMainScene.clearChildScene();
+					        mPlayerMenu.reset();
+					        return true;
+					   
+					    case PMENU_HIDE:
+					    	
+					    	mMainScene.clearChildScene();
+					    	mPlayerMenu.reset();
+					    	
+					    default:
+					        return false;
+					}
+							
+				}
+			};
+		
 		
 		newPlayer.setHoldDetector(new HoldDetector(new IHoldDetectorListener() {
 			
 			@Override
 			public void onHold(HoldDetector arg0, long arg1, float arg2, float arg3) {
 				
-				//mPlayerMenu.back();
 			}
 
 			@Override
-			public void onHoldFinished(HoldDetector arg0, long arg1, float arg2, float arg3) {
+			public void onHoldFinished(final HoldDetector pHoldDetector, long pHoldTimeMilliseconds, final float pHoldX, final float pHoldY){
+				loadPlayerMenuItems();
+				menuItems.get(PMENU_DELETE).setPosition(pHoldX, pHoldY);
+				menuItems.get(PMENU_HIDE).setPosition(pHoldX, pHoldY-48);
+				//System.out.println(pHoldX);
 				
-				mPlayerMenu = createPlayerMenu();
-				//mPlayerMenu.setOnMenuItemClickListener(p);
-				mMainScene.getTopLayer().addEntity(mPlayerMenu);
+				menuItems.clear();
+				mMainScene.setChildScene(mPlayerMenu, false, true, true);
+				
 			}
 		}));
-		//mPlayerMenu.setOnMenuItemClickListener(newPlayer);
-		mMainScene.getTopLayer().addEntity(newPlayer);
-		mMainScene.registerTouchArea(newPlayer);
-		mMainScene.registerUpdateHandler(newPlayer.getHoldDetector());
-		//createPlayerMenu(newPlayer);
+		
+		mPlayerMenu.setOnMenuItemClickListener(newPlayer);
+		this.mMainScene.getLayer(PLAYER_LAYER).addEntity(newPlayer);
+		this.mMainScene.registerTouchArea(newPlayer);
+		this.mMainScene.registerUpdateHandler(newPlayer.getHoldDetector());
 		players.add(newPlayer);
 	}
 	
 	public void addBall(BallSprite ball){
 		
 		this.ball = ball;
-		mMainScene.getTopLayer().addEntity(ball);
-		mMainScene.registerTouchArea(ball);
+		this.mMainScene.getLayer(PLAYER_LAYER).addEntity(ball);
+		this.mMainScene.registerTouchArea(ball);
 	}
 	
-	public MenuScene createPlayerMenu(){
+	public void createPlayerMenu(){
 		
-		
-		
-		mPlayerMenu = new MenuScene(mZoomCamera);
-		
-		final IMenuItem resetMenuItem = new ColorMenuItemDecorator(new TextMenuItem(MENU_RESET, this.mFont, "DELETE"), 1.0f,0.0f,0.0f, 0.0f,0.0f,0.0f);
-		resetMenuItem.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-		mPlayerMenu.addMenuItem(resetMenuItem);
-		
+		mPlayerMenu = new MenuScene(this.mCamera);
 		mPlayerMenu.buildAnimations();
-		
 		mPlayerMenu.setBackgroundEnabled(false);
-
-		return mPlayerMenu;
 	}
-	
+	public void loadPlayerMenuItems(){
+		
+		final IMenuItem deleteMenuItem = new ColorMenuItemDecorator(new TextMenuItem(PMENU_DELETE, this.mFont, "DELETE"), 1.0f,0.0f,0.0f, 0.0f,0.0f,0.0f);
+		deleteMenuItem.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+		menuItems.add(PMENU_DELETE, deleteMenuItem); 
+		mPlayerMenu.addMenuItem(deleteMenuItem);
+
+		
+		final IMenuItem hideMenuItem = new ColorMenuItemDecorator(new TextMenuItem(PMENU_HIDE, this.mFont, "HIDE"), 1.0f,0.0f,0.0f, 0.0f,0.0f,0.0f);
+		deleteMenuItem.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+		menuItems.add(PMENU_DELETE, hideMenuItem);
+		mPlayerMenu.addMenuItem(hideMenuItem);
+		
+	}
 }
 

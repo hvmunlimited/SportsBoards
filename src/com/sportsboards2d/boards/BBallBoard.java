@@ -1,8 +1,6 @@
 package com.sportsboards2d.boards;
 
 import org.anddev.andengine.engine.Engine;
-import org.anddev.andengine.entity.scene.menu.MenuScene;
-import org.anddev.andengine.entity.scene.menu.item.IMenuItem;
 import org.anddev.andengine.opengl.texture.region.TextureRegionFactory;
 
 import com.sportsboards2d.R;

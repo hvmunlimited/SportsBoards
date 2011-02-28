@@ -17,7 +17,7 @@ import com.sportsboards2d.R;
  * Copyright 2011 5807400 Manitoba Inc. All rights reserved.
  */
 
-class MenuAdapter extends BaseAdapter{
+class LauncherMenuAdapter extends BaseAdapter{
 
 	private static final Activity[] Activities = {
 		Activity.SOCCER,
@@ -28,7 +28,7 @@ class MenuAdapter extends BaseAdapter{
 	
 	private final Context mContext;
 	
-	public MenuAdapter(final Context context){
+	public LauncherMenuAdapter(final Context context){
 		this.mContext = context;
 	}
 	
