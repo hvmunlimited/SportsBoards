@@ -1,7 +1,5 @@
 package com.sportsboards2d.sprites;
 
-import org.anddev.andengine.engine.camera.hud.controls.AnalogOnScreenControl;
-import org.anddev.andengine.engine.camera.hud.controls.AnalogOnScreenControl.IAnalogOnScreenControlListener;
 import org.anddev.andengine.entity.scene.menu.MenuScene;
 import org.anddev.andengine.entity.scene.menu.MenuScene.IOnMenuItemClickListener;
 import org.anddev.andengine.entity.scene.menu.item.IMenuItem;
@@ -36,9 +34,7 @@ public class PlayerSprite extends Sprite implements IOnMenuItemClickListener{
 	protected HoldDetector mHold;
 	public void setHoldDetector(HoldDetector mHold){ this.mHold = mHold;}
 	public HoldDetector getHoldDetector(){ return mHold;}
-	
-	protected AnalogOnScreenControl directionControl;
-	
+
 	/*
 	 * Constructors
 	 */
@@ -47,6 +43,7 @@ public class PlayerSprite extends Sprite implements IOnMenuItemClickListener{
 		super(pInfo.getX(), pInfo.getY(), tex);
 		this.pInfo = pInfo;
 	}
+	
 	/* Overrides
 	 * @see org.anddev.andengine.entity.shape.Shape#onAreaTouched(org.anddev.andengine.input.touch.TouchEvent, float, float)
 	 */
