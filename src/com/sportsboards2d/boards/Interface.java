@@ -140,4 +140,5 @@ public abstract class Interface extends BaseGameActivity implements IOnSceneTouc
 		return null;
 	}
 	
+	
 }

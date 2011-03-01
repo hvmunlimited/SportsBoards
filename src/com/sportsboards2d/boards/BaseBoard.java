@@ -13,10 +13,13 @@ import org.anddev.andengine.engine.options.resolutionpolicy.RatioResolutionPolic
 import org.anddev.andengine.entity.IEntity;
 import org.anddev.andengine.entity.primitive.Line;
 import org.anddev.andengine.entity.scene.Scene;
+import org.anddev.andengine.entity.scene.Scene.IOnAreaTouchListener;
+import org.anddev.andengine.entity.scene.Scene.ITouchArea;
 import org.anddev.andengine.entity.scene.menu.MenuScene;
 import org.anddev.andengine.entity.scene.menu.item.IMenuItem;
 import org.anddev.andengine.entity.scene.menu.item.TextMenuItem;
 import org.anddev.andengine.entity.scene.menu.item.decorator.ColorMenuItemDecorator;
+import org.anddev.andengine.entity.shape.GLShape;
 import org.anddev.andengine.entity.sprite.Sprite;
 import org.anddev.andengine.extension.input.touch.controller.MultiTouch;
 import org.anddev.andengine.extension.input.touch.controller.MultiTouchController;
@@ -54,19 +57,20 @@ import com.sportsboards2d.util.Math;
  * Copyright 2011 5807400 Manitoba Inc. All rights reserved.
  */
 
-public abstract class BaseBoard extends Interface{
+public abstract class BaseBoard extends Interface implements IOnAreaTouchListener{
 	
 	// ===========================================================
 	// Constants
 	// ===========================================================
 
-	private static final int BACKGROUND_LAYER = 0;
-	private static final int PLAYER_LAYER = 1;
-	private static final int PMENU_LAYER = 2;
+	private final int BACKGROUND_LAYER = 0;
+	private final int LINE_LAYER = 1;
+	private final int PLAYER_LAYER = 2;
+	private final int PMENU_LAYER = 3;
 	
 	private List<IMenuItem> menuItems = new ArrayList<IMenuItem>();
-	private static final int PMENU_DELETE = 0;
-	private static final int PMENU_HIDE = 1;
+	private final int PMENU_DELETE = 0;
+	private final int PMENU_HIDE = 1;
 
 	// ===========================================================
 	// Fields
@@ -94,15 +98,16 @@ public abstract class BaseBoard extends Interface{
 	private Formation currentFormation;
 	private List<PlayerSprite> players = new ArrayList<PlayerSprite>();
 	private List<Line>lines = new ArrayList<Line>();
-	private BallSprite ball;
+	private BallSprite mBall;
 	
 	private PlayerSprite selectedPlayer;
 	
 	
 	//private Camera mCamera;
 	
-	private Scene mMainScene;
+	protected Scene mMainScene;
 	private boolean LARGE_PLAYERS = true;
+	private boolean LINE_ENABLED = false;
 	
 	private MenuScene mPlayerMenu;
 	
@@ -114,8 +119,9 @@ public abstract class BaseBoard extends Interface{
 	@Override
 	public Engine onLoadEngine() {
 		this.mCamera = new Camera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
-		final Engine engine = new Engine(new EngineOptions(true, ScreenOrientation.LANDSCAPE, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), this.mCamera));
-		
+		final EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.LANDSCAPE, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), mCamera);
+		engineOptions.getTouchOptions().setRunOnUpdateThread(true);
+		Engine engine = new Engine(engineOptions);
 		try {
 			if(MultiTouch.isSupported(this)) {
 				engine.setTouchController(new MultiTouchController());
@@ -131,7 +137,7 @@ public abstract class BaseBoard extends Interface{
 	public void onLoadResources(){
 		
 		//load menu textures
-		this.mPlayerMenuFont = new Texture(256, 256, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
+		this.mPlayerMenuFont = new Texture(128, 128, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
 		FontFactory.setAssetBasePath("font/");
 		this.mFont = FontFactory.createFromAsset(this.mPlayerMenuFont, this, "Plok.ttf", 32, true, Color.RED);
 		this.mEngine.getTextureManager().loadTexture(this.mPlayerMenuFont);
@@ -155,38 +161,99 @@ public abstract class BaseBoard extends Interface{
 		this.mMainScene = new Scene(3);
 		
 		this.mMainScene.setOnSceneTouchListener(this);
+		this.mMainScene.setOnAreaTouchListener(this);
 		this.mMainScene.setTouchAreaBindingEnabled(true);
-		
 		createPlayerMenu();
 
-		mMainScene.getLayer(BACKGROUND_LAYER).addEntity(new Sprite(0, 0, this.mBackGroundTextureRegion));
-		currentFormation = loadFormation();
+		this.mMainScene.getLayer(BACKGROUND_LAYER).addEntity(new Sprite(0, 0, this.mBackGroundTextureRegion));
+		this.currentFormation = loadFormation();
 		showFormation(currentFormation);
 		
 		return mMainScene;
 	}
 	
 	public void clearScene(){
-		
-		this.mMainScene.clearTouchAreas();
-		this.mMainScene.clearUpdateHandlers();
-		
-		for(PlayerSprite p: players){
-			this.mMainScene.getLayer(PLAYER_LAYER).removeEntity(p);	
+	
+		clearPlayers();
+		clearLines();
+		clearBall();
+
+	}
+	
+	public void clearPlayers(){
+		for(final PlayerSprite p: players){
+			mEngine.runOnUpdateThread(new Runnable() {
+	    		@Override
+	    		public void run() {
+	    			BaseBoard.this.removeSprite(p);
+	    		}
+	    	});
 		}
-		
-		this.mMainScene.getLayer(PLAYER_LAYER).removeEntity(this.ball);
-		
-		for(Line line: lines){
-			this.mMainScene.getLayer(PLAYER_LAYER).removeEntity(line);
-		}
-		
-		this.ball = null;
 		this.players.clear();
-		this.lines.clear();
+	}
+	public void clearBall(){
 		
+		mEngine.runOnUpdateThread(new Runnable() {
+    		@Override
+    		public void run() {
+    			BaseBoard.this.removeSprite(mBall);
+    		}
+    	});
+		this.mBall = null;
+	}
+	public void clearLines(){
+		for(final Line line: lines){
+			mEngine.runOnUpdateThread(new Runnable(){	
+				@Override
+				public void run(){
+					BaseBoard.this.removeSprite(line);
+				}
+			});
+		}
+		this.lines.clear();
+
 	}
 
+	public void removeSprite(GLShape sprite){
+		
+		this.mMainScene.unregisterTouchArea(sprite);
+		if(sprite instanceof PlayerSprite || sprite instanceof BallSprite){
+			this.mMainScene.getLayer(PLAYER_LAYER).removeEntity(sprite);
+			players.remove(sprite);
+		}
+		else if(sprite instanceof Line){
+			this.mMainScene.getLayer(LINE_LAYER).removeEntity(sprite);
+			lines.remove(sprite);
+		}
+	}
+	
+	public void createBall(BallSprite mBall){
+		
+		this.mBall = mBall;
+		this.mMainScene.getLayer(PLAYER_LAYER).addEntity(mBall);
+		this.mMainScene.registerTouchArea(mBall);
+	}
+	
+	public void createPlayerMenu(){
+		
+		mPlayerMenu = new MenuScene(this.mCamera);
+		mPlayerMenu.buildAnimations();
+		mPlayerMenu.setBackgroundEnabled(false);
+	}
+	public void loadPlayerMenuItems(){
+		createPlayerMenu();
+		final IMenuItem deleteMenuItem = new ColorMenuItemDecorator(new TextMenuItem(PMENU_DELETE, this.mFont, "DELETE"), 1.0f,0.0f,0.0f, 0.0f,0.0f,0.0f);
+		deleteMenuItem.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+		menuItems.add(PMENU_DELETE, deleteMenuItem); 
+		mPlayerMenu.addMenuItem(deleteMenuItem);
+
+		
+		final IMenuItem hideMenuItem = new ColorMenuItemDecorator(new TextMenuItem(PMENU_HIDE, this.mFont, "HIDE"), 1.0f,0.0f,0.0f, 0.0f,0.0f,0.0f);
+		deleteMenuItem.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+		menuItems.add(PMENU_DELETE, hideMenuItem);
+		mPlayerMenu.addMenuItem(hideMenuItem);
+		
+	}
 	@Override
 	public boolean onCreateOptionsMenu(final Menu pMenu) {
 		 MenuInflater inflater = getMenuInflater();
@@ -199,22 +266,34 @@ public abstract class BaseBoard extends Interface{
 		
 		switch(item.getItemId()) {
 		
+			case R.id.line_enable:
+				
+				if(LINE_ENABLED){
+					LINE_ENABLED = false;
+				}
+				else{
+					LINE_ENABLED = true;
+				}
+				
+				return true;
+		
 			case R.id.reset:
 				
 				clearScene();
+				loadFormation();
 				showFormation(currentFormation);
 				
 				return true;
 			
 			case R.id.change_player_size:
 				
-				clearScene();
+				currentFormation = saveFormation();
+				clearPlayers();
+				clearBall();
 				this.mRedPlayerTexture.clearTextureSources();
 				this.mBluePlayerTexture.clearTextureSources();
 				this.mBallTexture.clearTextureSources();
-				
-				this.mEngine.getTextureManager().unloadTextures(this.mRedPlayerTexture, this.mBluePlayerTexture, this.mBallTexture);
-				
+								
 				this.mRedPlayerTexture = new Texture(64, 64, TextureOptions.BILINEAR);
 				this.mBluePlayerTexture = new Texture(64, 64, TextureOptions.BILINEAR);
 				
@@ -258,13 +337,13 @@ public abstract class BaseBoard extends Interface{
 	 * Capture player & ball positions, save them in XML format to internal storage
 	 */
 	
-	public void saveFormation(){
+	public Formation saveFormation(){
 		
 		Formation fn = new Formation();
 		ArrayList<PlayerInfo> playerList = new ArrayList<PlayerInfo>();
 		PlayerSprite pSprite = null;
 		PlayerInfo pInfo = null;
-		BallSprite ball = null;
+		BallSprite mBall = null;
 		
 		for(int i = 0; i < mMainScene.getLayer(PLAYER_LAYER).getEntityCount(); i++){
 			if((IEntity) mMainScene.getLayer(PLAYER_LAYER).getEntity(i) instanceof PlayerSprite){
@@ -274,13 +353,16 @@ public abstract class BaseBoard extends Interface{
 				playerList.add(pInfo);
 			}
 			else if((IEntity) mMainScene.getLayer(PLAYER_LAYER).getEntity(i) instanceof BallSprite){
-				ball = (BallSprite)mMainScene.getLayer(PLAYER_LAYER).getEntity(i);
+				mBall = (BallSprite)mMainScene.getLayer(PLAYER_LAYER).getEntity(i);
 			}
 		}
-		fn.setBall(ball.getX(), ball.getY());
+		fn.setBall(mBall.getX(), mBall.getY());
 		fn.setPlayers(playerList);
 		fn.setName("testing");
-		XMLWriter.writeFormation(this, fn, SPORT_NAME.toLowerCase());
+		//XMLWriter.writeFormation(this, fn, SPORT_NAME.toLowerCase());
+		
+		return fn;
+		
 	}
 	
 	public Formation loadFormation(){
@@ -302,7 +384,7 @@ public abstract class BaseBoard extends Interface{
 		
 		
 		TextureRegion tex = null;
-		addBall(new BallSprite(fn.getBall().getX(), fn.getBall().getY(), this.mBallTextureRegion));
+		createBall(new BallSprite(fn.getBall().getX(), fn.getBall().getY(), this.mBallTextureRegion));
 		for(PlayerInfo p:fn.getPlayers()){
 			
 			if(p.getTeamColor().equalsIgnoreCase("blue")){
@@ -311,12 +393,12 @@ public abstract class BaseBoard extends Interface{
 			else if(p.getTeamColor().equalsIgnoreCase("red")){
 				tex = this.mRedPlayerTextureRegion;
 			}		
-			addPlayer(p, tex);
+			createPlayer(p, tex);
 
 		}
 	}
 	
-	public void addPlayer(final PlayerInfo p, TextureRegion tex){
+	private void createPlayer(final PlayerInfo p, TextureRegion tex){
 		
 		
 				
@@ -331,7 +413,7 @@ public abstract class BaseBoard extends Interface{
 			float diff;
 			float angleRad, angleDeg;
 			
-
+/*
 			@Override
 			
 			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY) throws NullPointerException{
@@ -365,53 +447,52 @@ public abstract class BaseBoard extends Interface{
 							moveX = this.getX();
 							moveY = this.getY();
 							
-							diff = MathUtils.distance(startX, startY, moveX, moveY);
+							if(LINE_ENABLED){
 							
-							if(diff > 50){
+								diff = MathUtils.distance(startX, startY, moveX, moveY);
 								
-								arrowLineMain = new Line(startX+24, startY+24, moveX+24, moveY+24, 8);
-								
-								mMainScene.getLayer(PLAYER_LAYER).addEntity(arrowLineMain);
-								lines.add(arrowLineMain);
-								startX = moveX;
-								startY = moveY;
+								if(diff > 50){
+									
+									arrowLineMain = new Line(startX+24, startY+24, moveX+24, moveY+24, 8);
+									
+									mMainScene.getLayer(LINE_LAYER).addEntity(arrowLineMain);
+									lines.add(arrowLineMain);
+									startX = moveX;
+									startY = moveY;
+								}
 							}
 							
 						}
 						break;
 					case TouchEvent.ACTION_UP:
 						if(this.mGrabbed) {
+							
 							this.mGrabbed = false;
 							this.setScale(1.0f);
+							this.setPosition(pSceneTouchEvent.getX()-24, pSceneTouchEvent.getY()-24);
+
 							endX = this.getX()+24;
 							endY = this.getY()+24;
 							
 							diff = MathUtils.distance(startX, startY, endX, endY);
-							
-							System.out.println("Distance between start and end: " + diff);
-							
 							xDiff = Math.calculateDifference(startX, endX) / diff;
-							yDiff = Math.calculateDifference(startY, endY) / diff;
-							
+							yDiff = Math.calculateDifference(startY, endY) / diff;	
 							angleRad = (float) java.lang.Math.atan2(-xDiff, yDiff);
 							angleDeg = MathUtils.radToDeg(angleRad);
 							
-							//System.out.println("xDiff: " + xDiff)
-							
+							System.out.println("Distance between start and end: " + diff);
 							System.out.println("pValueX: " + xDiff);
 							System.out.println("pValueY: " + yDiff);
 							System.out.println("Angle in radians: " + angleRad);
 							System.out.println("Angle in degrees: " + angleDeg);
 							
 								
-							this.setPosition(pSceneTouchEvent.getX()-24, pSceneTouchEvent.getY()-24);
-
-												
+							
 						}
 						break;
 					}
 					return true;
-				}
+				}*/
 				@Override
 				public boolean onMenuItemClicked(final MenuScene pMenuScene, final IMenuItem pMenuItem, final float pMenuItemLocalX, final float pMenuItemLocalY){
 					
@@ -421,18 +502,29 @@ public abstract class BaseBoard extends Interface{
 	
 					    case PMENU_DELETE:
 					    	
-					    	mMainScene.getLayer(PLAYER_LAYER).removeEntity(selectedPlayer);
-					    	//players.remove(selectedPlayer);
+					    	mEngine.runOnUpdateThread(new Runnable() {
+					    	
+					    		@Override
+
+					    		public void run() {
+					    			removeSprite(selectedPlayer);
+							   
+					    		}
+
+					    	});
+					    	
 					        /* Remove the menu and reset it. */
 					        mMainScene.clearChildScene();
 					        mPlayerMenu.reset();
+					        mPlayerMenu = null;
 					        return true;
 					   
 					    case PMENU_HIDE:
-					    	
+					    	selectedPlayer = null;
 					    	mMainScene.clearChildScene();
 					    	mPlayerMenu.reset();
-					    	
+					    	mPlayerMenu = null;
+					    	return true;
 					    default:
 					        return false;
 					}
@@ -450,50 +542,134 @@ public abstract class BaseBoard extends Interface{
 
 			@Override
 			public void onHoldFinished(final HoldDetector pHoldDetector, long pHoldTimeMilliseconds, final float pHoldX, final float pHoldY){
-				loadPlayerMenuItems();
-				menuItems.get(PMENU_DELETE).setPosition(pHoldX, pHoldY);
-				menuItems.get(PMENU_HIDE).setPosition(pHoldX, pHoldY-48);
-				//System.out.println(pHoldX);
-				
-				menuItems.clear();
+				BaseBoard.this.loadPlayerMenuItems();
+				BaseBoard.this.menuItems.get(PMENU_DELETE).setPosition(pHoldX, pHoldY);
+				BaseBoard.this.menuItems.get(PMENU_HIDE).setPosition(pHoldX, pHoldY-48);
+				mPlayerMenu.setOnMenuItemClickListener(newPlayer);
+
+				BaseBoard.this.menuItems.clear();
 				mMainScene.setChildScene(mPlayerMenu, false, true, true);
 				
 			}
 		}));
 		
-		mPlayerMenu.setOnMenuItemClickListener(newPlayer);
 		this.mMainScene.getLayer(PLAYER_LAYER).addEntity(newPlayer);
 		this.mMainScene.registerTouchArea(newPlayer);
 		this.mMainScene.registerUpdateHandler(newPlayer.getHoldDetector());
-		players.add(newPlayer);
+		//this.mMainScene.setOnAreaTouchListener(this);
+		this.players.add(newPlayer);
 	}
 	
-	public void addBall(BallSprite ball){
-		
-		this.ball = ball;
-		this.mMainScene.getLayer(PLAYER_LAYER).addEntity(ball);
-		this.mMainScene.registerTouchArea(ball);
-	}
 	
-	public void createPlayerMenu(){
-		
-		mPlayerMenu = new MenuScene(this.mCamera);
-		mPlayerMenu.buildAnimations();
-		mPlayerMenu.setBackgroundEnabled(false);
-	}
-	public void loadPlayerMenuItems(){
-		
-		final IMenuItem deleteMenuItem = new ColorMenuItemDecorator(new TextMenuItem(PMENU_DELETE, this.mFont, "DELETE"), 1.0f,0.0f,0.0f, 0.0f,0.0f,0.0f);
-		deleteMenuItem.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-		menuItems.add(PMENU_DELETE, deleteMenuItem); 
-		mPlayerMenu.addMenuItem(deleteMenuItem);
+	
+	//////////TO DO
+	@Override
+	public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final ITouchArea pTouchArea, final float pTouchAreaLocalX, final float pTouchAreaLocalY) {
 
+		Sprite sprite = (Sprite) pTouchArea;
+		System.out.println("here");
+		if(sprite instanceof BallSprite){
+			
+			switch(pSceneTouchEvent.getAction()) {
+			case TouchEvent.ACTION_DOWN:
+				mBall.setScale(2.0f);
+				mBall.setmGrabbed(true);
+				break;
+			case TouchEvent.ACTION_MOVE:
+				if(mBall.ismGrabbed()) {
+					mBall.setPosition(pSceneTouchEvent.getX() - 48 / 2, pSceneTouchEvent.getY() - 48 / 2);
+				}
+				break;
+			case TouchEvent.ACTION_UP:
+				if(mBall.ismGrabbed()) {
+					mBall.setmGrabbed(false);
+					mBall.setScale(1.0f);
+				}
+				break;
+		}
+			//sprite.onAreaTouched(pSceneTouchEvent, pTouchAreaLocalX, pTouchAreaLocalY);
+		}
+		else if(sprite instanceof PlayerSprite){
+			
+			if(!LINE_ENABLED){
+				//sprite.onAreaTouched(pSceneTouchEvent, pTouchAreaLocalX, pTouchAreaLocalY);
+			}
+			
+			switch(pSceneTouchEvent.getAction()) {
+				case TouchEvent.ACTION_DOWN:
+					/*
+					this.setScale(2.0f);	
+					this.mGrabbed = true;
+					this.setPosition(pSceneTouchEvent.getX()-24, pSceneTouchEvent.getY()-24);
+					
+					startX = this.getX();
+					startY = this.getY();
+					
+					System.out.println(this.getTextureRegion().getHeight());
+					
+					//arrowLineWingLeft = new Line(startX, startY, startX-30, startY-30, 8);
+					//arrowLineWingRight = new Line(startX, startY, startX+30, startY-30, 8);
+					*/
+					
+					break;
+				case TouchEvent.ACTION_MOVE:
+					/*
+					if(this.mGrabbed) {
+	
+						this.setPosition(pSceneTouchEvent.getX()-24, pSceneTouchEvent.getY()-24);
+						moveX = this.getX();
+						moveY = this.getY();
+						
+						if(LINE_ENABLED){
+						
+							diff = MathUtils.distance(startX, startY, moveX, moveY);
+							
+							if(diff > 50){
+								
+								arrowLineMain = new Line(startX+24, startY+24, moveX+24, moveY+24, 8);
+								
+								mMainScene.getLayer(LINE_LAYER).addEntity(arrowLineMain);
+								lines.add(arrowLineMain);
+								startX = moveX;
+								startY = moveY;
+							}
+						}
+						
+					}*/
+					
+					break;
+				case TouchEvent.ACTION_UP:
+					/*
+					if(this.mGrabbed) {
+						
+						this.mGrabbed = false;
+						this.setScale(1.0f);
+						this.setPosition(pSceneTouchEvent.getX()-24, pSceneTouchEvent.getY()-24);
+	
+						endX = this.getX()+24;
+						endY = this.getY()+24;
+						
+						diff = MathUtils.distance(startX, startY, endX, endY);
+						xDiff = Math.calculateDifference(startX, endX) / diff;
+						yDiff = Math.calculateDifference(startY, endY) / diff;	
+						angleRad = (float) java.lang.Math.atan2(-xDiff, yDiff);
+						angleDeg = MathUtils.radToDeg(angleRad);
+						
+						System.out.println("Distance between start and end: " + diff);
+						System.out.println("pValueX: " + xDiff);
+						System.out.println("pValueY: " + yDiff);
+						System.out.println("Angle in radians: " + angleRad);
+						System.out.println("Angle in degrees: " + angleDeg);
+						
+							
+						
+					}*/
+					break;
+				}
 		
-		final IMenuItem hideMenuItem = new ColorMenuItemDecorator(new TextMenuItem(PMENU_HIDE, this.mFont, "HIDE"), 1.0f,0.0f,0.0f, 0.0f,0.0f,0.0f);
-		deleteMenuItem.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-		menuItems.add(PMENU_DELETE, hideMenuItem);
-		mPlayerMenu.addMenuItem(hideMenuItem);
+		}
 		
+		return false;
 	}
 }
 

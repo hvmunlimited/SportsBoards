@@ -6,13 +6,22 @@
 	<string name="football_string">Football</string>
 	<string name="basketball_string">Basketball</string>
 	
+	<!--Current Settings Menu Strings -->
+	
 	<string name="reset">Reset</string>
+	<string name="line_enable">Line Enable</string>
+	<string name="change_player_size">Change Player Size</string>
+	<string name="line_settings">Line Settings</string>
+	
+	
+	<!-- To be added -->
 	<string name="save">Save</string>
 	<string name="load">Load</string>
 	<string name="enable">Enable Zoom</string>
 	<string name="disable">Disable Zoom</string>
-	<string name="change_player_size">Change Player Size</string>
 	
+	
+	<!-- Player Menu Strings -->
 	<string name="delete_player">Remove this player</string>
 
 	<string name="check_license">Check license</string>
