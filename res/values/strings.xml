@@ -9,9 +9,22 @@
 	<!--Current Settings Menu Strings -->
 	
 	<string name="reset">Reset</string>
-	<string name="line_enable">Line Enable</string>
-	<string name="change_player_size">Change Player Size</string>
 	<string name="line_settings">Line Settings</string>
+	<string name="change_player_size">Change Player Size</string>
+	
+		
+		<!--  Line Settings Strings -->
+		<string name="line_enable">Line Enable</string>
+		<string name="line_color">Line Color</string>
+		
+			<!--  Line Color Strings -->
+			<string name="line_white">White</string>
+			<string name="line_black">Black</string>
+			<string name="line_red">Red</string>
+			<string name="line_green">Green</string>
+			<string name="line_blue">Blue</string>
+		
+		<string name="line_type">Line Type</string>
 	
 	
 	<!-- To be added -->

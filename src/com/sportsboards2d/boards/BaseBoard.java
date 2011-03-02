@@ -13,7 +13,6 @@ import org.anddev.andengine.engine.options.resolutionpolicy.RatioResolutionPolic
 import org.anddev.andengine.entity.IEntity;
 import org.anddev.andengine.entity.primitive.Line;
 import org.anddev.andengine.entity.scene.Scene;
-import org.anddev.andengine.entity.scene.Scene.IOnAreaTouchListener;
 import org.anddev.andengine.entity.scene.Scene.ITouchArea;
 import org.anddev.andengine.entity.scene.menu.MenuScene;
 import org.anddev.andengine.entity.scene.menu.item.IMenuItem;
@@ -33,6 +32,7 @@ import org.anddev.andengine.opengl.texture.Texture;
 import org.anddev.andengine.opengl.texture.TextureOptions;
 import org.anddev.andengine.opengl.texture.region.TextureRegion;
 import org.anddev.andengine.opengl.texture.region.TextureRegionFactory;
+import org.anddev.andengine.opengl.texture.region.TiledTextureRegion;
 import org.anddev.andengine.util.MathUtils;
 
 import android.graphics.Color;
@@ -44,10 +44,9 @@ import com.sportsboards2d.R;
 import com.sportsboards2d.db.Formation;
 import com.sportsboards2d.db.PlayerInfo;
 import com.sportsboards2d.db.parsing.XMLAccess;
-import com.sportsboards2d.db.parsing.XMLWriter;
 import com.sportsboards2d.sprites.BallSprite;
+import com.sportsboards2d.sprites.LineFactory;
 import com.sportsboards2d.sprites.PlayerSprite;
-import com.sportsboards2d.util.Math;
 
 /**
  * Coded by Nathan King
@@ -57,7 +56,7 @@ import com.sportsboards2d.util.Math;
  * Copyright 2011 5807400 Manitoba Inc. All rights reserved.
  */
 
-public abstract class BaseBoard extends Interface implements IOnAreaTouchListener{
+public abstract class BaseBoard extends Interface{
 	
 	// ===========================================================
 	// Constants
@@ -91,9 +90,9 @@ public abstract class BaseBoard extends Interface implements IOnAreaTouchListene
 	private Font mFont;
 	
 	protected TextureRegion mBackGroundTextureRegion;
-	protected TextureRegion mBallTextureRegion;
-	private TextureRegion mRedPlayerTextureRegion;
-	private TextureRegion mBluePlayerTextureRegion;
+	protected TiledTextureRegion mBallTextureRegion;
+	private TiledTextureRegion mRedPlayerTextureRegion;
+	private TiledTextureRegion mBluePlayerTextureRegion;
 	
 	private Formation currentFormation;
 	private List<PlayerSprite> players = new ArrayList<PlayerSprite>();
@@ -106,8 +105,6 @@ public abstract class BaseBoard extends Interface implements IOnAreaTouchListene
 	//private Camera mCamera;
 	
 	protected Scene mMainScene;
-	private boolean LARGE_PLAYERS = true;
-	private boolean LINE_ENABLED = false;
 	
 	private MenuScene mPlayerMenu;
 	
@@ -149,24 +146,46 @@ public abstract class BaseBoard extends Interface implements IOnAreaTouchListene
 		this.mBallTexture = new Texture(64, 64, TextureOptions.BILINEAR);
 		this.mRedPlayerTexture = new Texture(64, 64, TextureOptions.BILINEAR);
 		this.mBluePlayerTexture = new Texture(64, 64, TextureOptions.BILINEAR);
-		this.mRedPlayerTextureRegion = TextureRegionFactory.createFromAsset(this.mRedPlayerTexture, this, "48x48RED.png", 0, 0);
-		this.mBluePlayerTextureRegion = TextureRegionFactory.createFromAsset(this.mBluePlayerTexture, this, "48x48BLUE.png", 0, 0);
+		this.mRedPlayerTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mRedPlayerTexture, this, "48x48RED.png", 0, 0, 1, 1);
+		this.mBluePlayerTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mBluePlayerTexture, this, "48x48BLUE.png", 0, 0, 1, 1);
 		
 		this.mEngine.getTextureManager().loadTextures(this.mBackgroundTexture, this.mBluePlayerTexture, this.mRedPlayerTexture, this.mBallTexture);
 	}
 	@Override
 	public Scene onLoadScene(){
 		
-		super.onLoadScene();
-		this.mMainScene = new Scene(3);
-		
+		this.mMainScene = super.onLoadScene();
+				
 		this.mMainScene.setOnSceneTouchListener(this);
 		this.mMainScene.setOnAreaTouchListener(this);
 		this.mMainScene.setTouchAreaBindingEnabled(true);
+		
 		createPlayerMenu();
+		
+		this.mHoldDetector = new HoldDetector(new IHoldDetectorListener(){
+
+			@Override
+			public void onHold(HoldDetector arg0, long arg1, float arg2, float arg3){}
+
+			@Override
+			public void onHoldFinished(final HoldDetector pHoldDetector, long pHoldTimeMilliseconds, final float pHoldX, final float pHoldY){
+				
+				BaseBoard.this.loadPlayerMenuItems();
+				BaseBoard.this.menuItems.get(PMENU_DELETE).setPosition(pHoldX, pHoldY);
+				BaseBoard.this.menuItems.get(PMENU_HIDE).setPosition(pHoldX, pHoldY-48);
+				mPlayerMenu.setOnMenuItemClickListener(selectedPlayer);
+
+				BaseBoard.this.menuItems.clear();
+				mMainScene.setChildScene(mPlayerMenu, false, true, true);
+			}
+			
+		});
+		this.mHoldDetector.setTriggerHoldMinimumMilliseconds(400);
+		this.mMainScene.registerUpdateHandler(mHoldDetector);
 
 		this.mMainScene.getLayer(BACKGROUND_LAYER).addEntity(new Sprite(0, 0, this.mBackGroundTextureRegion));
 		this.currentFormation = loadFormation();
+		
 		showFormation(currentFormation);
 		
 		return mMainScene;
@@ -254,76 +273,64 @@ public abstract class BaseBoard extends Interface implements IOnAreaTouchListene
 		mPlayerMenu.addMenuItem(hideMenuItem);
 		
 	}
-	@Override
-	public boolean onCreateOptionsMenu(final Menu pMenu) {
-		 MenuInflater inflater = getMenuInflater();
-		 inflater.inflate(R.layout.settings_menu, pMenu);
-		 return true;
-	}
+	
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item){
 		
-		switch(item.getItemId()) {
+		if(!super.onOptionsItemSelected(item)){
 		
-			case R.id.line_enable:
-				
-				if(LINE_ENABLED){
-					LINE_ENABLED = false;
-				}
-				else{
-					LINE_ENABLED = true;
-				}
-				
-				return true;
-		
-			case R.id.reset:
-				
-				clearScene();
-				loadFormation();
-				showFormation(currentFormation);
-				
-				return true;
+			switch(item.getItemId()) {
 			
-			case R.id.change_player_size:
-				
-				currentFormation = saveFormation();
-				clearPlayers();
-				clearBall();
-				this.mRedPlayerTexture.clearTextureSources();
-				this.mBluePlayerTexture.clearTextureSources();
-				this.mBallTexture.clearTextureSources();
-								
-				this.mRedPlayerTexture = new Texture(64, 64, TextureOptions.BILINEAR);
-				this.mBluePlayerTexture = new Texture(64, 64, TextureOptions.BILINEAR);
-				
-				if(LARGE_PLAYERS){
+				case R.id.reset:
 					
-					this.mRedPlayerTextureRegion = TextureRegionFactory.createFromAsset(this.mRedPlayerTexture, this, "32x32RED.png", 0, 0);
-					this.mBluePlayerTextureRegion = TextureRegionFactory.createFromAsset(this.mBluePlayerTexture, this, "32x32BLUE.png", 0, 0);
-					this.mBallTextureRegion = TextureRegionFactory.createFromAsset(this.mBallTexture, this, BALL_PATH + "32.png", 0, 0);
-
-					LARGE_PLAYERS = false;
-				}
-				else{
+					clearScene();
+					loadFormation();
+					showFormation(currentFormation);
 					
-					this.mRedPlayerTextureRegion = TextureRegionFactory.createFromAsset(this.mRedPlayerTexture, this, "48x48RED.png", 0, 0);
-					this.mBluePlayerTextureRegion = TextureRegionFactory.createFromAsset(this.mBluePlayerTexture, this, "48x48BLUE.png", 0, 0);
-					this.mBallTextureRegion = TextureRegionFactory.createFromAsset(this.mBallTexture, this, BALL_PATH + "48.png", 0, 0);
-
-					LARGE_PLAYERS = true;
+					return true;
+				
+				case R.id.change_player_size:
 					
-				}
-				
-				this.mEngine.getTextureManager().loadTextures(this.mRedPlayerTexture, this.mBluePlayerTexture, this.mBallTexture);
-				
-				showFormation(currentFormation);
-				
-				return true;
-				
-			default:
-				return false;
+					currentFormation = saveFormation();
+					clearPlayers();
+					clearBall();
+					this.mRedPlayerTexture.clearTextureSources();
+					this.mBluePlayerTexture.clearTextureSources();
+					this.mBallTexture.clearTextureSources();
+									
+					this.mRedPlayerTexture = new Texture(64, 64, TextureOptions.BILINEAR);
+					this.mBluePlayerTexture = new Texture(64, 64, TextureOptions.BILINEAR);
+					
+					if(LARGE_PLAYERS){
+						
+						this.mRedPlayerTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mRedPlayerTexture, this, "32x32RED.png", 0, 0, 1, 1);
+						this.mBluePlayerTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mBluePlayerTexture, this, "32x32BLUE.png", 0, 0, 1, 1);
+						this.mBallTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mBallTexture, this, BALL_PATH + "32.png", 0, 0, 1, 1);
+	
+						LARGE_PLAYERS = false;
+					}
+					else{
+						
+						this.mRedPlayerTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mRedPlayerTexture, this, "48x48RED.png", 0, 0, 1, 1);
+						this.mBluePlayerTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mBluePlayerTexture, this, "48x48BLUE.png", 0, 0, 1, 1);
+						this.mBallTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mBallTexture, this, BALL_PATH + "48.png", 0, 0, 1, 1);
+	
+						LARGE_PLAYERS = true;
+						
+					}
+					
+					this.mEngine.getTextureManager().loadTextures(this.mRedPlayerTexture, this.mBluePlayerTexture, this.mBallTexture);
+					
+					showFormation(currentFormation);
+					
+					return true;
+			}
 		}
+		else{
+			return true;
+		}
+		return false;
 	}
 	
 	
@@ -381,9 +388,7 @@ public abstract class BaseBoard extends Interface implements IOnAreaTouchListene
 	
 	public void showFormation(Formation fn){
 		
-		
-		
-		TextureRegion tex = null;
+		TiledTextureRegion tex = null;
 		createBall(new BallSprite(fn.getBall().getX(), fn.getBall().getY(), this.mBallTextureRegion));
 		for(PlayerInfo p:fn.getPlayers()){
 			
@@ -398,105 +403,14 @@ public abstract class BaseBoard extends Interface implements IOnAreaTouchListene
 		}
 	}
 	
-	private void createPlayer(final PlayerInfo p, TextureRegion tex){
+	private void createPlayer(final PlayerInfo p, TiledTextureRegion tex){
 		
 		
 				
 		final PlayerSprite newPlayer = new PlayerSprite(p, tex){
 			
-			float startX, startY, endX, endY;
-			float moveX, moveY;
-			Line arrowLineMain = null;
-			//Line arrowLineWingLeft = null;
-			//Line arrowLineWingRight = null;
-			float xDiff, yDiff;
-			float diff;
-			float angleRad, angleDeg;
-			
-/*
-			@Override
-			
-			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY) throws NullPointerException{
-				selectedPlayer = this;
-				//mHold.
-				mHold.onTouchEvent(pSceneTouchEvent);
-			
-				
-				
-				switch(pSceneTouchEvent.getAction()) {
-					case TouchEvent.ACTION_DOWN:
-						
-						this.setScale(2.0f);	
-						this.mGrabbed = true;
-						this.setPosition(pSceneTouchEvent.getX()-24, pSceneTouchEvent.getY()-24);
-						
-						startX = this.getX();
-						startY = this.getY();
-						
-						System.out.println(this.getTextureRegion().getHeight());
-						
-						//arrowLineWingLeft = new Line(startX, startY, startX-30, startY-30, 8);
-						//arrowLineWingRight = new Line(startX, startY, startX+30, startY-30, 8);
-						
-						
-						break;
-					case TouchEvent.ACTION_MOVE:
-						if(this.mGrabbed) {
-
-							this.setPosition(pSceneTouchEvent.getX()-24, pSceneTouchEvent.getY()-24);
-							moveX = this.getX();
-							moveY = this.getY();
-							
-							if(LINE_ENABLED){
-							
-								diff = MathUtils.distance(startX, startY, moveX, moveY);
-								
-								if(diff > 50){
-									
-									arrowLineMain = new Line(startX+24, startY+24, moveX+24, moveY+24, 8);
-									
-									mMainScene.getLayer(LINE_LAYER).addEntity(arrowLineMain);
-									lines.add(arrowLineMain);
-									startX = moveX;
-									startY = moveY;
-								}
-							}
-							
-						}
-						break;
-					case TouchEvent.ACTION_UP:
-						if(this.mGrabbed) {
-							
-							this.mGrabbed = false;
-							this.setScale(1.0f);
-							this.setPosition(pSceneTouchEvent.getX()-24, pSceneTouchEvent.getY()-24);
-
-							endX = this.getX()+24;
-							endY = this.getY()+24;
-							
-							diff = MathUtils.distance(startX, startY, endX, endY);
-							xDiff = Math.calculateDifference(startX, endX) / diff;
-							yDiff = Math.calculateDifference(startY, endY) / diff;	
-							angleRad = (float) java.lang.Math.atan2(-xDiff, yDiff);
-							angleDeg = MathUtils.radToDeg(angleRad);
-							
-							System.out.println("Distance between start and end: " + diff);
-							System.out.println("pValueX: " + xDiff);
-							System.out.println("pValueY: " + yDiff);
-							System.out.println("Angle in radians: " + angleRad);
-							System.out.println("Angle in degrees: " + angleDeg);
-							
-								
-							
-						}
-						break;
-					}
-					return true;
-				}*/
 				@Override
 				public boolean onMenuItemClicked(final MenuScene pMenuScene, final IMenuItem pMenuItem, final float pMenuItemLocalX, final float pMenuItemLocalY){
-					
-					
 					
 					switch(pMenuItem.getID()) {
 	
@@ -517,6 +431,7 @@ public abstract class BaseBoard extends Interface implements IOnAreaTouchListene
 					        mMainScene.clearChildScene();
 					        mPlayerMenu.reset();
 					        mPlayerMenu = null;
+					        selectedPlayer = null;
 					        return true;
 					   
 					    case PMENU_HIDE:
@@ -532,31 +447,8 @@ public abstract class BaseBoard extends Interface implements IOnAreaTouchListene
 				}
 			};
 		
-		
-		newPlayer.setHoldDetector(new HoldDetector(new IHoldDetectorListener() {
-			
-			@Override
-			public void onHold(HoldDetector arg0, long arg1, float arg2, float arg3) {
-				
-			}
-
-			@Override
-			public void onHoldFinished(final HoldDetector pHoldDetector, long pHoldTimeMilliseconds, final float pHoldX, final float pHoldY){
-				BaseBoard.this.loadPlayerMenuItems();
-				BaseBoard.this.menuItems.get(PMENU_DELETE).setPosition(pHoldX, pHoldY);
-				BaseBoard.this.menuItems.get(PMENU_HIDE).setPosition(pHoldX, pHoldY-48);
-				mPlayerMenu.setOnMenuItemClickListener(newPlayer);
-
-				BaseBoard.this.menuItems.clear();
-				mMainScene.setChildScene(mPlayerMenu, false, true, true);
-				
-			}
-		}));
-		
 		this.mMainScene.getLayer(PLAYER_LAYER).addEntity(newPlayer);
-		this.mMainScene.registerTouchArea(newPlayer);
-		this.mMainScene.registerUpdateHandler(newPlayer.getHoldDetector());
-		//this.mMainScene.setOnAreaTouchListener(this);
+		this.mMainScene.registerTouchArea(newPlayer);		
 		this.players.add(newPlayer);
 	}
 	
@@ -566,110 +458,127 @@ public abstract class BaseBoard extends Interface implements IOnAreaTouchListene
 	@Override
 	public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final ITouchArea pTouchArea, final float pTouchAreaLocalX, final float pTouchAreaLocalY) {
 
-		Sprite sprite = (Sprite) pTouchArea;
-		System.out.println("here");
-		if(sprite instanceof BallSprite){
+		
+		PlayerSprite sprite = null; 
+		
+		float moveX, moveY;// endX, endY;
+		moveX = 0;
+		moveY = 0;
+	//	endX = 0;
+	//	endY = 0;
+		Line arrowLineMain = null;
+	//	float xDiff, yDiff;
+		float diff;
+	//	float angleRad, angleDeg;
+		
+		if((pTouchArea) instanceof BallSprite){
 			
 			switch(pSceneTouchEvent.getAction()) {
-			case TouchEvent.ACTION_DOWN:
-				mBall.setScale(2.0f);
-				mBall.setmGrabbed(true);
-				break;
-			case TouchEvent.ACTION_MOVE:
-				if(mBall.ismGrabbed()) {
-					mBall.setPosition(pSceneTouchEvent.getX() - 48 / 2, pSceneTouchEvent.getY() - 48 / 2);
-				}
-				break;
-			case TouchEvent.ACTION_UP:
-				if(mBall.ismGrabbed()) {
-					mBall.setmGrabbed(false);
-					mBall.setScale(1.0f);
-				}
-				break;
-		}
-			//sprite.onAreaTouched(pSceneTouchEvent, pTouchAreaLocalX, pTouchAreaLocalY);
-		}
-		else if(sprite instanceof PlayerSprite){
 			
-			if(!LINE_ENABLED){
-				//sprite.onAreaTouched(pSceneTouchEvent, pTouchAreaLocalX, pTouchAreaLocalY);
+				case TouchEvent.ACTION_DOWN:
+					
+					mBall.setScale(2.0f);
+					mBall.setmGrabbed(true);
+					break;
+					
+				case TouchEvent.ACTION_MOVE:
+					
+					if(mBall.ismGrabbed()) {
+						mBall.setPosition(pSceneTouchEvent.getX() - 48 / 2, pSceneTouchEvent.getY() - 48 / 2);
+					}
+					break;
+					
+				case TouchEvent.ACTION_UP:
+					
+					if(mBall.ismGrabbed()) {
+						mBall.setmGrabbed(false);
+						mBall.setScale(1.0f);
+					}
+					break;
 			}
+		}
+		else if((pTouchArea) instanceof PlayerSprite){
 			
+			mHoldDetector.onTouchEvent(pSceneTouchEvent);
+			sprite = (PlayerSprite) pTouchArea;
+			selectedPlayer = sprite;			
+
 			switch(pSceneTouchEvent.getAction()) {
 				case TouchEvent.ACTION_DOWN:
-					/*
-					this.setScale(2.0f);	
-					this.mGrabbed = true;
-					this.setPosition(pSceneTouchEvent.getX()-24, pSceneTouchEvent.getY()-24);
 					
-					startX = this.getX();
-					startY = this.getY();
+					sprite.setScale(2.0f);	
+					sprite.setmGrabbed(true);
 					
-					System.out.println(this.getTextureRegion().getHeight());
+					sprite.setPosition(pSceneTouchEvent.getX()-24, pSceneTouchEvent.getY()-24);
+					
+					sprite.setStartX(sprite.getX());
+					sprite.setStartY(sprite.getY());
+
+					//System.out.println(this.getTextureRegion().getHeight());
 					
 					//arrowLineWingLeft = new Line(startX, startY, startX-30, startY-30, 8);
 					//arrowLineWingRight = new Line(startX, startY, startX+30, startY-30, 8);
-					*/
+			
 					
 					break;
 				case TouchEvent.ACTION_MOVE:
-					/*
-					if(this.mGrabbed) {
+					
+					if(sprite.ismGrabbed()) {
 	
-						this.setPosition(pSceneTouchEvent.getX()-24, pSceneTouchEvent.getY()-24);
-						moveX = this.getX();
-						moveY = this.getY();
+						sprite.setPosition(pSceneTouchEvent.getX()-24, pSceneTouchEvent.getY()-24);
+						moveX = sprite.getX();
+						moveY = sprite.getY();
 						
 						if(LINE_ENABLED){
 						
-							diff = MathUtils.distance(startX, startY, moveX, moveY);
+							diff = MathUtils.distance(sprite.getStartX(), sprite.getStartY(), moveX, moveY);
 							
 							if(diff > 50){
 								
-								arrowLineMain = new Line(startX+24, startY+24, moveX+24, moveY+24, 8);
-								
+								arrowLineMain = LineFactory.createLine(sprite.getStartX()+24, sprite.getStartY()+24, moveX+24, moveY+24, 8);
 								mMainScene.getLayer(LINE_LAYER).addEntity(arrowLineMain);
 								lines.add(arrowLineMain);
-								startX = moveX;
-								startY = moveY;
+								sprite.setStartX(moveX);
+								sprite.setStartY(moveY);
 							}
 						}
 						
-					}*/
+					}
 					
 					break;
 				case TouchEvent.ACTION_UP:
-					/*
-					if(this.mGrabbed) {
+					
+					if(sprite.ismGrabbed()) {
 						
-						this.mGrabbed = false;
-						this.setScale(1.0f);
-						this.setPosition(pSceneTouchEvent.getX()-24, pSceneTouchEvent.getY()-24);
+						sprite.setmGrabbed(false);
+
+						sprite.setScale(1.0f);
+						sprite.setPosition(pSceneTouchEvent.getX()-24, pSceneTouchEvent.getY()-24);
 	
-						endX = this.getX()+24;
-						endY = this.getY()+24;
+						//endX = sprite.getX()+24;
+						//endY = sprite.getY()+24;
 						
-						diff = MathUtils.distance(startX, startY, endX, endY);
-						xDiff = Math.calculateDifference(startX, endX) / diff;
-						yDiff = Math.calculateDifference(startY, endY) / diff;	
-						angleRad = (float) java.lang.Math.atan2(-xDiff, yDiff);
-						angleDeg = MathUtils.radToDeg(angleRad);
+						//diff = MathUtils.distance(startX, startY, endX, endY);
+						//xDiff = Math.calculateDifference(startX, endX) / diff;
+						//yDiff = Math.calculateDifference(startY, endY) / diff;	
+						//angleRad = (float) java.lang.Math.atan2(-xDiff, yDiff);
+						//angleDeg = MathUtils.radToDeg(angleRad);
 						
-						System.out.println("Distance between start and end: " + diff);
-						System.out.println("pValueX: " + xDiff);
-						System.out.println("pValueY: " + yDiff);
-						System.out.println("Angle in radians: " + angleRad);
-						System.out.println("Angle in degrees: " + angleDeg);
+						//System.out.println("Distance between start and end: " + diff);
+						//System.out.println("pValueX: " + xDiff);
+						//System.out.println("pValueY: " + yDiff);
+						//System.out.println("Angle in radians: " + angleRad);
+						//System.out.println("Angle in degrees: " + angleDeg);
 						
 							
 						
-					}*/
+					}
 					break;
 				}
 		
 		}
 		
-		return false;
+		return true;
 	}
 }
 

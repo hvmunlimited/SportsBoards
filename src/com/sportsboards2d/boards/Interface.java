@@ -3,16 +3,28 @@ package com.sportsboards2d.boards;
 import org.anddev.andengine.engine.Engine;
 import org.anddev.andengine.engine.camera.Camera;
 import org.anddev.andengine.entity.scene.Scene;
+import org.anddev.andengine.entity.scene.Scene.IOnAreaTouchListener;
 import org.anddev.andengine.entity.scene.Scene.IOnSceneTouchListener;
 import org.anddev.andengine.extension.input.touch.controller.MultiTouch;
 import org.anddev.andengine.extension.input.touch.controller.MultiTouchException;
 import org.anddev.andengine.extension.input.touch.detector.PinchZoomDetector;
 import org.anddev.andengine.extension.input.touch.detector.PinchZoomDetector.IPinchZoomDetectorListener;
 import org.anddev.andengine.input.touch.TouchEvent;
+import org.anddev.andengine.input.touch.detector.HoldDetector;
 import org.anddev.andengine.input.touch.detector.ScrollDetector;
 import org.anddev.andengine.input.touch.detector.SurfaceScrollDetector;
 import org.anddev.andengine.input.touch.detector.ScrollDetector.IScrollDetectorListener;
+import org.anddev.andengine.opengl.texture.Texture;
+import org.anddev.andengine.opengl.texture.TextureOptions;
+import org.anddev.andengine.opengl.texture.region.TextureRegionFactory;
 import org.anddev.andengine.ui.activity.BaseGameActivity;
+
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+
+import com.sportsboards2d.R;
+import com.sportsboards2d.sprites.LineFactory;
 
 /**
  * Coded by Nathan King
@@ -22,7 +34,7 @@ import org.anddev.andengine.ui.activity.BaseGameActivity;
  * Copyright 2011 5807400 Manitoba Inc. All rights reserved.
  */
 
-public abstract class Interface extends BaseGameActivity implements IOnSceneTouchListener, IScrollDetectorListener, IPinchZoomDetectorListener{
+public abstract class Interface extends BaseGameActivity implements IOnAreaTouchListener, IOnSceneTouchListener, IScrollDetectorListener, IPinchZoomDetectorListener{
 	
 	// ===========================================================
 	// Constants
@@ -39,6 +51,10 @@ public abstract class Interface extends BaseGameActivity implements IOnSceneTouc
 	private SurfaceScrollDetector mScrollDetector;
 	private PinchZoomDetector mPinchZoomDetector;
 	private float mPinchZoomStartedCameraZoomFactor;
+	protected HoldDetector mHoldDetector;
+	
+	protected boolean LARGE_PLAYERS = true;
+	protected boolean LINE_ENABLED = false;
 	
 	@Override
 	public void onScroll(final ScrollDetector pScollDetector, final TouchEvent pTouchEvent, final float pDistanceX, final float pDistanceY) {
@@ -125,6 +141,12 @@ public abstract class Interface extends BaseGameActivity implements IOnSceneTouc
 	 */
 	@Override
 	public Scene onLoadScene() {
+		
+		Scene scene = new Scene(3);
+		
+		
+		
+		
 		this.mScrollDetector = new SurfaceScrollDetector(this);
 		if(MultiTouch.isSupportedByAndroidVersion()) {
 			try {
@@ -137,8 +159,55 @@ public abstract class Interface extends BaseGameActivity implements IOnSceneTouc
 		}
 		this.mPinchZoomDetector.setEnabled(false);
 		this.mScrollDetector.setEnabled(false);
-		return null;
+		return scene;
+	}
+	@Override
+	public boolean onCreateOptionsMenu(final Menu pMenu) {
+		 MenuInflater inflater = getMenuInflater();
+		 inflater.inflate(R.layout.settings_menu, pMenu);
+		 return true;
 	}
 	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item){
+		
+		switch(item.getItemId()) {
+		
+			case R.id.line_enable:
+				
+				if(LINE_ENABLED){
+					LINE_ENABLED = false;
+
+				}
+				else{
+					LINE_ENABLED = true;
+					item.setChecked(true);
+				}
+				
+				return true;
+				
+			case R.id.line_black:
+				item.setChecked(true);
+				LineFactory.setColor(item.getItemId());
+				return true;
+			case R.id.line_white:
+				item.setChecked(true);
+				LineFactory.setColor(item.getItemId());
+				return true;
+			case R.id.line_red:
+				item.setChecked(true);
+				LineFactory.setColor(item.getItemId());
+				return true;
+			case R.id.line_green:
+				item.setChecked(true);
+				LineFactory.setColor(item.getItemId());
+				return true;
+			case R.id.line_blue:
+				item.setChecked(true);
+				LineFactory.setColor(item.getItemId());
+				return true;
+		}
+		return false;
+	}
 	
 }

@@ -3,9 +3,51 @@
     <item android:id="@+id/reset"
           android:icon="@drawable/icon"
           android:title="@string/reset" />
-   <item android:id="@+id/line_enable"
+          
+    <item android:id="@+id/line_settings"
           android:icon="@drawable/icon"
-          android:title="@string/line_enable" />
+          android:title="@string/line_settings" >
+          <menu>
+          
+          	<group android:checkableBehavior="all">
+          
+	          	<item android:id="@+id/line_enable"
+	          		  android:icon="@drawable/icon"
+	          		  android:checked="false"
+	          		  android:title="@string/line_enable" />
+	        </group>
+	        
+          	<item android:id="@+id/line_color"
+          		  android:icon="@drawable/icon"
+          		  android:title="@string/line_color" />
+          		  
+          		  	<group android:checkableBehavior="single">
+          		  		<item android:id="@+id/line_white"
+	          		 		  android:icon="@drawable/icon"
+	          		  		  android:title="@string/line_white" />
+	          		  	<item android:id="@+id/line_black"
+	          		 		  android:icon="@drawable/icon"
+	          		  		  android:title="@string/line_black" />
+	          		  	<item android:id="@+id/line_red"
+	          		 		  android:icon="@drawable/icon"
+	          		  		  android:title="@string/line_red" />
+	          		  	<item android:id="@+id/line_green"
+	          		 		  android:icon="@drawable/icon"
+	          		  		  android:title="@string/line_green" />
+	          		  	<item android:id="@+id/line_blue"
+	          		 		  android:icon="@drawable/icon"
+	          		  		  android:title="@string/line_blue" />
+          		  	
+          		  	</group>
+          	
+          	<item android:id="@+id/line_type"
+          		  android:icon="@drawable/icon"
+          		  android:title="@string/line_type" />
+          
+          
+          </menu> 
+    </item>
+    
     <item android:id="@+id/change_player_size"
           android:icon="@drawable/icon"
           android:title="@string/change_player_size" />

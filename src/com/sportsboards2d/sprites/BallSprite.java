@@ -1,6 +1,6 @@
 package com.sportsboards2d.sprites;
 
-import org.anddev.andengine.opengl.texture.region.TextureRegion;
+import org.anddev.andengine.opengl.texture.region.TiledTextureRegion;
 
 /**
  * Coded by Nathan King
@@ -20,7 +20,8 @@ public class BallSprite extends BaseSprite{
 	 * Constructors
 	 */
 	
-	public BallSprite(float x, float y, TextureRegion tex){
+	public BallSprite(float x, float y, TiledTextureRegion tex){
 		super(x, y, tex);	
 	}
+	
 }
