@@ -9,10 +9,10 @@
 	<!--Current Settings Menu Strings -->
 	
 	<string name="reset">Reset</string>
-	<string name="line_settings">Line Settings</string>
-	<string name="change_player_size">Change Player Size</string>
+	<string name="line_clear">Clear Lines</string>
 	
-		
+	<string name="line_settings">Line Settings</string>
+
 		<!--  Line Settings Strings -->
 		<string name="line_enable">Line Enable</string>
 		<string name="line_color">Line Color</string>
@@ -26,6 +26,11 @@
 		
 		<string name="line_type">Line Type</string>
 	
+	<string name="player_settings">Player Settings</string>
+		<!--  Player Settings Strings -->
+		<string name="change_player_size">Change Player Size</string>
+	
+		
 	
 	<!-- To be added -->
 	<string name="save">Save</string>

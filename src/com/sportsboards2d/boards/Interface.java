@@ -14,11 +14,11 @@ import org.anddev.andengine.input.touch.detector.HoldDetector;
 import org.anddev.andengine.input.touch.detector.ScrollDetector;
 import org.anddev.andengine.input.touch.detector.SurfaceScrollDetector;
 import org.anddev.andengine.input.touch.detector.ScrollDetector.IScrollDetectorListener;
-import org.anddev.andengine.opengl.texture.Texture;
-import org.anddev.andengine.opengl.texture.TextureOptions;
-import org.anddev.andengine.opengl.texture.region.TextureRegionFactory;
 import org.anddev.andengine.ui.activity.BaseGameActivity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -143,10 +143,6 @@ public abstract class Interface extends BaseGameActivity implements IOnAreaTouch
 	public Scene onLoadScene() {
 		
 		Scene scene = new Scene(3);
-		
-		
-		
-		
 		this.mScrollDetector = new SurfaceScrollDetector(this);
 		if(MultiTouch.isSupportedByAndroidVersion()) {
 			try {
@@ -208,6 +204,30 @@ public abstract class Interface extends BaseGameActivity implements IOnAreaTouch
 				return true;
 		}
 		return false;
+	}
+	
+	@Override
+	public boolean onKeyDown(int key, KeyEvent event){
+		
+		if(key == KeyEvent.KEYCODE_BACK){
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setMessage("Are you sure you want to exit?")
+			       .setCancelable(false)
+			       .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+			           public void onClick(DialogInterface dialog, int id) {
+			                Interface.this.finish();
+			           }
+			       })
+			       .setNegativeButton("No", new DialogInterface.OnClickListener() {
+			           public void onClick(DialogInterface dialog, int id) {
+			                dialog.cancel();
+			           }
+			       });
+			AlertDialog alert = builder.create();
+			alert.show();
+			return true;
+		}
+		return super.onKeyDown(key, event);
 	}
 	
 }

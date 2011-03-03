@@ -3,13 +3,8 @@ package com.sportsboards2d.launcher;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.ContextMenu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.ListView;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 
 import com.sportsboards2d.R;
 
@@ -38,5 +33,6 @@ public class Launcher extends ListActivity{
 		super.onListItemClick(lv, v, position, id);
 		Activity act = (Activity) this.getListAdapter().getItem(position);
 		this.startActivity(new Intent(this, act.Class));
+		this.finish();
 	}	
 }

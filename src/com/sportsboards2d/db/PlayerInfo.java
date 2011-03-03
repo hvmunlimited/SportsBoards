@@ -1,5 +1,6 @@
 package com.sportsboards2d.db;
 
+
 /**
  * Coded by Nathan King
  */
@@ -45,5 +46,14 @@ public class PlayerInfo{
 		this.coords = coords;
 	}
 	
+	public String getInitials(){
+		
+		String result = "";
+		int index;
+		result += pName.charAt(0);
+		index = pName.indexOf(" ");
+		result += pName.charAt(index+1);
+		return result;
+	}
 	
 }

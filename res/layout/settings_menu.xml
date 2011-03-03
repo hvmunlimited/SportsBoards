@@ -4,6 +4,10 @@
           android:icon="@drawable/icon"
           android:title="@string/reset" />
           
+    <item android:id="@+id/line_clear"
+          android:icon="@drawable/icon"
+          android:title="@string/line_clear" />
+                 
     <item android:id="@+id/line_settings"
           android:icon="@drawable/icon"
           android:title="@string/line_settings" >
@@ -48,8 +52,16 @@
           </menu> 
     </item>
     
-    <item android:id="@+id/change_player_size"
+    <item android:id="@+id/player_settings"
           android:icon="@drawable/icon"
-          android:title="@string/change_player_size" />
+          android:title="@string/player_settings" >
+          
+          <menu>
+          	 <item android:id="@+id/change_player_size"
+          		   android:icon="@drawable/icon"
+         		   android:title="@string/change_player_size" />
+   
+          </menu>
+   </item>
    
 </menu>
