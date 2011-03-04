@@ -62,13 +62,10 @@ public abstract class BaseBoard extends Interface{
 	// Constants
 	// ===========================================================
 
-	private final int BACKGROUND_LAYER = 0;
-	private final int LINE_LAYER = 1;
-	private final int PLAYER_LAYER = 2;
+
 	
 	private List<IMenuItem> menuItems = new ArrayList<IMenuItem>();
-	private final int PMENU_DELETE = 0;
-	private final int PMENU_HIDE = 1;
+
 
 	// ===========================================================
 	// Fields
@@ -85,9 +82,10 @@ public abstract class BaseBoard extends Interface{
 	private Texture mRedPlayerTexture;
 	private Texture mBluePlayerTexture;
 	
+	
+	
 	private Texture mPlayerMenuFontTexture;
 	private Texture mPlayerInfoFontTexture;
-	private Texture mPlayerInfoTexture;
 	
 	private Font mPlayerMenuFont;
 	private Font mPlayerInfoFont;
@@ -106,7 +104,7 @@ public abstract class BaseBoard extends Interface{
 	
 	private PlayerSprite selectedPlayer;
 	
-	private Scene mMainScene;
+	protected Scene mMainScene;
 	private MenuScene mPlayerMenu;
 	
 	
@@ -133,8 +131,8 @@ public abstract class BaseBoard extends Interface{
 	}
 	@Override
 	public void onLoadResources(){
-		
-		FontFactory.setAssetBasePath("font/");
+
+		super.onLoadResources();
 		//load menu textures
 		this.mPlayerMenuFontTexture = new Texture(128, 128, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
 		this.mPlayerMenuFont = FontFactory.createFromAsset(this.mPlayerMenuFontTexture, this, "Vera.ttf", 36, true, Color.RED);
@@ -163,7 +161,6 @@ public abstract class BaseBoard extends Interface{
 		
 		this.mMainScene = super.onLoadScene();
 				
-		this.mMainScene.setOnSceneTouchListener(this);
 		this.mMainScene.setOnAreaTouchListener(this);
 		this.mMainScene.setTouchAreaBindingEnabled(true);
 		
@@ -267,6 +264,7 @@ public abstract class BaseBoard extends Interface{
 		mPlayerMenu.setBackgroundEnabled(false);
 	}
 	public void loadPlayerMenuItems(){
+		
 		createPlayerMenu();
 		final IMenuItem deleteMenuItem = new ColorMenuItemDecorator(new TextMenuItem(PMENU_DELETE, this.mPlayerMenuFont, "DELETE"), 1.0f,0.0f,0.0f, 0.0f,0.0f,0.0f);
 		deleteMenuItem.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
@@ -281,68 +279,69 @@ public abstract class BaseBoard extends Interface{
 		
 	}
 	
-	
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item){
-		
-		if(!super.onOptionsItemSelected(item)){
-		
-			switch(item.getItemId()) {
+	public boolean onMenuItemClicked(final MenuScene pMenuScene, final IMenuItem pMenuItem, final float pMenuItemLocalX, final float pMenuItemLocalY) {
+		switch(pMenuItem.getID()) {
 			
-				case R.id.reset:
-					
-					clearScene();
-					loadFormation();
-					showFormation(currentFormation);
-					
-					return true;
-					
-				case R.id.line_clear:
-					this.clearLines();
-					return true;
+			case MAIN_MENU_RESET:
 				
+				this.mMainMenu.back();
+				clearScene();
+				loadFormation();
+				showFormation(currentFormation);
+
+				return true;
+
+			case MAIN_MENU_CLEARLINES:
 				
-				case R.id.change_player_size:
-					
-					currentFormation = saveFormation();
-					clearPlayers();
-					clearBall();
-					this.mRedPlayerTexture.clearTextureSources();
-					this.mBluePlayerTexture.clearTextureSources();
-					this.mBallTexture.clearTextureSources();
-									
-					this.mRedPlayerTexture = new Texture(64, 64, TextureOptions.BILINEAR);
-					this.mBluePlayerTexture = new Texture(64, 64, TextureOptions.BILINEAR);
-					
-					if(LARGE_PLAYERS){
-						
-						this.mRedPlayerTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mRedPlayerTexture, this, "32x32RED.png", 0, 0, 1, 1);
-						this.mBluePlayerTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mBluePlayerTexture, this, "32x32BLUE.png", 0, 0, 1, 1);
-						this.mBallTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mBallTexture, this, BALL_PATH + "32.png", 0, 0, 1, 1);
-	
-						LARGE_PLAYERS = false;
-					}
-					else{
-						
-						this.mRedPlayerTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mRedPlayerTexture, this, "48x48RED.png", 0, 0, 1, 1);
-						this.mBluePlayerTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mBluePlayerTexture, this, "48x48BLUE.png", 0, 0, 1, 1);
-						this.mBallTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mBallTexture, this, BALL_PATH + "48.png", 0, 0, 1, 1);
-	
-						LARGE_PLAYERS = true;
-						
-					}
-					
-					this.mEngine.getTextureManager().loadTextures(this.mRedPlayerTexture, this.mBluePlayerTexture, this.mBallTexture);
-					
-					showFormation(currentFormation);
-					
-					return true;
-			}
+				this.mMainMenu.back();
+				this.clearLines();
+				
+				return true;
+				
+			case MAIN_MENU_SETTINGS:
+				
+				super.onMenuItemClicked(pMenuScene, pMenuItem, pMenuItemLocalX, pMenuItemLocalY);
+				
+				return true;
+				
+			case SETTINGS_PLAYER_SIZE:
+
+				currentFormation = saveFormation();
+				clearPlayers();
+				clearBall();
+				this.mRedPlayerTexture.clearTextureSources();
+				this.mBluePlayerTexture.clearTextureSources();
+				this.mBallTexture.clearTextureSources();
+				this.mRedPlayerTexture = new Texture(64, 64, TextureOptions.BILINEAR);
+				this.mBluePlayerTexture = new Texture(64, 64, TextureOptions.BILINEAR);
+
+				if(LARGE_PLAYERS){
+
+					this.mRedPlayerTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mRedPlayerTexture, this, "32x32RED.png", 0, 0, 1, 1);
+					this.mBluePlayerTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mBluePlayerTexture, this, "32x32BLUE.png", 0, 0, 1, 1);
+					this.mBallTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mBallTexture, this, BALL_PATH + "32.png", 0, 0, 1, 1);
+
+					LARGE_PLAYERS = false;
+				}
+				else{
+					this.mRedPlayerTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mRedPlayerTexture, this, "48x48RED.png", 0, 0, 1, 1);
+					this.mBluePlayerTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mBluePlayerTexture, this, "48x48BLUE.png", 0, 0, 1, 1);
+					this.mBallTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mBallTexture, this, BALL_PATH + "48.png", 0, 0, 1, 1);
+
+					LARGE_PLAYERS = true;
+
+				}
+
+				this.mEngine.getTextureManager().loadTextures(this.mRedPlayerTexture, this.mBluePlayerTexture, this.mBallTexture);
+
+				showFormation(currentFormation);
+
+				return true;
+				
+			default:
+				return false;
 		}
-		else{
-			return true;
-		}
-		return false;
 	}
 	
 	
@@ -453,13 +452,19 @@ public abstract class BaseBoard extends Interface{
 					    	return true;
 					    default:
 					        return false;
-					}
-							
+					}	
 				}
 			};
 		
-		playerText = new ChangeableText(0, 0, this.mPlayerInfoFont, p.getInitials());
-		//newPlayer.setTextInfo(playerText);
+		playerText = new ChangeableText(+15, -30, this.mPlayerInfoFont, p.getInitials());
+		newPlayer.addDisplayInfo(playerText);
+		playerText = new ChangeableText(+50, +10, this.mPlayerInfoFont, p.getType());
+		newPlayer.addDisplayInfo(playerText);
+		playerText = new ChangeableText(+20, +50, this.mPlayerInfoFont, "0");
+		newPlayer.addDisplayInfo(playerText);
+
+		newPlayer.setupDisplay();
+		
 		this.mMainScene.getChild(PLAYER_LAYER).attachChild(newPlayer);
 		this.mMainScene.registerTouchArea(newPlayer);		
 	
@@ -515,10 +520,10 @@ public abstract class BaseBoard extends Interface{
 			selectedPlayer = sprite;
 			
 			if(sprite.getPlayerInfo().getTeamColor().equalsIgnoreCase("red")){
-				LineFactory.setColor(R.id.line_red);
+				LineFactory.setColor(LineFactory.RED);
 			}
 			else if(sprite.getPlayerInfo().getTeamColor().equalsIgnoreCase("blue")){
-				LineFactory.setColor(R.id.line_blue);
+				LineFactory.setColor(LineFactory.BLUE);
 			}
 
 			switch(pSceneTouchEvent.getAction()) {
@@ -528,7 +533,7 @@ public abstract class BaseBoard extends Interface{
 					sprite.setmGrabbed(true);
 					
 					sprite.setPosition(pSceneTouchEvent.getX()-24, pSceneTouchEvent.getY()-24);
-					//sprite.attachChild(sprite.getTextInfo());
+					sprite.displayInfo(true);
 
 					sprite.setStartX(sprite.getX());
 					sprite.setStartY(sprite.getY());
@@ -567,8 +572,8 @@ public abstract class BaseBoard extends Interface{
 						sprite.setScale(1.0f);
 						sprite.setPosition(pSceneTouchEvent.getX()-24, pSceneTouchEvent.getY()-24);
 						
-						//sprite.detachChild(sprite.getTextInfo());
-						
+						sprite.displayInfo(false);
+
 						
 						
 						

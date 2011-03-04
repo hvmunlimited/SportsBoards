@@ -3,6 +3,8 @@
  */
 package com.sportsboards2d.sprites;
 
+import java.util.List;
+
 import org.anddev.andengine.entity.scene.menu.MenuScene;
 import org.anddev.andengine.entity.scene.menu.MenuScene.IOnMenuItemClickListener;
 import org.anddev.andengine.entity.scene.menu.item.IMenuItem;
@@ -22,10 +24,11 @@ public abstract class BaseSprite extends AnimatedSprite implements IOnMenuItemCl
 	
 	private boolean mGrabbed;
 	private float startX, startY;
-	private ChangeableText textInfo;
+	protected List<ChangeableText> displayInfo;
 	
 	public BaseSprite(float pX, float pY, TiledTextureRegion pTextureRegion) {
 		super(pX, pY, pTextureRegion);
+		displayInfo = new SmartList<ChangeableText>();
 		// TODO Auto-generated constructor stub
 	}
 	
@@ -59,11 +62,10 @@ public abstract class BaseSprite extends AnimatedSprite implements IOnMenuItemCl
 		return this.startX;
 	}
 
-	public void setTextInfo(SmartList<ChangeableText> textInfo) {
-		//this.textInfo = textInfo;
+	public void addDisplayInfo(ChangeableText displayInfo) {
+		this.displayInfo.add(displayInfo);
 	}
-
-	public ChangeableText getTextInfo() {
-		return this.textInfo;
+	public ChangeableText getDisplayInfo(int index) {
+		return displayInfo.get(index);
 	}
 }
