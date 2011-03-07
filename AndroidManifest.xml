@@ -22,7 +22,9 @@
 			android:screenOrientation="landscape" />
 		<activity android:name="com.sportsboards2d.boards.BBallBoard"
 			android:screenOrientation="landscape" />	
-			
+		
+		<activity android:name="com.sportsboards2d.boards.SaveForm"
+			android:screenOrientation="landscape" />
 		
 
 	</application>

@@ -1,12 +1,6 @@
 package com.sportsboards2d.sprites;
 
 import org.anddev.andengine.entity.primitive.Line;
-//import com.sportsboards2d.R;
-/**
- * Coded by Nathan King
- */
-
-import com.sportsboards2d.R;
 	
 /**
  * Copyright 2011 5807400 Manitoba Inc. All rights reserved.

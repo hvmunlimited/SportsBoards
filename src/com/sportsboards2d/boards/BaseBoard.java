@@ -3,8 +3,6 @@ package com.sportsboards2d.boards;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.microedition.khronos.opengles.GL10;
-
 import org.anddev.andengine.engine.Engine;
 import org.anddev.andengine.engine.camera.Camera;
 import org.anddev.andengine.engine.options.EngineOptions;
@@ -16,8 +14,6 @@ import org.anddev.andengine.entity.scene.Scene;
 import org.anddev.andengine.entity.scene.Scene.ITouchArea;
 import org.anddev.andengine.entity.scene.menu.MenuScene;
 import org.anddev.andengine.entity.scene.menu.item.IMenuItem;
-import org.anddev.andengine.entity.scene.menu.item.TextMenuItem;
-import org.anddev.andengine.entity.scene.menu.item.decorator.ColorMenuItemDecorator;
 import org.anddev.andengine.entity.shape.Shape;
 import org.anddev.andengine.entity.sprite.Sprite;
 import org.anddev.andengine.entity.text.ChangeableText;
@@ -25,8 +21,6 @@ import org.anddev.andengine.extension.input.touch.controller.MultiTouch;
 import org.anddev.andengine.extension.input.touch.controller.MultiTouchController;
 import org.anddev.andengine.extension.input.touch.controller.MultiTouchException;
 import org.anddev.andengine.input.touch.TouchEvent;
-import org.anddev.andengine.input.touch.detector.HoldDetector;
-import org.anddev.andengine.input.touch.detector.HoldDetector.IHoldDetectorListener;
 import org.anddev.andengine.opengl.font.Font;
 import org.anddev.andengine.opengl.font.FontFactory;
 import org.anddev.andengine.opengl.texture.Texture;
@@ -36,10 +30,9 @@ import org.anddev.andengine.opengl.texture.region.TextureRegionFactory;
 import org.anddev.andengine.opengl.texture.region.TiledTextureRegion;
 import org.anddev.andengine.util.MathUtils;
 
+import android.content.Intent;
 import android.graphics.Color;
-import android.view.MenuItem;
 
-import com.sportsboards2d.R;
 import com.sportsboards2d.db.Formation;
 import com.sportsboards2d.db.PlayerInfo;
 import com.sportsboards2d.db.parsing.XMLAccess;
@@ -47,6 +40,7 @@ import com.sportsboards2d.db.parsing.XMLWriter;
 import com.sportsboards2d.sprites.BallSprite;
 import com.sportsboards2d.sprites.LineFactory;
 import com.sportsboards2d.sprites.PlayerSprite;
+import com.sportsboards2d.util.Constants;
 
 /**
  * Coded by Nathan King
@@ -64,7 +58,6 @@ public abstract class BaseBoard extends Interface{
 
 
 	
-	private List<IMenuItem> menuItems = new ArrayList<IMenuItem>();
 
 
 	// ===========================================================
@@ -100,12 +93,11 @@ public abstract class BaseBoard extends Interface{
 	private List<Line>lines = new ArrayList<Line>();
 	private BallSprite mBall;
 	
-	private List<Shape> undoList = new ArrayList<Shape>();
+	//private List<Shape> undoList = new ArrayList<Shape>();
 	
-	private PlayerSprite selectedPlayer;
 	
 	protected Scene mMainScene;
-	private MenuScene mPlayerMenu;
+	//Eprivate MenuScene mPlayerMenu;
 	
 	
 	// ===========================================================
@@ -164,30 +156,8 @@ public abstract class BaseBoard extends Interface{
 		this.mMainScene.setOnAreaTouchListener(this);
 		this.mMainScene.setTouchAreaBindingEnabled(true);
 		
-		createPlayerMenu();
-		
-		this.mHoldDetector = new HoldDetector(new IHoldDetectorListener(){
-
-			@Override
-			public void onHold(HoldDetector arg0, long arg1, float arg2, float arg3){}
-
-			@Override
-			public void onHoldFinished(final HoldDetector pHoldDetector, long pHoldTimeMilliseconds, final float pHoldX, final float pHoldY){
-				
-				BaseBoard.this.loadPlayerMenuItems();
-				BaseBoard.this.menuItems.get(PMENU_DELETE).setPosition(pHoldX+24, pHoldY);
-				BaseBoard.this.menuItems.get(PMENU_HIDE).setPosition(pHoldX+24, pHoldY-48);
-				mPlayerMenu.setOnMenuItemClickListener(selectedPlayer);
-
-				BaseBoard.this.menuItems.clear();
-				mMainScene.setChildScene(mPlayerMenu, false, true, true);
-			}
-			
-		});
-		this.mHoldDetector.setTriggerHoldMinimumMilliseconds(400);
-		this.mMainScene.registerUpdateHandler(mHoldDetector);
-
 		this.mMainScene.getChild(BACKGROUND_LAYER).attachChild(new Sprite(0, 0, this.mBackGroundTextureRegion));
+		
 		this.currentFormation = loadFormation();
 		
 		showFormation(currentFormation);
@@ -257,33 +227,30 @@ public abstract class BaseBoard extends Interface{
 		this.mMainScene.registerTouchArea(mBall);
 	}
 	
-	public void createPlayerMenu(){
-		
-		mPlayerMenu = new MenuScene(this.mCamera);
-		mPlayerMenu.buildAnimations();
-		mPlayerMenu.setBackgroundEnabled(false);
-	}
-	public void loadPlayerMenuItems(){
-		
-		createPlayerMenu();
-		final IMenuItem deleteMenuItem = new ColorMenuItemDecorator(new TextMenuItem(PMENU_DELETE, this.mPlayerMenuFont, "DELETE"), 1.0f,0.0f,0.0f, 0.0f,0.0f,0.0f);
-		deleteMenuItem.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-		menuItems.add(PMENU_DELETE, deleteMenuItem); 
-		mPlayerMenu.addMenuItem(deleteMenuItem);
-
-		
-		final IMenuItem hideMenuItem = new ColorMenuItemDecorator(new TextMenuItem(PMENU_HIDE, this.mPlayerMenuFont, "HIDE"), 1.0f,0.0f,0.0f, 0.0f,0.0f,0.0f);
-		deleteMenuItem.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-		menuItems.add(PMENU_DELETE, hideMenuItem);
-		mPlayerMenu.addMenuItem(hideMenuItem);
-		
-	}
-	
 	@Override
 	public boolean onMenuItemClicked(final MenuScene pMenuScene, final IMenuItem pMenuItem, final float pMenuItemLocalX, final float pMenuItemLocalY) {
 		switch(pMenuItem.getID()) {
 			
-			case MAIN_MENU_RESET:
+			case Constants.MAIN_MENU_SETTINGS:
+				super.onMenuItemClicked(pMenuScene, pMenuItem, pMenuItemLocalX, pMenuItemLocalY);
+				return true;
+			case Constants.SETTINGS_MENU_LINE:
+				super.onMenuItemClicked(pMenuScene, pMenuItem, pMenuItemLocalX, pMenuItemLocalY);
+				return true;		
+			case Constants.SETTINGS_LINE_ENABLE:
+				super.onMenuItemClicked(pMenuScene, pMenuItem, pMenuItemLocalX, pMenuItemLocalY);
+				return true;	
+			case Constants.SETTINGS_LINE_COLOR:
+				super.onMenuItemClicked(pMenuScene, pMenuItem, pMenuItemLocalX, pMenuItemLocalY);
+				return true;
+			case Constants.SETTINGS_LINE_TYPE:
+				super.onMenuItemClicked(pMenuScene, pMenuItem, pMenuItemLocalX, pMenuItemLocalY);
+				return true;
+			case Constants.SETTINGS_MENU_PLAYER:
+				super.onMenuItemClicked(pMenuScene, pMenuItem, pMenuItemLocalX, pMenuItemLocalY);
+				return true;
+			
+			case Constants.MAIN_MENU_RESET:
 				
 				this.mMainMenu.back();
 				clearScene();
@@ -292,22 +259,26 @@ public abstract class BaseBoard extends Interface{
 
 				return true;
 
-			case MAIN_MENU_CLEARLINES:
+			case Constants.MAIN_MENU_CLEARLINES:
 				
 				this.mMainMenu.back();
 				this.clearLines();
 				
 				return true;
 				
-			case MAIN_MENU_SETTINGS:
+			case Constants.MAIN_MENU_SAVE:
 				
-				super.onMenuItemClicked(pMenuScene, pMenuItem, pMenuItemLocalX, pMenuItemLocalY);
+				this.startActivityForResult(new Intent(this, SaveForm.class), 0);
 				
 				return true;
 				
-			case SETTINGS_PLAYER_SIZE:
+			case Constants.MAIN_MENU_LOAD:
+				
+				return true;
+				
+			case Constants.SETTINGS_PLAYER_SIZE:
 
-				currentFormation = saveFormation();
+				currentFormation = captureFormation();
 				clearPlayers();
 				clearBall();
 				this.mRedPlayerTexture.clearTextureSources();
@@ -336,7 +307,7 @@ public abstract class BaseBoard extends Interface{
 				this.mEngine.getTextureManager().loadTextures(this.mRedPlayerTexture, this.mBluePlayerTexture, this.mBallTexture);
 
 				showFormation(currentFormation);
-
+				this.mMainMenu.back();
 				return true;
 				
 			default:
@@ -355,7 +326,7 @@ public abstract class BaseBoard extends Interface{
 	 * Capture player & ball positions, save them in XML format to internal storage
 	 */
 	
-	public Formation saveFormation(){
+	public Formation captureFormation(){
 		
 		Formation fn = new Formation();
 		ArrayList<PlayerInfo> playerList = new ArrayList<PlayerInfo>();
@@ -376,9 +347,7 @@ public abstract class BaseBoard extends Interface{
 		}
 		fn.setBall(mBall.getX(), mBall.getY());
 		fn.setPlayers(playerList);
-		fn.setName("testing");
-		XMLWriter.writeFormation(this, fn, SPORT_NAME.toLowerCase());
-		
+		currentFormation = fn;
 		return fn;
 		
 	}
@@ -425,7 +394,7 @@ public abstract class BaseBoard extends Interface{
 					
 					switch(pMenuItem.getID()) {
 	
-					    case PMENU_DELETE:
+					    case Constants.PMENU_DELETE:
 					    	
 					    	mEngine.runOnUpdateThread(new Runnable() {
 					    	
@@ -437,18 +406,14 @@ public abstract class BaseBoard extends Interface{
 					    		}
 
 					    	});
-					    	
 					        /* Remove the menu and reset it. */
 					        mMainScene.clearChildScene();
-					        mPlayerMenu.reset();
-					        mPlayerMenu = null;
+
 					        return true;
 					   
-					    case PMENU_HIDE:
-					    	selectedPlayer = null;
+					    case Constants.PMENU_HIDE:
 					    	mMainScene.clearChildScene();
-					    	mPlayerMenu.reset();
-					    	mPlayerMenu = null;
+
 					    	return true;
 					    default:
 					        return false;
@@ -603,6 +568,14 @@ public abstract class BaseBoard extends Interface{
 		
 		return true;
 	}
-	
+	@Override
+	protected void onActivityResult(int requestCode, int receiveCode, Intent intent){
+		
+		System.out.println(intent.getType());
+		captureFormation();
+		currentFormation.setName(intent.getType());
+		XMLWriter.writeFormation(this, currentFormation, SPORT_NAME.toLowerCase());
+
+	}
 }
 
