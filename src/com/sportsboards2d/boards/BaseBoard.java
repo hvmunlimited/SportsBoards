@@ -575,11 +575,19 @@ public abstract class BaseBoard extends Interface{
 	@Override
 	protected void onActivityResult(int requestCode, int receiveCode, Intent intent){
 		
-		System.out.println(intent.getType());
 		captureFormation();
 		currentFormation.setName(intent.getType());
-		XMLWriter.writeFormation(this, currentFormation, SPORT_NAME.toLowerCase());
+		
+		XMLAccess.writeFormation(this, currentFormation, SPORT_NAME.toLowerCase());
 
+	}
+	@Override
+	public void finish(){
+		Configuration config = new Configuration(LINE_ENABLED, true, SPORT_NAME, LARGE_PLAYERS);
+		
+		XMLAccess.writeConfig(this, config, "config");
+		
+		super.finish();
 	}
 }
 

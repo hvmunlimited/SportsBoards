@@ -14,6 +14,7 @@ import org.xmlpull.v1.XmlSerializer;
 import android.content.Context;
 import android.util.Xml;
 
+import com.sportsboards2d.db.Configuration;
 import com.sportsboards2d.db.Formation;
 import com.sportsboards2d.db.PlayerInfo;
 
@@ -26,8 +27,10 @@ import com.sportsboards2d.db.PlayerInfo;
  */
 
 public class XMLWriter{
+	
+	public XMLWriter(){}
 		
-	public static String writeFormation(final Context context, Formation fn, String path){
+	public String writeFormation(final Context context, Formation fn, String path){
 		
 		FileOutputStream fOut;
 		XmlSerializer serializer = Xml.newSerializer();
@@ -90,8 +93,65 @@ public class XMLWriter{
 
 	}
 	
+	public String writeConfig(final Context context, Configuration config, String path){
+		
+		FileOutputStream fOut;
+		XmlSerializer serializer = Xml.newSerializer();
+	    StringWriter writer = new StringWriter();
+	    
+	    String playerSize = "false";
+	    String load = "false";
+	    String line = "false";
+	    
+	    if(config.isLargePlayers()){
+	    	playerSize = "true";
+	    }
+	    if(config.isLastLoaded()){
+	    	load = "true";
+	    }
+	    if(config.isLineEnabled()){
+	    	line = "true";
+	    }
+	    
+	    try {
+			fOut = context.openFileOutput(path, Context.MODE_PRIVATE);
+			
+	    	serializer.setOutput(writer);
+	    	serializer.startDocument("UTF-8", true);
+	    	
+	    	serializer.startTag("", "config");
+	    	
+	    	serializer.startTag("", "player_size");
+	    	serializer.text(playerSize);
+	    	serializer.endTag("", "player_size");
+	    	
+	    	serializer.startTag("", "line_enabled");
+	    	serializer.text(line);
+	    	serializer.endTag("", "line_enabled");
+	    	
+	    	serializer.startTag("", "last_loaded");
+	    	serializer.text(load);
+	    	serializer.endTag("", "last_loaded");
+	    	
+	    	serializer.startTag("", "default_sport");
+	    	serializer.text(config.getDefault_sport());
+	    	serializer.endTag("", "default_sport");
+	    	
+	    	serializer.endTag("", "config");
+		
+	    	String str = writer.toString();
+			fOut.write(str.getBytes());
+			fOut.close();
+	        
+	        return writer.toString();
+	    } catch (Exception e) {
+	        throw new RuntimeException(e);
+	    } 
+
+	}
+	
 	@SuppressWarnings("unused")
-	private static String convertStreamToString(InputStream input) throws IOException{
+	private String convertStreamToString(InputStream input) throws IOException{
 		
 		if(input != null){
 			Writer writer = new StringWriter();

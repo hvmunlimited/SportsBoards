@@ -287,19 +287,15 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 	}
 	@Override
 	public boolean onMenuItemClicked(final MenuScene pMenuScene, final IMenuItem pMenuItem, final float pMenuItemLocalX, final float pMenuItemLocalY) {
-		
-		System.out.println(pMenuItem.getID());
-		
+				
 		switch(pMenuItem.getID()) {
 		
 			case Constants.MAIN_MENU_SETTINGS:
-				System.out.println("here");
 				//attach settings menu
 				this.mMainMenu.setChildSceneModal(mSettingsMenu);
 				return true;
 				
 			case Constants.SETTINGS_MENU_GENERAL:
-				System.out.println("here");
 				this.mSettingsMenu.back();
 				//attach general settings menu
 				return true;

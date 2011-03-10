@@ -98,7 +98,6 @@ public class XMLReader extends BaseFeedParser{
                         
                         if (name.equalsIgnoreCase(FORM) && newForm != null){
                         	newForm.setPlayers(players);
-                        	System.out.println("end form");
                             forms.add(newForm);
                         }
                         else if (name.equalsIgnoreCase(PLAYER)){
@@ -160,7 +159,6 @@ public class XMLReader extends BaseFeedParser{
                         	temp = parser.nextText();
                         	if(temp.equalsIgnoreCase("true")){
                         		config.setLineEnabled(true);
-                        		System.out.println(LINE_ENABLED);
 
                         	}
                         	else{
