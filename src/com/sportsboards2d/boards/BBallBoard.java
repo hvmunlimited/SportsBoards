@@ -1,6 +1,8 @@
 package com.sportsboards2d.boards;
 
 import org.anddev.andengine.engine.Engine;
+import org.anddev.andengine.opengl.texture.Texture;
+import org.anddev.andengine.opengl.texture.TextureOptions;
 import org.anddev.andengine.opengl.texture.region.TextureRegionFactory;
 
 import com.sportsboards2d.R;
@@ -32,10 +34,16 @@ public class BBallBoard extends BaseBoard{
 
 	@Override
 	public void onLoadResources() {
-		super.onLoadResources();		
+		super.onLoadResources();	
 		this.mBackGroundTextureRegion = TextureRegionFactory.createFromAsset(this.mBackgroundTexture, this, "basketball_court.jpg", 0, 0);
-		this.mBallTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mBallTexture, this, BALL_PATH + "48.png", 0, 0, 1, 1);
 		this.mEngine.getTextureManager().loadTextures(this.mBackgroundTexture);
+	}
+	
+	public void reloadBall(){
+		
+		this.mBallTexture.clearTextureSources();
+		this.mBallTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mBallTexture, this, "Basketball_Ball_48.png", 0, 0, 1, 1);
+		
 	}
 	
 	@Override

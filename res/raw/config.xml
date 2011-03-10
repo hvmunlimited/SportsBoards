@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
+
+	<player_size>true</player_size>
+	<default_sport>basketball</default_sport>
+	<line_enabled>true</line_enabled>
+	<last_loaded>true</last_loaded>
 	
-
-
+	
 </config>

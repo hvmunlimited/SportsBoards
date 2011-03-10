@@ -31,7 +31,6 @@ public class SoccerBoard extends BaseBoard{
 	public void onLoadResources() {
 		super.onLoadResources();	
 		this.mBackGroundTextureRegion = TextureRegionFactory.createFromAsset(this.mBackgroundTexture, this, "soccer_field.jpg", 0, 0);
-		this.mBallTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mBallTexture, this, BALL_PATH + "48.png", 0, 0, 1, 1);
 		this.mEngine.getTextureManager().loadTextures(this.mBackgroundTexture);
 	}
 	@Override

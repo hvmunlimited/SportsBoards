@@ -11,6 +11,8 @@ package com.sportsboards2d.db.parsing;
 public abstract class BaseFeedParser implements FeedParser{
 	
 	//XML tag names
+	
+	//formation tags
 	static final String ROOT = "forms";
 	static final String FORM = "form";
 	static final String NAME = "name";
@@ -21,5 +23,11 @@ public abstract class BaseFeedParser implements FeedParser{
 	static final String PNAME = "pName";
 	static final String COORDS = "coords";
 	
+	//config tags
+	static final String CONFIG = "config";
+	static final String LINE_ENABLED = "line_enabled";
+	static final String LOAD_LAST = "last_loaded";
+	static final String PLAYER_SIZE = "player_size";
+	static final String DEFAULT = "default_sport";
 	
 }

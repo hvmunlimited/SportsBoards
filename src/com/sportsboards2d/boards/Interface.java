@@ -20,8 +20,11 @@ import org.anddev.andengine.opengl.font.Font;
 import org.anddev.andengine.opengl.font.FontFactory;
 import org.anddev.andengine.opengl.texture.Texture;
 import org.anddev.andengine.opengl.texture.TextureOptions;
+import org.anddev.andengine.opengl.texture.region.TextureRegionFactory;
 import org.anddev.andengine.ui.activity.BaseGameActivity;
 
+import com.sportsboards2d.db.Configuration;
+import com.sportsboards2d.db.parsing.XMLAccess;
 import com.sportsboards2d.sprites.PlayerSprite;
 import com.sportsboards2d.util.Constants;
 
@@ -48,9 +51,10 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 	protected static final int CAMERA_HEIGHT = 600;
 	
 	protected static final int BACKGROUND_LAYER = 0;
-	protected static final int PLAYER_LAYER = 1;
-	protected static final int LINE_LAYER = 2;
-	protected static final int MENU_LAYER = 3;
+	protected static final int BALL_LAYER = 1;
+	protected static final int PLAYER_LAYER = 2;
+	protected static final int LINE_LAYER = 3;
+	protected static final int MENU_LAYER = 4;
 
 	
 	
@@ -84,14 +88,17 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 	@Override 
 	public void onLoadResources(){
 		
+		onLoadConfig();
+		
 		FontFactory.setAssetBasePath("font/");
+		TextureRegionFactory.setAssetBasePath("gfx/");
 
 		this.mMenuFontTexture = new Texture(256, 256, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
 		this.mMenuFont = FontFactory.createFromAsset(this.mMenuFontTexture, this, "UnrealTournament.ttf", 36, true, Color.RED);
 
 		this.mEngine.getTextureManager().loadTexture(this.mMenuFontTexture);
 		this.mEngine.getFontManager().loadFont(this.mMenuFont);
-		
+	
 	}
 
 	@Override
@@ -125,6 +132,13 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 		this.mMainScene.registerUpdateHandler(this.mHoldDetector);
 		
 		return this.mMainScene;
+	}
+	
+	public void onLoadConfig(){
+		Configuration config = XMLAccess.loadConfig(this);
+		
+		LINE_ENABLED = config.isLineEnabled();
+		LARGE_PLAYERS = config.isLargePlayers();
 	}
 	
 	public void createMainMenu(){
