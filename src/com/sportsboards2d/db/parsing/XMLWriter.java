@@ -1,13 +1,13 @@
 package com.sportsboards2d.db.parsing;
 
 import java.io.BufferedReader;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.List;
 
 import org.xmlpull.v1.XmlSerializer;
 
@@ -30,72 +30,59 @@ public class XMLWriter{
 	
 	public XMLWriter(){}
 		
-	public String writeFormation(final Context context, Formation fn, String path){
-		
-		FileOutputStream fOut;
+	public String convertFormations(final Context context, List<Formation>forms){
 		XmlSerializer serializer = Xml.newSerializer();
 	    StringWriter writer = new StringWriter();
 	    
 	    try {
-			fOut = context.openFileOutput(path, Context.MODE_PRIVATE);
 			
 	    	serializer.setOutput(writer);
 	    	serializer.startDocument("UTF-8", true);
-	    	serializer.startTag("", "form");
-	    	serializer.startTag("", "name");
-    		serializer.text(fn.getName());
-    		serializer.endTag("", "name");
-
-	    	serializer.startTag("", "ball");
-    		serializer.attribute("", "x", String.valueOf(fn.getBall().getX()));
-    		serializer.attribute("", "y", String.valueOf(fn.getBall().getY()));
-    		serializer.endTag("", "ball");
-    		serializer.startTag("", "players");
-
-	    	for(PlayerInfo pInfo:fn.getPlayers()){
-	    		serializer.startTag("", "player");
-	    		
-	    		serializer.startTag("", "team");
-	    		serializer.text(pInfo.getTeamColor());
-	    		serializer.endTag("", "team");
-	    		
-	    		serializer.startTag("", "type");
-	    		serializer.text(pInfo.getType());
-	    		serializer.endTag("", "type");
-	    		
-	    		serializer.startTag("", "pName");
-	    		serializer.text(pInfo.getPlayerName());
-	    		serializer.endTag("", "pName");
-	    		
-	    		serializer.startTag("", "coords");
-	    		serializer.attribute("", "x", String.valueOf(pInfo.getX()));
-	    		serializer.attribute("", "y", String.valueOf(pInfo.getY()));
-	    		serializer.endTag("", "coords");
-
-	    		serializer.endTag("", "player");
+	    	serializer.startTag("", "forms");
+	    	for(Formation fn: forms){
+	
+		    	serializer.startTag("", "form");
+		    	serializer.startTag("", "name");
+		    	serializer.text(fn.getName());
+		    	serializer.endTag("", "name");
+		    	serializer.startTag("", "ball");
+		    	serializer.attribute("", "x", String.valueOf(fn.getBall().getX()));
+		    	serializer.attribute("", "y", String.valueOf(fn.getBall().getY()));
+		    	serializer.endTag("", "ball");
+		    	serializer.startTag("", "players");
+	
+		    	for(PlayerInfo pInfo:fn.getPlayers()){
+		    		serializer.startTag("", "player");
+		    		serializer.startTag("", "team");
+		    		serializer.text(pInfo.getTeamColor());
+		    		serializer.endTag("", "team");
+		    		serializer.startTag("", "type");
+		    		serializer.text(pInfo.getType());
+		    		serializer.endTag("", "type");
+		    		serializer.startTag("", "pName");
+		    		serializer.text(pInfo.getPlayerName());
+		    		serializer.endTag("", "pName");
+		    		serializer.startTag("", "coords");
+		    		serializer.attribute("", "x", String.valueOf(pInfo.getX()));
+		    		serializer.attribute("", "y", String.valueOf(pInfo.getY()));
+		    		serializer.endTag("", "coords");
+		    		serializer.endTag("", "player");
+		    	}
+		    	serializer.endTag("", "players");
+		    	serializer.endTag("", "form");
 	    	}
-    		serializer.endTag("", "players");
-
-	    	serializer.endTag("", "form");
-
+	    	serializer.endTag("", "forms");
 	    	serializer.endDocument();
-	    	
-	    	
-	    	
-			String str = writer.toString();
-			fOut.write(str.getBytes());
-			fOut.close();
-	        
-	        return writer.toString();
-	    } catch (Exception e) {
-	        throw new RuntimeException(e);
-	    } 
 
+	    }
+	    catch(IOException oshit){
+	    	oshit.printStackTrace();
+	    }
+	    return writer.toString();   
 	}
 	
-	public String writeConfig(final Context context, Configuration config, String path){
+	public String writeConfig(final Context context, Configuration config){
 		
-		FileOutputStream fOut;
 		XmlSerializer serializer = Xml.newSerializer();
 	    StringWriter writer = new StringWriter();
 	    
@@ -113,9 +100,7 @@ public class XMLWriter{
 	    	line = "true";
 	    }
 	    
-	    try {
-			fOut = context.openFileOutput(path, Context.MODE_PRIVATE);
-			
+	    try {			
 	    	serializer.setOutput(writer);
 	    	serializer.startDocument("UTF-8", true);
 	    	
@@ -138,20 +123,17 @@ public class XMLWriter{
 	    	serializer.endTag("", "default_sport");
 	    	
 	    	serializer.endTag("", "config");
-		
-	    	String str = writer.toString();
-			fOut.write(str.getBytes());
-			fOut.close();
+	    	
+	    	serializer.endDocument();
 	        
-	        return writer.toString();
 	    } catch (Exception e) {
 	        throw new RuntimeException(e);
 	    } 
-
+        return writer.toString();
 	}
 	
 	@SuppressWarnings("unused")
-	private String convertStreamToString(InputStream input) throws IOException{
+	public String convertStreamToString(InputStream input) throws IOException{
 		
 		if(input != null){
 			Writer writer = new StringWriter();

@@ -3,14 +3,12 @@
  */
 package com.sportsboards2d.boards;
 
-import com.sportsboards2d.R;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
+import android.view.KeyEvent;
 import android.widget.EditText;
 
 /**
@@ -39,17 +37,29 @@ public class SaveForm extends Activity{
 					Intent value = new Intent();
 					value.setType((input.getText().toString()));
 			
-					setResult(0, value);
+					setResult(1, value);
 					SaveForm.this.finish();
 				}
 			});
 			
 			alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
 				public void onClick(DialogInterface dialog, int whichButton){
+					setResult(-1, null);
 					SaveForm.this.finish();
 				}
 			});
 			alert.show();
 	}
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+	    if (keyCode == KeyEvent.KEYCODE_BACK) {
+	        setResult(-1, null);
+	        this.finish();
+	        return true;
+	    }
+	    return super.onKeyDown(keyCode, event);
+	}
+
 	
 }

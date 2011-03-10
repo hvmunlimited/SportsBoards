@@ -43,6 +43,7 @@ import com.sportsboards2d.sprites.BallSprite;
 import com.sportsboards2d.sprites.LineFactory;
 import com.sportsboards2d.sprites.PlayerSprite;
 import com.sportsboards2d.util.Constants;
+import com.sportsboards2d.util.StringPrinting;
 
 /**
  * Coded by Nathan King
@@ -91,6 +92,7 @@ public abstract class BaseBoard extends Interface{
 	private TiledTextureRegion mBluePlayerTextureRegion;
 	
 	private Formation currentFormation;
+	public static List<Formation> formsList = null;
 	private List<PlayerSprite> players = new ArrayList<PlayerSprite>();
 	private List<Line>lines = new ArrayList<Line>();
 	private BallSprite mBall;
@@ -175,7 +177,7 @@ public abstract class BaseBoard extends Interface{
 		
 		this.mMainScene.getChild(BACKGROUND_LAYER).attachChild(new Sprite(0, 0, this.mBackGroundTextureRegion));
 		
-		loadFormation();
+		loadFormation(DEFAULT_NAME);
 		
 		this.mBall = new BallSprite(0, 0, this.mBallTextureRegion);
 
@@ -255,7 +257,7 @@ public abstract class BaseBoard extends Interface{
 			case Constants.MAIN_MENU_RESET:
 				
 				clearScene();
-				loadFormation();
+				loadFormation(currentFormation.getName());
 				
 				showFormation(currentFormation);
 				this.mMainMenu.back();
@@ -271,12 +273,14 @@ public abstract class BaseBoard extends Interface{
 				
 			case Constants.MAIN_MENU_SAVE:
 				
-				this.startActivityForResult(new Intent(this, SaveForm.class), 0);
+				this.startActivityForResult(new Intent(this, SaveForm.class), 1);
 				
 				return true;
 				
+			//get a list of formations	
 			case Constants.MAIN_MENU_LOAD:
 				
+				this.startActivityForResult(new Intent(this, LoadForm.class), 2);
 				return true;
 				
 			case Constants.SETTINGS_PLAYER_SIZE:
@@ -332,29 +336,35 @@ public abstract class BaseBoard extends Interface{
 		Formation fn = new Formation();
 		ArrayList<PlayerInfo> playerList = new ArrayList<PlayerInfo>();
 		PlayerSprite pSprite = null;
+		float x, y;
 		PlayerInfo pInfo = null;
 		
 		for(int i = 0; i < mMainScene.getChild(PLAYER_LAYER).getChildCount(); i++){
+			pInfo = new PlayerInfo();
 			if((IEntity) mMainScene.getChild(PLAYER_LAYER).getChild(i) instanceof PlayerSprite){
 				pSprite = (PlayerSprite)mMainScene.getChild(PLAYER_LAYER).getChild(i);
-				pInfo = pSprite.getPlayerInfo();
-				pInfo.setCoords(pSprite.getX(), pSprite.getY());
+				pInfo.setPlayerName(pSprite.getPlayerInfo().getPlayerName());
+				pInfo.setTeamColor(pSprite.getPlayerInfo().getTeamColor());
+				pInfo.setType(pSprite.getPlayerInfo().getType());
+				x = pSprite.getX();
+				y = pSprite.getY();
+				pInfo.setCoords(x, y);
 				playerList.add(pInfo);
 			}
 		}
 		fn.setBall(this.mBall.getX(), this.mBall.getY());
 		fn.setPlayers(playerList);
-		currentFormation = fn;
 		return fn;
-		
 	}
 	
-	public void loadFormation(){
+	public void loadFormation(String name){
 		
-		ArrayList<Formation> formsList = (ArrayList<Formation>) XMLAccess.loadFormations(this, resID);
-		
-		for(Formation fn:formsList){
-			if(fn.getName().equalsIgnoreCase(DEFAULT_NAME)){
+		if(BaseBoard.formsList == null){
+			BaseBoard.formsList = (ArrayList<Formation>) XMLAccess.loadFormations(this, SPORT_NAME.toLowerCase(), resID);
+		}
+		//StringPrinting.printAllFormation(formsList);
+		for(Formation fn:BaseBoard.formsList){
+			if(fn.getName().equals(name)){
 				this.currentFormation = fn;
 				break;
 			}
@@ -575,16 +585,55 @@ public abstract class BaseBoard extends Interface{
 	@Override
 	protected void onActivityResult(int requestCode, int receiveCode, Intent intent){
 		
-		captureFormation();
-		currentFormation.setName(intent.getType());
+		System.out.println(receiveCode);	
+		boolean exists = false;
+		Formation fn = null;
+		int index = 0;
+		//save form activity
 		
-		XMLAccess.writeFormation(this, currentFormation, SPORT_NAME.toLowerCase());
+		if(receiveCode != -1){
+			
+			if(requestCode == 1){
+				if(receiveCode == 1){
+					
+					for(int i = 0; i < formsList.size(); i++){
+						if(formsList.get(i).getName().equalsIgnoreCase(intent.getType())){
+							index = i;
+							exists = true;
+							break;
+						}
+					}
+					fn = captureFormation();
+					
+					if(exists==true){
+						System.out.println("here");
+						formsList.set(index, fn);
+					}
+					else{
+						
+						fn.setName(intent.getType());
+						BaseBoard.formsList.add(fn);
+					}
+				}
+			}
+			//load form activity
+			else if(requestCode == 2){
+				fn = BaseBoard.formsList.get(receiveCode);
+				clearScene();
+				currentFormation = fn;
+				showFormation(currentFormation);
+				XMLAccess.writeFormations(this, formsList, SPORT_NAME.toLowerCase());
+
+			}
+		}
 
 	}
 	@Override
 	public void finish(){
-		Configuration config = new Configuration(LINE_ENABLED, true, SPORT_NAME, LARGE_PLAYERS);
 		
+		Configuration config = new Configuration(LINE_ENABLED, true, SPORT_NAME, LARGE_PLAYERS);
+
+
 		XMLAccess.writeConfig(this, config, "config");
 		
 		super.finish();

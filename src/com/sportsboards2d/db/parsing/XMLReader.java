@@ -2,7 +2,11 @@ package com.sportsboards2d.db.parsing;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
+
 import org.xmlpull.v1.XmlPullParser;
+
+import android.content.Context;
 import android.util.Xml;
 
 import com.sportsboards2d.db.Configuration;
@@ -106,13 +110,59 @@ public class XMLReader extends BaseFeedParser{
                         }
                         
                         break;
+                        
+                }
+                eventType = parser.next();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }	
+		return forms;
+	}
+	
+	public List<String> parseFormationNames(InputStream input) {
+		
+		List<String>names = null; 
+		
+		float x = 0;
+		float y = 0;
+		
+		XmlPullParser parser = Xml.newPullParser();
+		
+		try {
+            // auto-detect the encoding from the stream
+            parser.setInput(input, null);
+            int eventType = parser.getEventType();
+            boolean done = false;
+            while (eventType != XmlPullParser.END_DOCUMENT && !done){
+                String name = null;
+                switch (eventType){
+                    case XmlPullParser.START_DOCUMENT:
+                    	names = new ArrayList<String>();
+                        break;
+                    case XmlPullParser.START_TAG:
+                    	
+                        name = parser.getName();
+                        
+                        if(name.equalsIgnoreCase(NAME)){
+                        	names.add(parser.nextText());
+                        }
+                        
+                        break;
+                        
+                    case XmlPullParser.END_TAG:
+                    	
+                        name = parser.getName();
+                        
+                        
+                        break;
                 }
                 eventType = parser.next();
             }
         } catch (Exception e) {
             System.out.println("exception");
         }	
-		return forms;
+		return names;
 	}
 
 	/* (non-Javadoc)
@@ -185,7 +235,7 @@ public class XMLReader extends BaseFeedParser{
             }
         } catch (Exception e) {
             System.out.println("exception");
-        }	
+        }
         return config;
 	}
 }

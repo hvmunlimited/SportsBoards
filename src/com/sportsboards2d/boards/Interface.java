@@ -125,6 +125,7 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 				Interface.this.menuItems.get(Constants.PMENU_HIDE).setPosition(pHoldX+24, pHoldY-48);
 				Interface.this.mPlayerContextMenu.setOnMenuItemClickListener(selectedPlayer);
 				Interface.this.mMainScene.setChildScene(Interface.this.mPlayerContextMenu, false, true, true);
+				
 			}
 			
 		});
@@ -135,7 +136,8 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 	}
 	
 	public void onLoadConfig(){
-		Configuration config = XMLAccess.loadConfig(this);
+		
+		Configuration config = XMLAccess.loadConfig(this, "config");
 		
 		LINE_ENABLED = config.isLineEnabled();
 		LARGE_PLAYERS = config.isLargePlayers();
