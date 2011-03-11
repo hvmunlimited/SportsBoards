@@ -2,12 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 
 	package="com.sportsboards2d" 
-	android:versionCode="2" 
-	android:versionName="1.1">
+	android:versionCode="3" 
+	android:versionName="1.2">
 	<application android:icon="@drawable/icon"
 		android:label="@string/app_name">
 
-		<activity android:name="com.sportsboards2d.launcher.Launcher"
+		<activity android:name="com.sportsboards2d.launcher.LicenseCheck"
 
 			android:label="@string/app_name" 
 			android:screenOrientation="landscape">
@@ -16,7 +16,7 @@
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
-		<activity android:name="com.sportsboards2d.launcher.LicenseCheck"
+		<activity android:name="com.sportsboards2d.launcher.Launcher"
 			android:screenOrientation="landscape" />
 		<activity android:name="com.sportsboards2d.boards.SoccerBoard"
 			android:screenOrientation="landscape" />
@@ -24,6 +24,8 @@
 			android:screenOrientation="landscape" />	
 		
 		<activity android:name="com.sportsboards2d.boards.SaveForm"
+			android:screenOrientation="landscape" />
+		<activity android:name="com.sportsboards2d.boards.DeleteForm"
 			android:screenOrientation="landscape" />
 		<activity android:name="com.sportsboards2d.boards.LoadForm"
 			android:screenOrientation="landscape" />

@@ -3,7 +3,7 @@
 
 	<player_size>true</player_size>
 	<default_sport>basketball</default_sport>
-	<line_enabled>true</line_enabled>
+	<line_enabled>false</line_enabled>
 	<last_loaded>true</last_loaded>
 	
 	

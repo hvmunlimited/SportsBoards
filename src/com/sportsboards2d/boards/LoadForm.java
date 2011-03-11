@@ -32,11 +32,8 @@ public class LoadForm extends ListActivity{
 	public void onCreate(Bundle savedInstanceState) {
 	  super.onCreate(savedInstanceState);
 	  setResult(-1, null);
-	  String[]formationNames = new String[BaseBoard.formsList.size()];
-	  for(int i = 0; i < BaseBoard.formsList.size(); i++){
-		  formationNames[i] = BaseBoard.formsList.get(i).getName();
-	  }
-	  setListAdapter(new ArrayAdapter<String>(this, R.layout.simple_list_item_1, formationNames));
+	  
+	  setListAdapter(new ArrayAdapter<String>(this, R.layout.simple_list_item_1, BaseBoard.formNames));
 
 	  ListView lv = getListView();
 	  lv.setTextFilterEnabled(true);

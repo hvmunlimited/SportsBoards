@@ -28,7 +28,7 @@ public abstract class Constants{
 	
 	public static final int MAIN_MENU_SAVE = 10;
 	public static final int MAIN_MENU_LOAD = 11;
-	
+	public static final int MAIN_MENU_DELETE = 12;
 
 	
 

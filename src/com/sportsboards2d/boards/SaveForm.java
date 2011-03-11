@@ -27,7 +27,7 @@ public class SaveForm extends Activity{
 
 			alert.setTitle("Save Formation");
 			alert.setMessage("Enter a name for the formation");
-			
+			alert.setCancelable(false);
 			final EditText input = new EditText(this);
 			alert.setView(input);
 			
@@ -50,16 +50,4 @@ public class SaveForm extends Activity{
 			});
 			alert.show();
 	}
-	
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-	    if (keyCode == KeyEvent.KEYCODE_BACK) {
-	        setResult(-1, null);
-	        this.finish();
-	        return true;
-	    }
-	    return super.onKeyDown(keyCode, event);
-	}
-
-	
 }

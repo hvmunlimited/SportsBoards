@@ -14,24 +14,26 @@ import org.anddev.andengine.entity.scene.menu.animator.SlideMenuAnimator;
 import org.anddev.andengine.entity.scene.menu.item.IMenuItem;
 import org.anddev.andengine.entity.scene.menu.item.TextMenuItem;
 import org.anddev.andengine.entity.scene.menu.item.decorator.ColorMenuItemDecorator;
+import org.anddev.andengine.entity.sprite.Sprite;
 import org.anddev.andengine.input.touch.detector.HoldDetector;
 import org.anddev.andengine.input.touch.detector.HoldDetector.IHoldDetectorListener;
 import org.anddev.andengine.opengl.font.Font;
 import org.anddev.andengine.opengl.font.FontFactory;
 import org.anddev.andengine.opengl.texture.Texture;
 import org.anddev.andengine.opengl.texture.TextureOptions;
+import org.anddev.andengine.opengl.texture.region.TextureRegion;
 import org.anddev.andengine.opengl.texture.region.TextureRegionFactory;
 import org.anddev.andengine.ui.activity.BaseGameActivity;
-
-import com.sportsboards2d.db.Configuration;
-import com.sportsboards2d.db.parsing.XMLAccess;
-import com.sportsboards2d.sprites.PlayerSprite;
-import com.sportsboards2d.util.Constants;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.view.KeyEvent;
+
+import com.sportsboards2d.db.Configuration;
+import com.sportsboards2d.db.parsing.XMLAccess;
+import com.sportsboards2d.sprites.PlayerSprite;
+import com.sportsboards2d.util.Constants;
 
 /**
  * Coded by Nathan King
@@ -54,7 +56,8 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 	protected static final int BALL_LAYER = 1;
 	protected static final int PLAYER_LAYER = 2;
 	protected static final int LINE_LAYER = 3;
-	protected static final int MENU_LAYER = 4;
+	protected static final int MENU_BORDER_LAYER = 4;
+	protected static final int MENU_LAYER = 5;
 
 	
 	
@@ -67,6 +70,9 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 	
 	protected boolean LARGE_PLAYERS = true;
 	protected boolean LINE_ENABLED = false;
+	
+	private Texture mMenuBorderTexture;
+	private TextureRegion mMenuBorderTextureRegion;
 	
 	private Texture mMenuFontTexture;
 	private Font mMenuFont;
@@ -92,25 +98,28 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 		
 		FontFactory.setAssetBasePath("font/");
 		TextureRegionFactory.setAssetBasePath("gfx/");
+		
+		this.mMenuBorderTexture = new Texture(512 ,512, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
+		this.mMenuBorderTextureRegion = TextureRegionFactory.createFromAsset(this.mMenuBorderTexture, this, "menu_border.png", 0, 0);
 
 		this.mMenuFontTexture = new Texture(256, 256, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
-		this.mMenuFont = FontFactory.createFromAsset(this.mMenuFontTexture, this, "UnrealTournament.ttf", 36, true, Color.RED);
+		this.mMenuFont = FontFactory.createFromAsset(this.mMenuFontTexture, this, "VeraBd.ttf", 36, true, Color.WHITE);
 
 		this.mEngine.getTextureManager().loadTexture(this.mMenuFontTexture);
 		this.mEngine.getFontManager().loadFont(this.mMenuFont);
+		this.mEngine.getTextureManager().loadTexture(this.mMenuBorderTexture);
 	
 	}
 
 	@Override
 	public Scene onLoadScene() {
 		
-		this.mMainScene = new Scene(4);
+		this.mMainScene = new Scene(5);
 		createMainMenu();
-		createSettingsMenu();
-		createLineSettingsMenu();
-		createPlayerSettingsMenu();
-		createGeneralSettingsMenu();
-		
+		//createSettingsMenu();
+		//createLineSettingsMenu();
+		//createPlayerSettingsMenu();
+		//createGeneralSettingsMenu();
 		createPlayerContextMenu();
 		
 		this.mHoldDetector = new HoldDetector(new IHoldDetectorListener(){
@@ -129,7 +138,7 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 			}
 			
 		});
-		this.mHoldDetector.setTriggerHoldMinimumMilliseconds(400);
+		this.mHoldDetector.setTriggerHoldMinimumMilliseconds(200);
 		this.mMainScene.registerUpdateHandler(this.mHoldDetector);
 		
 		return this.mMainScene;
@@ -147,25 +156,33 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 	
 		this.mMainMenu = new MenuScene(this.mCamera);
 		
-		final IMenuItem reset = new ColorMenuItemDecorator(new TextMenuItem(Constants.MAIN_MENU_RESET, this.mMenuFont, "Reset"), 1.0f,0.0f,0.0f, 0.0f,0.0f,0.0f);
+		final IMenuItem reset = new ColorMenuItemDecorator(new TextMenuItem(Constants.MAIN_MENU_RESET, this.mMenuFont, "Reset"), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
 		reset.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 		this.mMainMenu.addMenuItem(reset);
 		
-		final IMenuItem clearLines = new ColorMenuItemDecorator(new TextMenuItem(Constants.MAIN_MENU_CLEARLINES, this.mMenuFont, "Clear Lines"), 1.0f,0.0f,0.0f, 0.0f,0.0f,0.0f);
+		final IMenuItem lineEnable = new ColorMenuItemDecorator(new TextMenuItem(Constants.SETTINGS_LINE_ENABLE, this.mMenuFont, "Toggle Line Draw"), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
+		lineEnable.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+		this.mMainMenu.addMenuItem(lineEnable);
+		
+		final IMenuItem clearLines = new ColorMenuItemDecorator(new TextMenuItem(Constants.MAIN_MENU_CLEARLINES, this.mMenuFont, "Clear Lines"), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
 		clearLines.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 		this.mMainMenu.addMenuItem(clearLines);
 		
-		final IMenuItem save = new ColorMenuItemDecorator(new TextMenuItem(Constants.MAIN_MENU_SAVE, this.mMenuFont, "Save Formation"), 1.0f,0.0f,0.0f, 0.0f,0.0f,0.0f);
+		final IMenuItem save = new ColorMenuItemDecorator(new TextMenuItem(Constants.MAIN_MENU_SAVE, this.mMenuFont, "Save Formation"), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
 		save.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 		this.mMainMenu.addMenuItem(save);
 		
-		final IMenuItem load = new ColorMenuItemDecorator(new TextMenuItem(Constants.MAIN_MENU_LOAD, this.mMenuFont, "Load Formation"), 1.0f,0.0f,0.0f, 0.0f,0.0f,0.0f);
+		final IMenuItem delete = new ColorMenuItemDecorator(new TextMenuItem(Constants.MAIN_MENU_DELETE, this.mMenuFont, "Delete Formation"), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
+		delete.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+		this.mMainMenu.addMenuItem(delete);
+		
+		final IMenuItem load = new ColorMenuItemDecorator(new TextMenuItem(Constants.MAIN_MENU_LOAD, this.mMenuFont, "Load Formation"), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
 		load.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 		this.mMainMenu.addMenuItem(load);
-		
-		final IMenuItem settings = new ColorMenuItemDecorator(new TextMenuItem(Constants.MAIN_MENU_SETTINGS, this.mMenuFont, "Settings"), 1.0f,0.0f,0.0f, 0.0f,0.0f,0.0f);
-		settings.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-		this.mMainMenu.addMenuItem(settings);
+/////////////////////		
+		//final IMenuItem settings = new ColorMenuItemDecorator(new TextMenuItem(Constants.MAIN_MENU_SETTINGS, this.mMenuFont, "Settings"), 1.0f,0.0f,0.0f, 0.0f,0.0f,0.0f);
+		//settings.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+		//this.mMainMenu.addMenuItem(settings);
 		
 		this.mMainMenu.buildAnimations();
 		this.mMainMenu.setBackgroundEnabled(false);
@@ -197,10 +214,6 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 	public void createLineSettingsMenu(){
 		
 		this.mLineSettingsMenu = new MenuScene(this.mCamera);
-		
-		final IMenuItem lineEnable = new ColorMenuItemDecorator(new TextMenuItem(Constants.SETTINGS_LINE_ENABLE, this.mMenuFont, "Enable/Disable Draw"), 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-		lineEnable.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-		this.mLineSettingsMenu.addMenuItem(lineEnable);
 		
 		final IMenuItem lineColor = new ColorMenuItemDecorator(new TextMenuItem(Constants.SETTINGS_LINE_COLOR, this.mMenuFont, "Line Color"), 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
 		lineColor.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
@@ -237,13 +250,13 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 		this.mPlayerContextMenu.buildAnimations();
 		this.mPlayerContextMenu.setBackgroundEnabled(false);
 		
-		final IMenuItem deleteMenuItem = new ColorMenuItemDecorator(new TextMenuItem(Constants.PMENU_DELETE, this.mMenuFont, "DELETE"), 1.0f,0.0f,0.0f, 0.0f,0.0f,0.0f);
+		final IMenuItem deleteMenuItem = new ColorMenuItemDecorator(new TextMenuItem(Constants.PMENU_DELETE, this.mMenuFont, "EXIT"), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
 		deleteMenuItem.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 		mPlayerContextMenu.addMenuItem(deleteMenuItem);
 		menuItems.add(deleteMenuItem);
 		
 		
-		final IMenuItem hideMenuItem = new ColorMenuItemDecorator(new TextMenuItem(Constants.PMENU_HIDE, this.mMenuFont, "HIDE"), 1.0f,0.0f,0.0f, 0.0f,0.0f,0.0f);
+		final IMenuItem hideMenuItem = new ColorMenuItemDecorator(new TextMenuItem(Constants.PMENU_HIDE, this.mMenuFont, "HIDE"), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
 		deleteMenuItem.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 		mPlayerContextMenu.addMenuItem(hideMenuItem);
 		menuItems.add(hideMenuItem);
@@ -258,8 +271,13 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 			if(this.mMainScene.hasChildScene()) {
 				/* Remove the menu and reset it. */
 				this.mMainMenu.back();
+				this.mMainScene.getChild(MENU_BORDER_LAYER).detachChildren();
 			} else {
 				/* Attach the menu. */
+				
+				Sprite sprite = new Sprite(300, 165, this.mMenuBorderTextureRegion);
+				
+				//this.mMainScene.getChild(MENU_BORDER_LAYER).attachChild(sprite);
 				this.mMainScene.setChildScene(this.mMainMenu, false, true, true);
 			}
 			return true;
@@ -315,7 +333,7 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 					else{
 						LINE_ENABLED = true;
 					}
-					this.mSettingsMenu.back();
+					//this.mSettingsMenu.back();
 					this.mMainMenu.back();
 					return true;
 					

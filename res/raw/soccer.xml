@@ -138,7 +138,7 @@
 			<coords x="425" y="330" />
 		</player>
 	</form>
-
+<!--  
 	<form>
 		<name>GOALKICK</name>
 		<ball x="487" y="270" />
@@ -277,4 +277,5 @@
 			<coords x="425" y="330" />
 		</player>
 	</form>
+-->
 </forms>
