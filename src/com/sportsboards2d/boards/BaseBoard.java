@@ -5,10 +5,13 @@ import java.util.List;
 
 import org.anddev.andengine.engine.Engine;
 import org.anddev.andengine.engine.camera.Camera;
+import org.anddev.andengine.engine.handler.IUpdateHandler;
 import org.anddev.andengine.engine.options.EngineOptions;
 import org.anddev.andengine.engine.options.EngineOptions.ScreenOrientation;
 import org.anddev.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
 import org.anddev.andengine.entity.IEntity;
+import org.anddev.andengine.entity.modifier.LoopEntityModifier;
+import org.anddev.andengine.entity.modifier.PathModifier;
 import org.anddev.andengine.entity.primitive.Line;
 import org.anddev.andengine.entity.scene.Scene;
 import org.anddev.andengine.entity.scene.Scene.ITouchArea;
@@ -19,6 +22,8 @@ import org.anddev.andengine.entity.text.ChangeableText;
 import org.anddev.andengine.extension.input.touch.controller.MultiTouch;
 import org.anddev.andengine.extension.input.touch.controller.MultiTouchController;
 import org.anddev.andengine.extension.input.touch.controller.MultiTouchException;
+import org.anddev.andengine.extension.physics.box2d.PhysicsConnector;
+import org.anddev.andengine.extension.physics.box2d.PhysicsFactory;
 import org.anddev.andengine.input.touch.TouchEvent;
 import org.anddev.andengine.opengl.font.Font;
 import org.anddev.andengine.opengl.font.FontFactory;
@@ -32,11 +37,16 @@ import org.anddev.andengine.util.MathUtils;
 import android.content.Intent;
 import android.graphics.Color;
 
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.sportsboards2d.db.Configuration;
+import com.sportsboards2d.db.Coordinates;
 import com.sportsboards2d.db.Formation;
 import com.sportsboards2d.db.PlayerInfo;
 import com.sportsboards2d.db.parsing.XMLAccess;
 import com.sportsboards2d.sprites.BallSprite;
+import com.sportsboards2d.sprites.ButtonSprite;
 import com.sportsboards2d.sprites.LineFactory;
 import com.sportsboards2d.sprites.PlayerSprite;
 import com.sportsboards2d.util.Constants;
@@ -92,11 +102,16 @@ public abstract class BaseBoard extends Interface{
 	private List<Line>lines = new ArrayList<Line>();
 	private BallSprite mBall;
 	
-	//private List<Shape> undoList = new ArrayList<Shape>();
+	//private List<List> pathList = new ArrayList<List>();
 	
+	//private List<Shape> undoList = new ArrayList<Shape>();
+	private List<Coordinates> path = new ArrayList<Coordinates>();
+
 	
 	protected Scene mMainScene;
 	//Eprivate MenuScene mPlayerMenu;
+	
+	private boolean playBackEnabled = false;
 	
 	
 	// ===========================================================
@@ -172,7 +187,7 @@ public abstract class BaseBoard extends Interface{
 		this.mBall = new BallSprite(0, 0, this.mBallTextureRegion);
 
 		showFormation();
-		
+		//setCollisionFilters();
 		return mMainScene;
 	}
 	
@@ -192,6 +207,7 @@ public abstract class BaseBoard extends Interface{
 	    			BaseBoard.this.mMainScene.getChild(PLAYER_LAYER).detachChild(p);
 	    			BaseBoard.this.players.remove(p);
 	    			BaseBoard.this.mMainScene.unregisterTouchArea(p);
+	    			//BaseBoard.this.mMainScene.
 	    		}
 	    	});
 		}
@@ -226,6 +242,7 @@ public abstract class BaseBoard extends Interface{
 		switch(pMenuItem.getID()) {
 			
 			case Constants.MAIN_MENU_SETTINGS:
+				this.playBackEnabled = true;
 				super.onMenuItemClicked(pMenuScene, pMenuItem, pMenuItemLocalX, pMenuItemLocalY);
 				return true;
 			case Constants.SETTINGS_MENU_LINE:
@@ -292,6 +309,7 @@ public abstract class BaseBoard extends Interface{
 				
 				this.mMainMenu.back();
 				return true;
+				
 				
 			case Constants.SETTINGS_PLAYER_SIZE:
 
@@ -396,7 +414,6 @@ public abstract class BaseBoard extends Interface{
 				tex = this.mRedPlayerTextureRegion;
 			}
 			createPlayer(p, tex);
-
 		}
 		
 		this.mBall.setPosition(fn.getBall().getX(), fn.getBall().getY());
@@ -407,6 +424,7 @@ public abstract class BaseBoard extends Interface{
 
 	private void createPlayer(PlayerInfo p, TiledTextureRegion tex){
 		
+		final Body body;
 		ChangeableText playerText;
 		
 		final PlayerSprite newPlayer = new PlayerSprite(p, tex){
@@ -453,20 +471,28 @@ public abstract class BaseBoard extends Interface{
 		newPlayer.addDisplayInfo(playerText);
 		playerText = new ChangeableText(+20, +50, this.mPlayerInfoFont, "0");
 		newPlayer.addDisplayInfo(playerText);
-
+		
+		//this enables/disables the player info popup when touching a player
 		//newPlayer.setupDisplay();
 		
+		//enable physics
+		
+		body = PhysicsFactory.createBoxBody(this.mPhysicsWorld, newPlayer, BodyType.DynamicBody, FIXTURE_DEF);
+		this.mPhysicsWorld.registerPhysicsConnector(new PhysicsConnector(newPlayer, body, true, true));
+
 		this.mMainScene.getChild(PLAYER_LAYER).attachChild(newPlayer);
 		this.mMainScene.registerTouchArea(newPlayer);		
-	
 		this.players.add(newPlayer);
 	}
 	
-	//////////TO DO
 	@Override
 	public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final ITouchArea pTouchArea, final float pTouchAreaLocalX, final float pTouchAreaLocalY) {
 
 		PlayerSprite sprite = null; 
+			
+		float[]Xs = null;
+		float[]Ys = null;
+		
 		
 		float moveX, moveY;// endX, endY;
 		moveX = 0;
@@ -484,16 +510,19 @@ public abstract class BaseBoard extends Interface{
 			
 				case TouchEvent.ACTION_DOWN:
 					
+					
+					
 					this.mBall.setScale(2.0f);
 					this.mBall.setmGrabbed(true);
-					break;
+					
+					return true;
 					
 				case TouchEvent.ACTION_MOVE:
 					
 					if(this.mBall.ismGrabbed()) {
 						this.mBall.setPosition(pSceneTouchEvent.getX() - 48 / 2, pSceneTouchEvent.getY() - 48 / 2);
 					}
-					break;
+					return true;
 					
 				case TouchEvent.ACTION_UP:
 					
@@ -501,7 +530,7 @@ public abstract class BaseBoard extends Interface{
 						this.mBall.setmGrabbed(false);
 						this.mBall.setScale(1.0f);
 					}
-					break;
+					return true;
 			}
 		}
 		else if((pTouchArea) instanceof PlayerSprite){
@@ -509,7 +538,8 @@ public abstract class BaseBoard extends Interface{
 			mHoldDetector.onTouchEvent(pSceneTouchEvent);
 			sprite = (PlayerSprite) pTouchArea;
 			selectedPlayer = sprite;
-			
+			Body body = this.mPhysicsWorld.getPhysicsConnectorManager().findBodyByShape(sprite);
+			selectedPlayer.clearEntityModifiers();
 			if(sprite.getPlayerInfo().getTeamColor().equalsIgnoreCase("red")){
 				LineFactory.setColor(LineFactory.RED);
 			}
@@ -523,21 +553,25 @@ public abstract class BaseBoard extends Interface{
 					sprite.setScale(2.0f);	
 					sprite.setmGrabbed(true);
 					
-					sprite.setPosition(pSceneTouchEvent.getX()-24, pSceneTouchEvent.getY()-24);
 					sprite.displayInfo(true);
-
+					path.clear();
 					sprite.setStartX(sprite.getX());
 					sprite.setStartY(sprite.getY());
+							
+					return true;
 					
-					
-					break;
 				case TouchEvent.ACTION_MOVE:
 					
 					if(sprite.ismGrabbed()) {
 	
-						sprite.setPosition(pSceneTouchEvent.getX()-24, pSceneTouchEvent.getY()-24);
+						sprite.setPosition(pSceneTouchEvent.getX(), pSceneTouchEvent.getY());
+						body.setTransform(new Vector2(pSceneTouchEvent.getX()/32,  pSceneTouchEvent.getY()/32), 0);
+						
 						moveX = sprite.getX();
 						moveY = sprite.getY();
+						
+						path.add(new Coordinates(sprite.getX(), sprite.getY()));
+
 						
 						if(LINE_ENABLED){
 						
@@ -545,7 +579,7 @@ public abstract class BaseBoard extends Interface{
 							
 							if(diff > 30){
 								
-								arrowLineMain = LineFactory.createLine(sprite.getStartX()+24, sprite.getStartY()+24, moveX+24, moveY+24, 8);
+								arrowLineMain = LineFactory.createLine(sprite.getStartX(), sprite.getStartY(), moveX, moveY, 8);
 								mMainScene.getChild(LINE_LAYER).attachChild(arrowLineMain);
 								lines.add(arrowLineMain);
 								sprite.setStartX(moveX);
@@ -554,45 +588,77 @@ public abstract class BaseBoard extends Interface{
 						}
 						
 					}
+				
+					return true;
 					
-					break;
 				case TouchEvent.ACTION_UP:
 					
 					if(sprite.ismGrabbed()) {
 						sprite.setmGrabbed(false);
 						sprite.setScale(1.0f);
-						sprite.setPosition(pSceneTouchEvent.getX()-24, pSceneTouchEvent.getY()-24);
-						
+
 						sprite.displayInfo(false);
 
+						if(path.size()>1){
 						
+							Xs = new float[path.size()];
+							Ys = new float[path.size()];
+							
+							System.out.println(path.size());
+							
+							for(int i = path.size()-1; i >= 0; i--){
+								Xs[i] = path.get(i).getX();
+								Ys[i] = path.get(i).getY();
+							}
+							
+							final PathModifier.Path path1 = new PathModifier.Path(Xs, Ys);
+							
+							selectedPlayer.registerEntityModifier(new LoopEntityModifier(new PathModifier(1, path1)));
+						}
+						//selectedPlayer.
 						
+						//playBack();
 						
 						
 						//endX = sprite.getX()+24;
 						//endY = sprite.getY()+24;
-						
-						//diff = MathUtils.distance(startX, startY, endX, endY);
-						//xDiff = Math.calculateDifference(startX, endX) / diff;
-						//yDiff = Math.calculateDifference(startY, endY) / diff;	
-						//angleRad = (float) java.lang.Math.atan2(-xDiff, yDiff);
-						//angleDeg = MathUtils.radToDeg(angleRad);
-						
-						//System.out.println("Distance between start and end: " + diff);
-						//System.out.println("pValueX: " + xDiff);
-						//System.out.println("pValueY: " + yDiff);
-						//System.out.println("Angle in radians: " + angleRad);
-						//System.out.println("Angle in degrees: " + angleDeg);
-						
-							
-						
+
 					}
-					break;
+					return true;
 				}
 		
 		}
+		else if((pTouchArea) instanceof ButtonSprite){
+			int buttonPushed = buttons.indexOf(pTouchArea);
+			
+			switch(buttonPushed){
+			
+				case Constants.PLAY_BUTTON:
+					
+					System.out.println("play button hit");
+					return true;
+					
+				case Constants.STOP_BUTTON:
+					
+					return true;
+			
+				case Constants.PAUSE_BUTTON:
+					
+					return true;
+					
+				case Constants.RECORD_BUTTON:
+					
+					return true;
+					
+				case Constants.REWIND_BUTTON:
+					
+					return true;
+			}
+			
+			
+		}
 		
-		return true;
+		return false;
 	}
 	@Override
 	protected void onActivityResult(int requestCode, int receiveCode, Intent intent){
@@ -643,13 +709,56 @@ public abstract class BaseBoard extends Interface{
 	}
 	@Override
 	public void finish(){
-		
 		Configuration config = new Configuration(LINE_ENABLED, true, SPORT_NAME, LARGE_PLAYERS);
-
-
 		XMLAccess.writeConfig(this, config, "config");
-		
 		super.finish();
 	}
+	public void setCollisionFilters(){
+		
+		for(int i = 0; i < this.mMainScene.getChild(PLAYER_LAYER).getChildCount(); i++){
+			
+			final PlayerSprite player = (PlayerSprite) this.mMainScene.getChild(PLAYER_LAYER).getChild(i);
+			
+			for(final ButtonSprite button:buttons){
+				
+			
+				
+				this.mMainScene.registerUpdateHandler(new IUpdateHandler() {
+	
+					@Override
+					public void reset() { }
+	
+					@Override
+					public void onUpdate(final float pSecondsElapsed) {
+						if(player.collidesWith(button)) {
+							//centerRectangle.setColor(1, 0, 0);
+						} else {
+							//centerRectangle.setColor(0, 1, 0);
+						}
+					}
+				});
+			}
+		}
+		
+	}
+	public void playBack(){
+		
+		//float[]Xs = new float[pathList.size()];
+		//float[]Ys = new float[pathList.size()];
+		
+		//for(List<Coordinates> path:pathList){
+			
+			//for(int i = path.size()-1; i >= 0; i--){
+			//	Xs[i] = path.get(i).getX();
+			//	Ys[i] = path.get(i).getY();
+			//}
+		//}
+		
+		
+		
+		
+	}
+	
+	public void record(){}
 }
 

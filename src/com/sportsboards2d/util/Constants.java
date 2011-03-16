@@ -30,7 +30,15 @@ public abstract class Constants{
 	public static final int MAIN_MENU_LOAD = 11;
 	public static final int MAIN_MENU_DELETE = 12;
 
+	public static final int PLAYBACK_MENU_PLAY = 13;
+	public static final int PLAYBACK_MENU_STOP = 14;
+	public static final int PLAYBACK_MENU_RECORD = 15;
 	
+	public static final int PLAY_BUTTON = 0;
+	public static final int RECORD_BUTTON = 1;
+	public static final int PAUSE_BUTTON = 2;
+	public static final int STOP_BUTTON = 3;
+	public static final int REWIND_BUTTON = 4;
 
 	public static final int PMENU_DELETE = 0;
 	public static final int PMENU_HIDE = 1;

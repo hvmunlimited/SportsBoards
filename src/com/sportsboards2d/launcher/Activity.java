@@ -24,6 +24,7 @@ enum Activity{
 	//FOOTBALL(FootBallBoard.class, R.string.football_string),
 	BBALL(BBallBoard.class, R.string.basketball_string);
 	//XMLPARSETEST(XMLParseTest.class, R.string.xmltest_string);
+	
 
 	public final Class<? extends BaseGameActivity> Class;
 	public final int id;
