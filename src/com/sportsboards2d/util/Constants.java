@@ -36,9 +36,9 @@ public abstract class Constants{
 	
 	public static final int PLAY_BUTTON = 0;
 	public static final int RECORD_BUTTON = 1;
-	public static final int PAUSE_BUTTON = 2;
-	public static final int STOP_BUTTON = 3;
-	public static final int REWIND_BUTTON = 4;
+	public static final int STOP_BUTTON = 2;
+	public static final int REWIND_BUTTON = 3;
+	public static final int PAUSE_BUTTON = 4;
 
 	public static final int PMENU_DELETE = 0;
 	public static final int PMENU_HIDE = 1;

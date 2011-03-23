@@ -7,7 +7,7 @@
 	<application android:icon="@drawable/icon"
 		android:label="@string/app_name">
 
-		<activity android:name="com.sportsboards2d.launcher.Launcher"
+		<activity android:name="com.sportsboards2d.boards.testingboard"
 
 			android:label="@string/app_name" 
 			android:screenOrientation="landscape">

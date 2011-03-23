@@ -85,6 +85,7 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 	
 	protected boolean LARGE_PLAYERS = true;
 	protected boolean LINE_ENABLED = false;
+	protected boolean playBackEnabled = false;
 	
 	//private Texture mMenuBorderTexture;
 	//private TextureRegion mMenuBorderTextureRegion;
@@ -189,6 +190,11 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 			}
 			
 		});
+		
+		
+		this.mHoldDetector.setTriggerHoldMinimumMilliseconds(900);
+		this.mMainScene.registerUpdateHandler(this.mHoldDetector);
+		
 		this.mPhysicsWorld = new PhysicsWorld(new Vector2(0, 0.0f), false);
 
 		final Shape ground = new Rectangle(0, CAMERA_HEIGHT - 2, CAMERA_WIDTH, 2);
@@ -214,33 +220,29 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 		ButtonSprite button = new ButtonSprite(325, 0, this.mPlayButtonTextureRegion);
 		button.setVisible(false);
 		buttons.add(button);
-		this.mMainScene.getChild(PLAYER_LAYER).attachChild(button);
+		this.mMainScene.getChild(BUTTON_LAYER).attachChild(button);
 
 		button = new ButtonSprite(400, 0, this.mRecordButtonTextureRegion);
 		button.setVisible(false);
 		buttons.add(button);
-		this.mMainScene.getChild(PLAYER_LAYER).attachChild(button);
+		this.mMainScene.getChild(BUTTON_LAYER).attachChild(button);
 
 		button = new ButtonSprite(475, 0, this.mStopButtonTextureRegion);
 		button.setVisible(false);
 		buttons.add(button);
-		this.mMainScene.getChild(PLAYER_LAYER).attachChild(button);
+		this.mMainScene.getChild(BUTTON_LAYER).attachChild(button);
 
 		button = new ButtonSprite(600, 0, this.mRewindButtonTextureRegion);
 		button.setVisible(false);
 		buttons.add(button);
-		this.mMainScene.getChild(PLAYER_LAYER).attachChild(button);
+		this.mMainScene.getChild(BUTTON_LAYER).attachChild(button);
 
 		button = new ButtonSprite(675, 0, this.mPauseButtonTextureRegion);
 		button.setVisible(false);
 		buttons.add(button);
-		this.mMainScene.getChild(PLAYER_LAYER).attachChild(button);
-		
-		this.mHoldDetector.setTriggerHoldMinimumMilliseconds(300);
-		this.mMainScene.registerUpdateHandler(this.mHoldDetector);
-		
-		
-		
+		this.mMainScene.getChild(BUTTON_LAYER).attachChild(button);
+
+	
 		return this.mMainScene;
 	}
 	
@@ -414,7 +416,6 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 		
 			case Constants.MAIN_MENU_SETTINGS:
 				//attach settings menu
-				
 				this.mMainMenu.back();
 				for(ButtonSprite b:buttons){
 					b.setVisible(true);

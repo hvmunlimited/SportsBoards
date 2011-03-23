@@ -50,6 +50,10 @@ public class PlayerInfo{
 		
 		String result = "";
 		int index;
+		
+		if(pName==""){
+			return "";
+		}
 		result += pName.charAt(0);
 		index = pName.indexOf(" ");
 		result += pName.charAt(index+1);
