@@ -18,6 +18,7 @@ import com.sportsboards2d.R;
 public class BBallBoard extends BaseBoard{
 	
 	
+	
 	// ===========================================================
 	// Methods for/from SuperClass/Interfaces
 	// ===========================================================
@@ -26,8 +27,8 @@ public class BBallBoard extends BaseBoard{
 	public Engine onLoadEngine() {
 		NUM_PLAYERS = 5;
 		resID = R.raw.basketball;
-		SPORT_NAME = "BASKETBALL";
-		BALL_PATH = "Basketball_Ball_";
+		SPORT_NAME = "basketball";
+		BALL_PATH_SMALL = "Basketball_Ball_32.png";
 		return super.onLoadEngine();
 	}
 	
@@ -45,12 +46,15 @@ public class BBallBoard extends BaseBoard{
 		this.mBallTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mBallTexture, this, "Basketball_Ball_48.png", 0, 0, 1, 1);
 		
 	}
-	
+
+
+	/* (non-Javadoc)
+	 * @see org.anddev.andengine.ui.IGameInterface#onLoadComplete()
+	 */
 	@Override
 	public void onLoadComplete() {
-
+		// TODO Auto-generated method stub
+		
 	}
-
-
 	
 }

@@ -1,3 +1,6 @@
+/**
+ * 
+ */
 package com.sportsboards2d.boards;
 
 import org.anddev.andengine.engine.Engine;
@@ -12,25 +15,20 @@ import com.sportsboards2d.R;
 /**
  * Copyright 2011 5807400 Manitoba Inc. All rights reserved.
  */
+public class HockeyBoard extends BaseBoard {
 
-public class SoccerBoard extends BaseBoard{
-	
-	// ===========================================================
-	// Methods for/from SuperClass/Interfaces
-	// ===========================================================
-	
 	@Override
 	public Engine onLoadEngine() {
 		NUM_PLAYERS = 11;
-		resID = R.raw.soccer;
-		SPORT_NAME = "soccer";
-		BALL_PATH_SMALL = "Soccer_Ball_32.png";
+		resID = R.raw.hockey;
+		SPORT_NAME = "hockey";
+		BALL_PATH_SMALL = "hockey_puck.png";
 		return super.onLoadEngine();
 	}
 	@Override
 	public void onLoadResources() {
 		super.onLoadResources();	
-		this.mBackGroundTextureRegion = TextureRegionFactory.createFromAsset(this.mBackgroundTexture, this, "soccer_field.jpg", 0, 0);
+		this.mBackGroundTextureRegion = TextureRegionFactory.createFromAsset(this.mBackgroundTexture, this, "hockey_rink.jpg", 0, 0);
 		this.mEngine.getTextureManager().loadTextures(this.mBackgroundTexture);
 	}
 	@Override

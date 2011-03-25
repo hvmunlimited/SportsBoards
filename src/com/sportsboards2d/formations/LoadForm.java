@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.sportsboards2d.boards;
+package com.sportsboards2d.formations;
 
 import android.R;
 import android.app.ListActivity;

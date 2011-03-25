@@ -5,6 +5,7 @@
 	<string name="soccer_string">Soccer</string>
 	<string name="football_string">Football</string>
 	<string name="basketball_string">Basketball</string>
+	<string name="hockey_string">Hockey</string>
 	
 	<!--Current Settings Menu Strings -->
 	<string name="settings">Settings</string>

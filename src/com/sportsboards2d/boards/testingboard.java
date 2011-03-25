@@ -40,7 +40,7 @@ public class testingboard extends BaseBoard{
 		NUM_PLAYERS = 5;
 		resID = R.raw.basketball;
 		SPORT_NAME = "BASKETBALL";
-		BALL_PATH = "Basketball_Ball_";
+		BALL_PATH_SMALL = "Basketball_Ball_";
 		return super.onLoadEngine();
 	}
 	

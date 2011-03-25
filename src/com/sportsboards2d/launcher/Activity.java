@@ -4,6 +4,8 @@ import org.anddev.andengine.ui.activity.BaseGameActivity;
 
 import com.sportsboards2d.R;
 import com.sportsboards2d.boards.BBallBoard;
+import com.sportsboards2d.boards.FootballBoard;
+import com.sportsboards2d.boards.HockeyBoard;
 import com.sportsboards2d.boards.SoccerBoard;
 
 /**
@@ -21,8 +23,9 @@ enum Activity{
 	 */
 	
 	SOCCER(SoccerBoard.class, R.string.soccer_string),
-	//FOOTBALL(FootBallBoard.class, R.string.football_string),
-	BBALL(BBallBoard.class, R.string.basketball_string);
+	FOOTBALL(FootballBoard.class, R.string.football_string),
+	BBALL(BBallBoard.class, R.string.basketball_string),
+	HOCKEY(HockeyBoard.class, R.string.hockey_string);
 	//XMLPARSETEST(XMLParseTest.class, R.string.xmltest_string);
 	
 

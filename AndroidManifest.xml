@@ -7,7 +7,7 @@
 	<application android:icon="@drawable/icon"
 		android:label="@string/app_name">
 
-		<activity android:name="com.sportsboards2d.boards.testingboard"
+		<activity android:name="com.sportsboards2d.launcher.Launcher"
 
 			android:label="@string/app_name" 
 			android:screenOrientation="landscape">
@@ -22,12 +22,17 @@
 			android:screenOrientation="landscape" />
 		<activity android:name="com.sportsboards2d.boards.BBallBoard"
 			android:screenOrientation="landscape" />	
+		<activity android:name="com.sportsboards2d.boards.HockeyBoard"
+			android:screenOrientation="landscape" />	
+		<activity android:name="com.sportsboards2d.boards.FootballBoard"
+			android:screenOrientation="landscape" />	
 		
-		<activity android:name="com.sportsboards2d.boards.SaveForm"
+		
+		<activity android:name="formations.SaveForm"
 			android:screenOrientation="landscape" />
-		<activity android:name="com.sportsboards2d.boards.DeleteForm"
+		<activity android:name="formations.DeleteForm"
 			android:screenOrientation="landscape" />
-		<activity android:name="com.sportsboards2d.boards.LoadForm"
+		<activity android:name="formations.LoadForm"
 			android:screenOrientation="landscape" />
 	
 	</application>

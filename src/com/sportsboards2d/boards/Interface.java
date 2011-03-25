@@ -9,18 +9,14 @@ import org.anddev.andengine.engine.camera.Camera;
 import org.anddev.andengine.entity.primitive.Rectangle;
 import org.anddev.andengine.entity.scene.Scene;
 import org.anddev.andengine.entity.scene.Scene.IOnAreaTouchListener;
-import org.anddev.andengine.entity.scene.Scene.ITouchArea;
 import org.anddev.andengine.entity.scene.menu.MenuScene;
 import org.anddev.andengine.entity.scene.menu.MenuScene.IOnMenuItemClickListener;
-import org.anddev.andengine.entity.scene.menu.animator.SlideMenuAnimator;
 import org.anddev.andengine.entity.scene.menu.item.IMenuItem;
 import org.anddev.andengine.entity.scene.menu.item.TextMenuItem;
 import org.anddev.andengine.entity.scene.menu.item.decorator.ColorMenuItemDecorator;
 import org.anddev.andengine.entity.shape.Shape;
-import org.anddev.andengine.entity.sprite.AnimatedSprite;
 import org.anddev.andengine.extension.physics.box2d.PhysicsFactory;
 import org.anddev.andengine.extension.physics.box2d.PhysicsWorld;
-import org.anddev.andengine.input.touch.TouchEvent;
 import org.anddev.andengine.input.touch.detector.HoldDetector;
 import org.anddev.andengine.input.touch.detector.HoldDetector.IHoldDetectorListener;
 import org.anddev.andengine.opengl.font.Font;
@@ -29,14 +25,11 @@ import org.anddev.andengine.opengl.texture.Texture;
 import org.anddev.andengine.opengl.texture.TextureOptions;
 import org.anddev.andengine.opengl.texture.region.TextureRegionFactory;
 import org.anddev.andengine.opengl.texture.region.TiledTextureRegion;
-import org.anddev.andengine.sensor.accelerometer.AccelerometerData;
-import org.anddev.andengine.sensor.accelerometer.IAccelerometerListener;
 import org.anddev.andengine.ui.activity.BaseGameActivity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
-import android.hardware.SensorManager;
 import android.view.KeyEvent;
 
 import com.badlogic.gdx.math.Vector2;
@@ -106,12 +99,6 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 	
 	protected Scene mMainScene;
 	protected MenuScene mMainMenu;
-	private MenuScene mSettingsMenu;
-	private MenuScene mLineSettingsMenu;
-	private MenuScene mGeneralSettingsMenu;
-	private MenuScene mPlayerSettingsMenu;
-	private MenuScene mPlayBackMenu;
-	
 	
 	protected MenuScene mPlayerContextMenu;
 	
@@ -121,7 +108,6 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 	protected List<ButtonSprite> buttons = new ArrayList<ButtonSprite>();
 
 	protected PhysicsWorld mPhysicsWorld;
-	private Vector2 mTempVector;
 	
 	@Override 
 	public void onLoadResources(){
@@ -162,10 +148,6 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 		
 		this.mMainScene = new Scene(7);
 		createMainMenu();
-		createSettingsMenu();
-		//createLineSettingsMenu();
-		//createPlayerSettingsMenu();
-		//createGeneralSettingsMenu();
 		createPlayerContextMenu();
 		
 		this.mHoldDetector = new HoldDetector(new IHoldDetectorListener(){
@@ -177,12 +159,12 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 			public void onHoldFinished(final HoldDetector pHoldDetector, long pHoldTimeMilliseconds, final float pHoldX, final float pHoldY){
 				
 				if(pHoldX >= 900){
-					Interface.this.menuItems.get(Constants.PMENU_DELETE).setPosition(pHoldX-128, pHoldY);
-					Interface.this.menuItems.get(Constants.PMENU_HIDE).setPosition(pHoldX-128, pHoldY-48);
+					Interface.this.menuItems.get(Constants.PMENU_HIDE).setPosition(pHoldX-128, pHoldY);
+					Interface.this.menuItems.get(Constants.PMENU_EXIT).setPosition(pHoldX-128, pHoldY-48);
 				}
 				else{
-					Interface.this.menuItems.get(Constants.PMENU_DELETE).setPosition(pHoldX+24, pHoldY);
-					Interface.this.menuItems.get(Constants.PMENU_HIDE).setPosition(pHoldX+24, pHoldY-48);
+					Interface.this.menuItems.get(Constants.PMENU_HIDE).setPosition(pHoldX+24, pHoldY);
+					Interface.this.menuItems.get(Constants.PMENU_EXIT).setPosition(pHoldX+24, pHoldY-48);
 				}
 				Interface.this.mPlayerContextMenu.setOnMenuItemClickListener(selectedPlayer);
 				Interface.this.mMainScene.setChildScene(Interface.this.mPlayerContextMenu, false, true, true);
@@ -232,12 +214,12 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 		buttons.add(button);
 		this.mMainScene.getChild(BUTTON_LAYER).attachChild(button);
 
-		button = new ButtonSprite(600, 0, this.mRewindButtonTextureRegion);
+		button = new ButtonSprite(550, 0, this.mRewindButtonTextureRegion);
 		button.setVisible(false);
 		buttons.add(button);
 		this.mMainScene.getChild(BUTTON_LAYER).attachChild(button);
 
-		button = new ButtonSprite(675, 0, this.mPauseButtonTextureRegion);
+		button = new ButtonSprite(625, 0, this.mPauseButtonTextureRegion);
 		button.setVisible(false);
 		buttons.add(button);
 		this.mMainScene.getChild(BUTTON_LAYER).attachChild(button);
@@ -246,7 +228,7 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 		return this.mMainScene;
 	}
 	
-	public void onLoadConfig(){
+	private void onLoadConfig(){
 		
 		Configuration config = XMLAccess.loadConfig(this, "config");
 		
@@ -254,7 +236,7 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 		LARGE_PLAYERS = config.isLargePlayers();
 	}
 	
-	public void createMainMenu(){
+	private void createMainMenu(){
 	
 		this.mMainMenu = new MenuScene(this.mCamera);
 		
@@ -282,79 +264,24 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 		load.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 		this.mMainMenu.addMenuItem(load);
 /////////////////////		
-		final IMenuItem settings = new ColorMenuItemDecorator(new TextMenuItem(Constants.MAIN_MENU_SETTINGS, this.mMenuFont, "Playback Mode"), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
-		settings.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-		this.mMainMenu.addMenuItem(settings);
+		final IMenuItem playback = new ColorMenuItemDecorator(new TextMenuItem(Constants.MAIN_MENU_PLAYBACK, this.mMenuFont, "Playback Mode"), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
+		playback.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+		this.mMainMenu.addMenuItem(playback);
 		
 		this.mMainMenu.buildAnimations();
 		this.mMainMenu.setBackgroundEnabled(false);
 		this.mMainMenu.setOnMenuItemClickListener(this);
 	}
 	
-	public void createSettingsMenu(){
-		
-		this.mSettingsMenu = new MenuScene(this.mCamera);
-		
-		final IMenuItem genSettings = new ColorMenuItemDecorator(new TextMenuItem(Constants.SETTINGS_MENU_GENERAL, this.mMenuFont, "System Settings"), 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-		genSettings.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-		this.mSettingsMenu.addMenuItem(genSettings);
-		
-		final IMenuItem lineSettings = new ColorMenuItemDecorator(new TextMenuItem(Constants.SETTINGS_MENU_LINE, this.mMenuFont, "Line Settings"), 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-		lineSettings.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-		this.mSettingsMenu.addMenuItem(lineSettings);
-		
-		final IMenuItem playerSettings = new ColorMenuItemDecorator(new TextMenuItem(Constants.SETTINGS_MENU_PLAYER, this.mMenuFont, "Player Settings"), 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-		playerSettings.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-		this.mSettingsMenu.addMenuItem(playerSettings);
-		
-		this.mSettingsMenu.setMenuAnimator(new SlideMenuAnimator());
-		this.mSettingsMenu.buildAnimations();
-		this.mSettingsMenu.setBackgroundEnabled(false);
-		this.mSettingsMenu.setOnMenuItemClickListener(this);
-	}
-	
-	public void createLineSettingsMenu(){
-		
-		this.mLineSettingsMenu = new MenuScene(this.mCamera);
-		
-		final IMenuItem lineColor = new ColorMenuItemDecorator(new TextMenuItem(Constants.SETTINGS_LINE_COLOR, this.mMenuFont, "Line Color"), 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-		lineColor.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-		this.mLineSettingsMenu.addMenuItem(lineColor);
-		
-		this.mLineSettingsMenu.setMenuAnimator(new SlideMenuAnimator());
-		this.mLineSettingsMenu.buildAnimations();
-		this.mLineSettingsMenu.setBackgroundEnabled(false);
-		this.mLineSettingsMenu.setOnMenuItemClickListener(this);
-
-	}
-	
-	public void createPlayerSettingsMenu(){
-		this.mPlayerSettingsMenu = new MenuScene(this.mCamera);
-		
-		final IMenuItem playerSize = new ColorMenuItemDecorator(new TextMenuItem(Constants.SETTINGS_PLAYER_SIZE, this.mMenuFont, "Change Player Size"), 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-		playerSize.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-		this.mPlayerSettingsMenu.addMenuItem(playerSize);
-		
-		this.mPlayerSettingsMenu.setMenuAnimator(new SlideMenuAnimator());
-		this.mPlayerSettingsMenu.buildAnimations();
-		this.mPlayerSettingsMenu.setBackgroundEnabled(false);
-		this.mPlayerSettingsMenu.setOnMenuItemClickListener(this);
-		
-	}
-	
-	public void createGeneralSettingsMenu(){
-		
-	}
 	
 	
-	
-	public void createPlayerContextMenu(){
+	private void createPlayerContextMenu(){
 		
 		this.mPlayerContextMenu = new MenuScene(this.mCamera);
 		this.mPlayerContextMenu.buildAnimations();
 		this.mPlayerContextMenu.setBackgroundEnabled(false);
 		
-		final IMenuItem deleteMenuItem = new ColorMenuItemDecorator(new TextMenuItem(Constants.PMENU_DELETE, this.mMenuFont, "EXIT"), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
+		final IMenuItem deleteMenuItem = new ColorMenuItemDecorator(new TextMenuItem(Constants.PMENU_EXIT, this.mMenuFont, "EXIT"), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
 		deleteMenuItem.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 		mPlayerContextMenu.addMenuItem(deleteMenuItem);
 		menuItems.add(deleteMenuItem);
@@ -414,7 +341,7 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 				
 		switch(pMenuItem.getID()) {
 		
-			case Constants.MAIN_MENU_SETTINGS:
+			case Constants.MAIN_MENU_PLAYBACK:
 				//attach settings menu
 				this.mMainMenu.back();
 				for(ButtonSprite b:buttons){
@@ -424,42 +351,19 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 				//this.mMainMenu.setChildSceneModal(mPlayBackMenu);
 				return true;
 				
-			case Constants.SETTINGS_MENU_GENERAL:
-				this.mSettingsMenu.back();
-				//attach general settings menu
-				return true;
-				
-			case Constants.SETTINGS_MENU_LINE:
-				//this.mMainMenu.clearChildScene();
-				this.mSettingsMenu.setChildSceneModal(mLineSettingsMenu);
-				//attach line settings menu
-				return true;
-				
-				case Constants.SETTINGS_LINE_ENABLE:
-					if(LINE_ENABLED){
-						LINE_ENABLED = false;
-					}
-					else{
-						LINE_ENABLED = true;
-					}
-					//this.mSettingsMenu.back();
-					this.mMainMenu.back();
-					return true;
-					
-				case Constants.SETTINGS_LINE_COLOR:
-					
-					return true;
 			
-				case Constants.SETTINGS_LINE_TYPE:
-					
-					return true;
-					
-			case Constants.SETTINGS_MENU_PLAYER:
-				
-				this.mSettingsMenu.setChildSceneModal(mPlayerSettingsMenu);
-	
+			case Constants.SETTINGS_LINE_ENABLE:
+				if(LINE_ENABLED){
+					LINE_ENABLED = false;
+				}
+				else{
+					LINE_ENABLED = true;
+				}
+				//this.mSettingsMenu.back();
+				this.mMainMenu.back();
 				return true;
-				
+
+	
 			default:
 				return false;
 		}
