@@ -96,6 +96,7 @@ public class Splash extends Activity{
 	@Override
 	protected void onDestroy(){
 		super.onDestroy();
+		Log.w("onDestroy", "destroying");
 		mChecker.onDestroy();
 	}
 	
