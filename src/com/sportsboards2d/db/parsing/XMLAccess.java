@@ -5,13 +5,17 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
 
 import com.sportsboards2d.R;
-import com.sportsboards2d.db.Configuration;
-import com.sportsboards2d.db.Formation;
+import com.sportsboards2d.db.objects.Configuration;
+import com.sportsboards2d.db.objects.Formation;
+import com.sportsboards2d.db.objects.FormationEntry;
+import com.sportsboards2d.db.objects.PlayerEntry;
+import com.sportsboards2d.db.objects.PlayerInfo;
 
 /**
  * Coded by Nathan King
@@ -47,12 +51,14 @@ public class XMLAccess{
 	public static List<Formation> loadFormations(final Context context, String path, int resID){
 		
 		List<Formation> forms = null;
+		List<FormationEntry> formEntries = null;
+		List<PlayerInfo> players = null;
 		InputStream input;		
 		XMLReader parser = new XMLReader();
 		
 		try{
 			input = new FileInputStream(context.getFilesDir() + "/" + path);
-			forms = parser.parseFormation(input);
+			formEntries = parser.parseFormation(input);
 			input.close();
 		}
 		catch(IOException oshit){
@@ -64,7 +70,11 @@ public class XMLAccess{
 			try {
 				
 				input = context.getResources().openRawResource(resID);
-				forms = parser.parseFormation(input);
+				formEntries = parser.parseFormation(input);
+				players = parser.parsePlayers(input);
+				
+				forms = matchPlayers(formEntries, players);
+				
 				input.close();
 				
 				writeFormations(context, forms, path);
@@ -76,23 +86,6 @@ public class XMLAccess{
 		}
 		
 		return forms;
-	}
-	
-	public static List<String> loadFormNames(final Context context, String path){
-	
-		XMLReader parser = new XMLReader();
-		InputStream input = null;
-		List<String> result = null;
-		
-		try{
-			input = new FileInputStream(context.getFilesDir() + "/" + path);
-			result = parser.parseFormationNames(input);
-			input.close();
-		}
-		catch(IOException oshit){
-			oshit.printStackTrace();
-		}
-		return result;
 	}
 	
 	public static void writeConfig(final Context context, Configuration config, String path){
@@ -113,7 +106,7 @@ public class XMLAccess{
 		}
 	}
 	
-	public static Configuration loadConfig(final Context context, String path){
+	public static Configuration readConfig(final Context context, String path){
 		
 		XMLReader parser = new XMLReader();
 		InputStream input = null;
@@ -143,6 +136,41 @@ public class XMLAccess{
 			}
 		}
 		return result;
+	}
+	
+	public static List<PlayerInfo> readPlayers(final Context context, String path){
+		
+		return null;
+	}
+	
+	private static List<Formation> matchPlayers(List<FormationEntry> formEntries, List<PlayerInfo> players){
+		
+		List<Formation> forms = new ArrayList<Formation>();
+		List<PlayerInfo> matchList = new ArrayList<PlayerInfo>();
+		Formation fn = null;
+		
+		int pID;
+		
+		for(FormationEntry fEntry:formEntries){
+			
+			for(PlayerEntry pEntry:fEntry.getPlayers()){
+				
+				pID = pEntry.getpID();
+				
+				for(PlayerInfo playerInfo:players){
+					if(pID == playerInfo.getpID()){
+						matchList.add(playerInfo);
+						break;
+					}
+				}
+				
+			}
+		}
+		
+		
+		
+		
+		return forms;
 	}
 	
 }

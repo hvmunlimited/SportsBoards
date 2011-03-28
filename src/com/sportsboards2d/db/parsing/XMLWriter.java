@@ -14,9 +14,9 @@ import org.xmlpull.v1.XmlSerializer;
 import android.content.Context;
 import android.util.Xml;
 
-import com.sportsboards2d.db.Configuration;
-import com.sportsboards2d.db.Formation;
-import com.sportsboards2d.db.PlayerInfo;
+import com.sportsboards2d.db.objects.Configuration;
+import com.sportsboards2d.db.objects.Formation;
+import com.sportsboards2d.db.objects.PlayerInfo;
 
 /**
  * Coded by Nathan King
@@ -38,6 +38,7 @@ public class XMLWriter{
 			
 	    	serializer.setOutput(writer);
 	    	serializer.startDocument("UTF-8", true);
+	    	serializer.startTag("", "bball");
 	    	serializer.startTag("", "forms");
 	    	for(Formation fn: forms){
 	
@@ -53,15 +54,10 @@ public class XMLWriter{
 	
 		    	for(PlayerInfo pInfo:fn.getPlayers()){
 		    		serializer.startTag("", "player");
-		    		serializer.startTag("", "team");
-		    		serializer.text(pInfo.getTeamColor());
-		    		serializer.endTag("", "team");
-		    		serializer.startTag("", "type");
-		    		serializer.text(pInfo.getType());
-		    		serializer.endTag("", "type");
-		    		serializer.startTag("", "pName");
-		    		serializer.text(pInfo.getPlayerName());
-		    		serializer.endTag("", "pName");
+		    		serializer.startTag("", "id");
+		    		serializer.text(text)
+		    		
+		    		
 		    		serializer.startTag("", "coords");
 		    		serializer.attribute("", "x", String.valueOf(pInfo.getX()));
 		    		serializer.attribute("", "y", String.valueOf(pInfo.getY()));
@@ -72,6 +68,11 @@ public class XMLWriter{
 		    	serializer.endTag("", "form");
 	    	}
 	    	serializer.endTag("", "forms");
+	    	
+	    	serializer.startTag("", "players");
+	    	
+	    	
+	    	
 	    	serializer.endDocument();
 
 	    }

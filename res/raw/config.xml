@@ -5,6 +5,6 @@
 	<default_sport>basketball</default_sport>
 	<line_enabled>false</line_enabled>
 	<last_loaded>true</last_loaded>
-	
+	<player_counter>0</player_counter>
 	
 </config>

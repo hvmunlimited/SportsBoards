@@ -12,8 +12,8 @@ import org.anddev.andengine.util.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.sportsboards2d.R;
-import com.sportsboards2d.db.Coordinates;
-import com.sportsboards2d.db.PlayerInfo;
+import com.sportsboards2d.db.objects.Coordinates;
+import com.sportsboards2d.db.objects.PlayerInfo;
 import com.sportsboards2d.sprites.PlayerSprite;
 
 /**

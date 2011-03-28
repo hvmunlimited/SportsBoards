@@ -1,75 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<forms>
-	<form>
-		<name>DEFAULT</name>
-		<ball x="488" y="276" />
-		<player>
-			<team>RED</team>
-			<type>PF</type>
-			<pName>Lamar Odom</pName>
-			<coords x="518" y="177" />
-		</player>
+<bball>
+	<forms>
+		<form>
+			<name>DEFAULT</name>
+			<ball x="488" y="276" />
+			<pEntry>
+				<id>0</id>
+				<team>RED</team>
+				<coords x="518" y="177" />
+			</pEntry>
+			
+			<pEntry>
+				<id>0</id>
+				<team>RED</team>
+				<coords x="581" y="323" />
+			</pEntry>
+			
+			<pEntry>
+				<id>0</id>
+				<team>RED</team>
+				<coords x="397" y="229" />
+			</pEntry>
+			<pEntry>
+				<id>0</id>
+				<team>RED</team>
+				<coords x="440" y="276" />
+			</pEntry>
+			<pEntry>
+				<id>0</id>
+				<team>RED</team>
+				<coords x="457" y="370" />
+			</pEntry>
 		
-		<player>
-			<team>RED</team>
-			<type>SG</type>
-			<pName>Nathan King</pName>
-			<coords x="581" y="323" />
-		</player>
 		
-		<player>
-			<team>RED</team>
-			<type>PG</type>
-			<pName>John Smith</pName>
-			<coords x="397" y="229" />
-		</player>
-		<player>
-			<team>RED</team>
-			<type>C</type>
-			<pName>Nathan King</pName>
-			<coords x="440" y="276" />
-		</player>
-		<player>
-			<team>RED</team>
-			<type>SF</type>
-			<pName>Nathan King</pName>
-			<coords x="457" y="370" />
-		</player>
-	
-	
-	
-		<player>
-			<team>BLUE</team>
-			<type>PG</type>
-			<pName>John Smith</pName>
-			<coords x="581" y="229" />
-		</player>
-		<player>
-			<team>BLUE</team>
-			<type>C</type>
-			<pName>Nathan King</pName>
-			<coords x="538" y="276" />
-		</player>
 		
+			<pEntry>
+				<id>0</id>
+				<team>BLUE</team>
+				<coords x="581" y="229" />
+			</pEntry>
+			<pEntry>
+				<id>0</id>
+				<team>BLUE</team>
+				<coords x="538" y="276" />
+			</pEntry>
+			
+			<pEntry>
+				<id>0</id>
+				<team>BLUE</team>
+				<coords x="518" y="370" />
+			</pEntry>
+			<pEntry>
+				<id>0</id>
+				<team>BLUE</team>
+				<coords x="457" y="177" />
+			</pEntry>
+			
+			<pEntry>
+				<id>0</id>
+				<team>BLUE</team>
+				<coords x="397" y="323" />
+			</pEntry>
+		</form>
+	</forms>
+
+	<players>
 		<player>
-			<team>BLUE</team>
-			<type>SF</type>
-			<pName>Nathan King</pName>
-			<coords x="518" y="370" />
+			<pID>0</pID>
+			<jNum>00</jNum>
+			<type>""</type>
+			<pName>default</pName>
 		</player>
-		<player>
-			<team>BLUE</team>
-			<type>PF</type>
-			<pName>Nathan King</pName>
-			<coords x="457" y="177" />
-		</player>
-		
-		<player>
-			<team>BLUE</team>
-			<type>SG</type>
-			<pName>Nathan King</pName>
-			<coords x="397" y="323" />
-		</player>
-		
-	</form>
-</forms>
+	</players>
+</bball>

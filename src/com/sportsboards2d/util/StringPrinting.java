@@ -5,8 +5,8 @@ package com.sportsboards2d.util;
 
 import java.util.List;
 
-import com.sportsboards2d.db.Formation;
-import com.sportsboards2d.db.PlayerInfo;
+import com.sportsboards2d.db.objects.Formation;
+import com.sportsboards2d.db.objects.PlayerInfo;
 
 /**
  * Coded by Nathan King

@@ -13,15 +13,16 @@ public abstract class BaseFeedParser implements FeedParser{
 	//XML tag names
 	
 	//formation tags
-	static final String ROOT = "forms";
+	static final String FORMS = "forms";
 	static final String FORM = "form";
-	static final String NAME = "name";
+	static final String FNAME = "name";
 	static final String BALL = "ball";
-	static final String PLAYER = "player";
-	static final String TEAM = "team";
-	static final String TYPE = "type";
-	static final String PNAME = "pName";
-	static final String COORDS = "coords";
+	static final String PENTRY = "pEntry";
+	
+	static final String PID = "pID";
+
+	static final String PTEAM = "team";
+	static final String PCOORDS = "coords";
 	
 	//config tags
 	static final String CONFIG = "config";
@@ -29,5 +30,13 @@ public abstract class BaseFeedParser implements FeedParser{
 	static final String LOAD_LAST = "last_loaded";
 	static final String PLAYER_SIZE = "player_size";
 	static final String DEFAULT = "default_sport";
+	
+	//player tags
+	static final String PLAYERS = "players";
+	static final String PLAYER = "player";
+	static final String JNUM = "jNum";
+	static final String TYPE = "type";
+	static final String PNAME = "pName";
+
 	
 }

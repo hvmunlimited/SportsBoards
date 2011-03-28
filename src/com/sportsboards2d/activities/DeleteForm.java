@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.sportsboards2d.formations;
+package com.sportsboards2d.activities;
 
 import com.sportsboards2d.boards.BaseBoard;
 

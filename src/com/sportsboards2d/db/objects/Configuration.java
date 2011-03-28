@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.sportsboards2d.db;
+package com.sportsboards2d.db.objects;
 
 /**
  * Coded by Nathan King

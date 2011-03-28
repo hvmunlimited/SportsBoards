@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.sportsboards2d.formations;
+package com.sportsboards2d.activities;
 
 import android.app.Activity;
 import android.app.AlertDialog;

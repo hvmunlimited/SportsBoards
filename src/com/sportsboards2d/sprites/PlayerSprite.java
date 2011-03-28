@@ -3,7 +3,7 @@ package com.sportsboards2d.sprites;
 import org.anddev.andengine.entity.text.ChangeableText;
 import org.anddev.andengine.opengl.texture.region.TiledTextureRegion;
 
-import com.sportsboards2d.db.PlayerInfo;
+import com.sportsboards2d.db.objects.PlayerInfo;
 
 /**
  * Coded by Nathan King

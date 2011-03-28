@@ -35,7 +35,7 @@ import android.view.KeyEvent;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.sportsboards2d.db.Configuration;
+import com.sportsboards2d.db.objects.Configuration;
 import com.sportsboards2d.db.parsing.XMLAccess;
 import com.sportsboards2d.sprites.ButtonSprite;
 import com.sportsboards2d.sprites.PlayerSprite;
@@ -230,7 +230,7 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 	
 	private void onLoadConfig(){
 		
-		Configuration config = XMLAccess.loadConfig(this, "config");
+		Configuration config = XMLAccess.readConfig(this, "config");
 		
 		LINE_ENABLED = config.isLineEnabled();
 		LARGE_PLAYERS = config.isLargePlayers();

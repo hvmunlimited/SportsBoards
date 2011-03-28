@@ -6,12 +6,13 @@ import java.util.List;
 
 import org.xmlpull.v1.XmlPullParser;
 
-import android.content.Context;
 import android.util.Xml;
 
-import com.sportsboards2d.db.Configuration;
-import com.sportsboards2d.db.Formation;
-import com.sportsboards2d.db.PlayerInfo;
+import com.sportsboards2d.db.objects.Configuration;
+import com.sportsboards2d.db.objects.Coordinates;
+import com.sportsboards2d.db.objects.FormationEntry;
+import com.sportsboards2d.db.objects.PlayerEntry;
+import com.sportsboards2d.db.objects.PlayerInfo;
 
 /**
  * Coded by Nathan King
@@ -25,149 +26,91 @@ public class XMLReader extends BaseFeedParser{
 	
 	public XMLReader(){}
 	
-	public ArrayList<Formation> parseFormation(InputStream input){
+	public List<FormationEntry> parseFormation(InputStream input){
+
+		List<FormationEntry> entries = null;
+		List<PlayerEntry> players = null;
 		
-		ArrayList<Formation> forms = null;
-		Formation newForm = null;
+		PlayerEntry pEntry;
+		FormationEntry fEntry;
 		
-		ArrayList<PlayerInfo> players = null;
-		PlayerInfo newPlayer = null;
-		
-		float x = 0;
-		float y = 0;
+		String formName = "", pTeam = "";
+		int pID = 0;
+		float xBall = 0.0f, yBall = 0.0f, xPlayer = 0.0f, yPlayer = 0.0f;
 		
 		XmlPullParser parser = Xml.newPullParser();
 		
 		try {
             // auto-detect the encoding from the stream
             parser.setInput(input, null);
+            
             int eventType = parser.getEventType();
-            newForm = null;
+
             boolean done = false;
+            
             while (eventType != XmlPullParser.END_DOCUMENT && !done){
                 String name = null;
                 switch (eventType){
                     case XmlPullParser.START_DOCUMENT:
-                        forms = new ArrayList<Formation>();
                         break;
                     case XmlPullParser.START_TAG:
                     	
                         name = parser.getName();
                         
-                        if (name.equalsIgnoreCase(FORM)){
-                            newForm = new Formation();
-                            players = null;
+                        if (name.equalsIgnoreCase(FORMS)){
+                            entries = new ArrayList<FormationEntry>();
                         } 
-                        else if (newForm != null){
-                        	
-                            if (name.equalsIgnoreCase(NAME)){
-
-                            	newForm.setName(parser.nextText());
-                            	
-                            } else if (name.equalsIgnoreCase(BALL)){                           	
-                            	x = Float.parseFloat(parser.getAttributeValue(0));
-                            	y = Float.parseFloat(parser.getAttributeValue(1));
-                            	newForm.setBall(x, y);
-                            	
-                            } else if (name.equalsIgnoreCase(PLAYER)){
-                            	
-                            	if(players == null){
-                            		players = new ArrayList<PlayerInfo>();
-                            	}
-                            	newPlayer = new PlayerInfo();
-                            	
-                            } else if (name.equalsIgnoreCase(TEAM)){
-                            	
-                            	newPlayer.setTeamColor(parser.nextText());
-                            
-                        	} else if (name.equalsIgnoreCase(TYPE)){
-                        		
-                        		newPlayer.setType(parser.nextText());
-                        	
-                        	} else if (name.equalsIgnoreCase(PNAME)){
-                    		
-                        		newPlayer.setPlayerName(parser.nextText());
-                        		
-               				} else if (name.equalsIgnoreCase(COORDS)){
-                            	x = Float.parseFloat(parser.getAttributeValue(0));
-                            	y = Float.parseFloat(parser.getAttributeValue(1));
-                            	newPlayer.setCoords(x,y);
-               				}
+                        else if (name.equalsIgnoreCase(FORM)){
+                        	players = new ArrayList<PlayerEntry>();
+                        }
+                        else if (name.equalsIgnoreCase(FNAME)){
+                        	formName = parser.getText();
+                        }
+                        else if (name.equalsIgnoreCase(BALL)){                           	
+                        	xBall = Float.parseFloat(parser.getAttributeValue(0));
+                        	yBall = Float.parseFloat(parser.getAttributeValue(1));
+                        }
+                        
+                        else if (name.equalsIgnoreCase(PID)){
+                        	pID = Integer.parseInt(parser.getText());
+                        }
+                        else if (name.equalsIgnoreCase(PTEAM)){
+                        	pTeam = parser.getText();
+                        }
+                        else if (name.equalsIgnoreCase(PCOORDS)){
+                        	xPlayer = Float.parseFloat(parser.getAttributeValue(0));
+                        	yPlayer = Float.parseFloat(parser.getAttributeValue(1));
                         }
                         break;
+                        	
                         
                     case XmlPullParser.END_TAG:
                     	
                         name = parser.getName();
                         
-                        if (name.equalsIgnoreCase(FORM) && newForm != null){
-                        	newForm.setPlayers(players);
-                            forms.add(newForm);
-                        }
-                        else if (name.equalsIgnoreCase(PLAYER)){
+                        if (name.equalsIgnoreCase(FORM)){
+                        	
+                        	fEntry = new FormationEntry(formName, new Coordinates(xBall, yBall), players);
+                        	entries.add(fEntry);
 
-                        	players.add(newPlayer); 	
+                        }
+                        else if (name.equalsIgnoreCase(PENTRY)){
+                        	pEntry = new PlayerEntry(pID, pTeam, new Coordinates(xPlayer, yPlayer));
+                        	players.add(pEntry);
                         }
                         
                         break;
                         
                 }
+                
                 eventType = parser.next();
             }
         } catch (Exception e) {
             e.printStackTrace();
         }	
-		return forms;
+		return entries;
 	}
 	
-	public List<String> parseFormationNames(InputStream input) {
-		
-		List<String>names = null; 
-		
-		float x = 0;
-		float y = 0;
-		
-		XmlPullParser parser = Xml.newPullParser();
-		
-		try {
-            // auto-detect the encoding from the stream
-            parser.setInput(input, null);
-            int eventType = parser.getEventType();
-            boolean done = false;
-            while (eventType != XmlPullParser.END_DOCUMENT && !done){
-                String name = null;
-                switch (eventType){
-                    case XmlPullParser.START_DOCUMENT:
-                    	names = new ArrayList<String>();
-                        break;
-                    case XmlPullParser.START_TAG:
-                    	
-                        name = parser.getName();
-                        
-                        if(name.equalsIgnoreCase(NAME)){
-                        	names.add(parser.nextText());
-                        }
-                        
-                        break;
-                        
-                    case XmlPullParser.END_TAG:
-                    	
-                        name = parser.getName();
-                        
-                        
-                        break;
-                }
-                eventType = parser.next();
-            }
-        } catch (Exception e) {
-            System.out.println("exception");
-        }	
-		return names;
-	}
-
-	/* (non-Javadoc)
-	 * @see com.sportsboards2d.db.parsing.FeedParser#parseConfig(java.io.InputStream)
-	 */
 	@Override
 	public Configuration parseConfig(InputStream input) {
 		
@@ -237,5 +180,78 @@ public class XMLReader extends BaseFeedParser{
             System.out.println("exception");
         }
         return config;
+	}
+	
+	public ArrayList<PlayerInfo> parsePlayers(InputStream input){
+		
+		ArrayList<PlayerInfo> pList = new ArrayList<PlayerInfo>();
+		
+		XmlPullParser parser = Xml.newPullParser();
+		PlayerInfo newPlayer = null;
+		
+		int id = 0, num = 0;
+		String type = null, pName = null;
+		
+		try {
+            // auto-detect the encoding from the stream
+            parser.setInput(input, null);
+            
+            int eventType = parser.getEventType();
+            
+            boolean done = false;
+            
+            while (eventType != XmlPullParser.END_DOCUMENT && !done){
+                String name = null;
+                switch (eventType){
+                
+                    case XmlPullParser.START_DOCUMENT:
+                    	
+                        break;
+                    case XmlPullParser.START_TAG:
+                    	
+                        name = parser.getName();
+                        
+                        if (name.equalsIgnoreCase(PLAYERS)){
+                        	pList = new ArrayList<PlayerInfo>();
+                        }
+                        else if(name.equalsIgnoreCase(PID)){
+                        	
+                        	id = Integer.parseInt(parser.getText());
+                        }
+                        else if(name.equalsIgnoreCase(JNUM)){
+
+                        	num = Integer.parseInt(parser.getText());
+                        }
+                        else if(name.equalsIgnoreCase(TYPE)){
+
+                        	type = parser.getText();
+                        }
+                        else if(name.equalsIgnoreCase(PNAME)){
+                        	
+                        	pName = parser.getText();
+                        }
+                        
+                        break;
+                        
+                    case XmlPullParser.END_TAG:
+                    	
+                        name = parser.getName();
+                        
+                        if(name.equalsIgnoreCase(PLAYER)){
+
+                            newPlayer = new PlayerInfo(id, num, type, pName);
+                            pList.add(newPlayer);
+                        }
+                    
+                        break;
+                }
+                eventType = parser.next();
+            }
+        } catch (Exception e) {
+            System.out.println("exception");
+        }
+		
+		
+		return pList;
 	}
 }
