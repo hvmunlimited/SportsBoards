@@ -1,5 +1,6 @@
 package com.sportsboards2d.db.parsing;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -10,10 +11,10 @@ import java.util.List;
 
 import android.content.Context;
 
-import com.sportsboards2d.R;
 import com.sportsboards2d.db.objects.Configuration;
 import com.sportsboards2d.db.objects.Formation;
 import com.sportsboards2d.db.objects.FormationEntry;
+import com.sportsboards2d.db.objects.Player;
 import com.sportsboards2d.db.objects.PlayerEntry;
 import com.sportsboards2d.db.objects.PlayerInfo;
 
@@ -36,8 +37,9 @@ public class XMLAccess{
 		FileOutputStream fOut;
 		
 		try {
-			fOut = context.openFileOutput(path, Context.MODE_PRIVATE);
+			fOut = context.openFileOutput(path + "forms", Context.MODE_PRIVATE);
 			output = writer.convertFormations(context, forms);
+			System.out.println(output);
 			fOut.write(output.getBytes());
 			fOut.close();
 			
@@ -48,20 +50,46 @@ public class XMLAccess{
 	
 	}
 	
-	public static List<Formation> loadFormations(final Context context, String path, int resID){
+	public static void writePlayers(final Context context, List<PlayerInfo>players, String path){
+		
+		XMLWriter writer = new XMLWriter();
+		String output;
+		FileOutputStream fOut;
+		
+		try {
+			fOut = context.openFileOutput(path + "players", Context.MODE_PRIVATE);
+			output = writer.convertPlayers(context, players);
+			System.out.println(output);
+			fOut.write(output.getBytes());
+			fOut.close();
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	
+	}
+	
+	public static List<Formation> loadFormations(final Context context, String path){
 		
 		List<Formation> forms = null;
 		List<FormationEntry> formEntries = null;
 		List<PlayerInfo> players = null;
-		InputStream input;		
+		InputStream input = null;	
 		XMLReader parser = new XMLReader();
 		
 		try{
-			input = new FileInputStream(context.getFilesDir() + "/" + path);
+			input = new FileInputStream(context.getFilesDir() + "/" + path + "forms");
+			System.out.println(context.getFilesDir() + "/" + path + "forms");
 			formEntries = parser.parseFormation(input);
 			input.close();
+			input = new FileInputStream(context.getFilesDir() + "/" + path + "players");
+			players = parser.parsePlayers(input);
+			input.close();
+			matchPlayers(formEntries, players);
 		}
 		catch(IOException oshit){
+			oshit.printStackTrace();
 			System.out.println("internal formation not found");
 			input = null;
 		}
@@ -69,15 +97,16 @@ public class XMLAccess{
 			
 			try {
 				
-				input = context.getResources().openRawResource(resID);
+				input = context.getAssets().open("database/" + path + "/formations.xml");
 				formEntries = parser.parseFormation(input);
-				players = parser.parsePlayers(input);
-				
-				forms = matchPlayers(formEntries, players);
-				
 				input.close();
-				
+				input = context.getAssets().open("database/" + path + "/players.xml");
+				players = parser.parsePlayers(input);
+				input.close();
+				forms = matchPlayers(formEntries, players);
+								
 				writeFormations(context, forms, path);
+				writePlayers(context, players, path);
 				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -111,8 +140,9 @@ public class XMLAccess{
 		XMLReader parser = new XMLReader();
 		InputStream input = null;
 		Configuration result = null;
-	
+		
 		try{
+			
 			input = new FileInputStream(context.getFilesDir() + "/" + path);
 			result = parser.parseConfig(input);
 			input.close();		
@@ -124,7 +154,8 @@ public class XMLAccess{
 		if(input == null){
 			
 			try{
-				input = context.getResources().openRawResource(R.raw.config);
+				
+				input = context.getAssets().open("database/config.xml");
 				result = parser.parseConfig(input);
 				input.close();
 				
@@ -146,9 +177,9 @@ public class XMLAccess{
 	private static List<Formation> matchPlayers(List<FormationEntry> formEntries, List<PlayerInfo> players){
 		
 		List<Formation> forms = new ArrayList<Formation>();
-		List<PlayerInfo> matchList = new ArrayList<PlayerInfo>();
+		Player newPlayer = null;
+		List<Player> matchList = new ArrayList<Player>();
 		Formation fn = null;
-		
 		int pID;
 		
 		for(FormationEntry fEntry:formEntries){
@@ -159,12 +190,16 @@ public class XMLAccess{
 				
 				for(PlayerInfo playerInfo:players){
 					if(pID == playerInfo.getpID()){
-						matchList.add(playerInfo);
+						newPlayer = new Player(pEntry.getCoords().getX(), pEntry.getCoords().getY(), pEntry.getpTeam(), 
+								playerInfo.getpID(), playerInfo.getjNum(), playerInfo.getType(), playerInfo.getPName());
+						matchList.add(newPlayer);
 						break;
 					}
 				}
 				
 			}
+			fn = new Formation(fEntry.getfName(), fEntry.getBall(), matchList);
+			forms.add(fn);
 		}
 		
 		

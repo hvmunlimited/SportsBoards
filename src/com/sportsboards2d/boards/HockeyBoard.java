@@ -20,7 +20,6 @@ public class HockeyBoard extends BaseBoard {
 	@Override
 	public Engine onLoadEngine() {
 		NUM_PLAYERS = 11;
-		resID = R.raw.hockey;
 		SPORT_NAME = "hockey";
 		BALL_PATH_SMALL = "hockey_puck.png";
 		return super.onLoadEngine();

@@ -20,7 +20,6 @@ public class FootballBoard extends BaseBoard {
 	@Override
 	public Engine onLoadEngine() {
 		NUM_PLAYERS = 11;
-		resID = R.raw.football;
 		SPORT_NAME = "football";
 		BALL_PATH_SMALL = "football.png";
 		return super.onLoadEngine();

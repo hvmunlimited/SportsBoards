@@ -22,7 +22,6 @@ public class SoccerBoard extends BaseBoard{
 	@Override
 	public Engine onLoadEngine() {
 		NUM_PLAYERS = 11;
-		resID = R.raw.soccer;
 		SPORT_NAME = "soccer";
 		BALL_PATH_SMALL = "Soccer_Ball_32.png";
 		return super.onLoadEngine();

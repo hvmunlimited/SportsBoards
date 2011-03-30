@@ -16,6 +16,7 @@ import android.util.Xml;
 
 import com.sportsboards2d.db.objects.Configuration;
 import com.sportsboards2d.db.objects.Formation;
+import com.sportsboards2d.db.objects.Player;
 import com.sportsboards2d.db.objects.PlayerInfo;
 
 /**
@@ -38,7 +39,6 @@ public class XMLWriter{
 			
 	    	serializer.setOutput(writer);
 	    	serializer.startDocument("UTF-8", true);
-	    	serializer.startTag("", "bball");
 	    	serializer.startTag("", "forms");
 	    	for(Formation fn: forms){
 	
@@ -50,31 +50,69 @@ public class XMLWriter{
 		    	serializer.attribute("", "x", String.valueOf(fn.getBall().getX()));
 		    	serializer.attribute("", "y", String.valueOf(fn.getBall().getY()));
 		    	serializer.endTag("", "ball");
-		    	serializer.startTag("", "players");
 	
-		    	for(PlayerInfo pInfo:fn.getPlayers()){
-		    		serializer.startTag("", "player");
-		    		serializer.startTag("", "id");
-		    		serializer.text(text)
+		    	for(Player pInfo:fn.getPlayers()){
+			    	serializer.startTag("", "pEntry");
+
+		    		serializer.startTag("", "pID");
+		    		serializer.attribute("", "id", String.valueOf(pInfo.getpID()));
+		    		serializer.endTag("", "pID");
 		    		
+		    		serializer.startTag("", "team");
+		    		serializer.text(pInfo.getTeamColor());
+		    		serializer.endTag("", "team");
 		    		
 		    		serializer.startTag("", "coords");
 		    		serializer.attribute("", "x", String.valueOf(pInfo.getX()));
 		    		serializer.attribute("", "y", String.valueOf(pInfo.getY()));
 		    		serializer.endTag("", "coords");
-		    		serializer.endTag("", "player");
+		    		
+		    		serializer.endTag("", "pEntry");
 		    	}
-		    	serializer.endTag("", "players");
 		    	serializer.endTag("", "form");
 	    	}
 	    	serializer.endTag("", "forms");
-	    	
-	    	serializer.startTag("", "players");
-	    	
-	    	
-	    	
 	    	serializer.endDocument();
-
+	    }
+	    catch(IOException oshit){
+	    	oshit.printStackTrace();
+	    }
+	    return writer.toString();   
+	}
+	
+	public String convertPlayers(final Context context, List<PlayerInfo>players){
+		XmlSerializer serializer = Xml.newSerializer();
+	    StringWriter writer = new StringWriter();
+	    
+	    try {
+			
+	    	serializer.setOutput(writer);
+	    	serializer.startDocument("UTF-8", true);
+	    	serializer.startTag("", "players");
+	    	for(PlayerInfo p: players){
+	
+		    	serializer.startTag("", "player");
+		    	
+		    	serializer.startTag("", "pID");
+		    	serializer.attribute("", "id", String.valueOf(p.getpID()));
+		    	serializer.endTag("", "pID");
+		    	
+		    	serializer.startTag("", "jNum");
+		    	serializer.attribute("", "num", String.valueOf(p.getjNum()));
+		    	serializer.endTag("", "jNum");
+		    	
+		    	serializer.startTag("", "type");
+		    	serializer.text(p.getType());
+		    	serializer.endTag("", "type");
+		    	
+		    	serializer.startTag("", "pName");
+		    	serializer.text(p.getPName());
+		    	serializer.endTag("", "pName");
+		    	
+		    	serializer.endTag("", "player");
+	    	}
+	    	serializer.endTag("", "players");
+	    	serializer.endDocument();
 	    }
 	    catch(IOException oshit){
 	    	oshit.printStackTrace();

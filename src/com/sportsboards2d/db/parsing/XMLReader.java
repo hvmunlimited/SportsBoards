@@ -64,7 +64,8 @@ public class XMLReader extends BaseFeedParser{
                         	players = new ArrayList<PlayerEntry>();
                         }
                         else if (name.equalsIgnoreCase(FNAME)){
-                        	formName = parser.getText();
+                        	formName = parser.nextText();
+                        	
                         }
                         else if (name.equalsIgnoreCase(BALL)){                           	
                         	xBall = Float.parseFloat(parser.getAttributeValue(0));
@@ -72,10 +73,10 @@ public class XMLReader extends BaseFeedParser{
                         }
                         
                         else if (name.equalsIgnoreCase(PID)){
-                        	pID = Integer.parseInt(parser.getText());
+                        	pID = Integer.parseInt(parser.getAttributeValue(0));
                         }
                         else if (name.equalsIgnoreCase(PTEAM)){
-                        	pTeam = parser.getText();
+                        	pTeam = parser.nextText();
                         }
                         else if (name.equalsIgnoreCase(PCOORDS)){
                         	xPlayer = Float.parseFloat(parser.getAttributeValue(0));
@@ -177,7 +178,7 @@ public class XMLReader extends BaseFeedParser{
                 eventType = parser.next();
             }
         } catch (Exception e) {
-            System.out.println("exception");
+            e.printStackTrace();
         }
         return config;
 	}
@@ -186,11 +187,13 @@ public class XMLReader extends BaseFeedParser{
 		
 		ArrayList<PlayerInfo> pList = new ArrayList<PlayerInfo>();
 		
-		XmlPullParser parser = Xml.newPullParser();
 		PlayerInfo newPlayer = null;
 		
 		int id = 0, num = 0;
 		String type = null, pName = null;
+		
+		XmlPullParser parser = Xml.newPullParser();
+
 		
 		try {
             // auto-detect the encoding from the stream
@@ -205,30 +208,29 @@ public class XMLReader extends BaseFeedParser{
                 switch (eventType){
                 
                     case XmlPullParser.START_DOCUMENT:
-                    	
+                    	pList = new ArrayList<PlayerInfo>();
+
                         break;
                     case XmlPullParser.START_TAG:
                     	
                         name = parser.getName();
-                        
-                        if (name.equalsIgnoreCase(PLAYERS)){
-                        	pList = new ArrayList<PlayerInfo>();
-                        }
-                        else if(name.equalsIgnoreCase(PID)){
+                      
+                        if(name.equalsIgnoreCase(PID)){
                         	
-                        	id = Integer.parseInt(parser.getText());
+                        	id = Integer.parseInt(parser.getAttributeValue(0));
                         }
                         else if(name.equalsIgnoreCase(JNUM)){
 
-                        	num = Integer.parseInt(parser.getText());
+                        	num = Integer.parseInt(parser.getAttributeValue(0));
                         }
                         else if(name.equalsIgnoreCase(TYPE)){
 
-                        	type = parser.getText();
+                        	type = parser.nextText();
+
                         }
                         else if(name.equalsIgnoreCase(PNAME)){
                         	
-                        	pName = parser.getText();
+                        	pName = parser.nextText();
                         }
                         
                         break;
@@ -238,7 +240,7 @@ public class XMLReader extends BaseFeedParser{
                         name = parser.getName();
                         
                         if(name.equalsIgnoreCase(PLAYER)){
-
+                        	
                             newPlayer = new PlayerInfo(id, num, type, pName);
                             pList.add(newPlayer);
                         }
@@ -248,10 +250,11 @@ public class XMLReader extends BaseFeedParser{
                 eventType = parser.next();
             }
         } catch (Exception e) {
-            System.out.println("exception");
+            e.printStackTrace();
         }
 		
-		
+		System.out.println(pList.size() + " players in the database");
+		//System.out.println(newPlayer.getPName());
 		return pList;
 	}
 }

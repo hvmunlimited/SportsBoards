@@ -46,6 +46,7 @@ import com.sportsboards2d.activities.SaveForm;
 import com.sportsboards2d.db.objects.Configuration;
 import com.sportsboards2d.db.objects.Coordinates;
 import com.sportsboards2d.db.objects.Formation;
+import com.sportsboards2d.db.objects.Player;
 import com.sportsboards2d.db.objects.PlayerInfo;
 import com.sportsboards2d.db.parsing.XMLAccess;
 import com.sportsboards2d.sprites.BallSprite;
@@ -82,7 +83,6 @@ public abstract class BaseBoard extends Interface{
 	protected String SPORT_NAME;
 	protected String BALL_PATH_SMALL;
 	protected String BALL_PATH_LARGE;
-	protected int resID;
 	protected final String DEFAULT_NAME = "DEFAULT";
 		
 	protected Texture mBackgroundTexture;
@@ -172,7 +172,7 @@ public abstract class BaseBoard extends Interface{
 		this.mMainScene.getChild(BACKGROUND_LAYER).attachChild(new Sprite(0, 0, this.mBackGroundTextureRegion));
 		loadFormation(DEFAULT_NAME);
 		this.mBall = new BallSprite(0, 0, this.mBallTextureRegion);
-		if(formsList.size()>0){
+		if(formsList!=null){
 			showFormation();
 		}
 		return mMainScene;
@@ -321,25 +321,25 @@ public abstract class BaseBoard extends Interface{
 	private Formation captureFormation(){
 		
 		Formation fn = new Formation();
-		ArrayList<PlayerInfo> playerList = new ArrayList<PlayerInfo>();
+		List<Player> playerList = new ArrayList<Player>();
 		PlayerSprite pSprite = null;
 		float x, y;
 		PlayerInfo pInfo = null;
 		
 		for(int i = 0; i < mMainScene.getChild(PLAYER_LAYER).getChildCount(); i++){
-			pInfo = new PlayerInfo();
+			//pInfo = new PlayerInfo();
 			if((IEntity) mMainScene.getChild(PLAYER_LAYER).getChild(i) instanceof PlayerSprite){
 				pSprite = (PlayerSprite)mMainScene.getChild(PLAYER_LAYER).getChild(i);
-				pInfo.setPlayerName(pSprite.getPlayerInfo().getPlayerName());
-				pInfo.setTeamColor(pSprite.getPlayerInfo().getTeamColor());
-				pInfo.setType(pSprite.getPlayerInfo().getType());
+				//pInfo.setPlayerName(pSprite.getPlayerInfo().getPlayerName());
+				//pInfo.setTeamColor(pSprite.getPlayerInfo().getTeamColor());
+				//pInfo.setType(pSprite.getPlayerInfo().getType());
 				x = pSprite.getX();
 				y = pSprite.getY();
-				pInfo.setCoords(x, y);
-				playerList.add(pInfo);
+				//pInfo.setCoords(x, y);
+				//playerList.add(pInfo);
 			}
 		}
-		fn.setBall(this.mBall.getX(), this.mBall.getY());
+		fn.setBall(new Coordinates(this.mBall.getX(), this.mBall.getY()));
 		fn.setPlayers(playerList);
 		return fn;
 	}
@@ -348,16 +348,20 @@ public abstract class BaseBoard extends Interface{
 		
 		if(formsList == null){
 			System.out.println(SPORT_NAME);
-			formsList = XMLAccess.loadFormations(this, SPORT_NAME.toLowerCase(), resID);
+			formsList = XMLAccess.loadFormations(this, SPORT_NAME.toLowerCase());
 		}
+		
 		System.out.println(formsList.size());
-
-		for(int i = 0; i < formsList.size(); i++){
-			if(name.equalsIgnoreCase(formsList.get(i).getName())){
-				currentFormation = i;
-				break;
+		
+		if(formsList != null){
+			for(int i = 0; i < formsList.size(); i++){
+				if(name.equalsIgnoreCase(formsList.get(i).getName())){
+					currentFormation = i;
+					break;
+				}
 			}
 		}
+		
 	}
 	
 	
@@ -365,10 +369,10 @@ public abstract class BaseBoard extends Interface{
 	private void showFormation(){
 		
 		TiledTextureRegion tex = null;
-		
+		Body body = null;
+		PlayerSprite newPlayer = null;
 		Formation fn = formsList.get(currentFormation);
-		
-		for(PlayerInfo p:fn.getPlayers()){
+		for(Player p:fn.getPlayers()){
 			
 			if(p.getTeamColor().equalsIgnoreCase("blue")){
 				tex = this.mBluePlayerTextureRegion;
@@ -376,7 +380,13 @@ public abstract class BaseBoard extends Interface{
 			else if(p.getTeamColor().equalsIgnoreCase("red")){
 				tex = this.mRedPlayerTextureRegion;
 			}
-			createPlayer(p, tex);
+			newPlayer = createPlayer(p, tex);
+			body = PhysicsFactory.createBoxBody(this.mPhysicsWorld, newPlayer, BodyType.DynamicBody, FIXTURE_DEF);
+			this.mPhysicsWorld.registerPhysicsConnector(new PhysicsConnector(newPlayer, body, true, true));
+
+			this.mMainScene.getChild(PLAYER_LAYER).attachChild(newPlayer);
+			this.mMainScene.registerTouchArea(newPlayer);		
+			this.players.add(newPlayer);
 		}
 		
 		this.mBall.setPosition(fn.getBall().getX(), fn.getBall().getY());
@@ -385,12 +395,11 @@ public abstract class BaseBoard extends Interface{
 		this.mMainScene.registerTouchArea(this.mBall);
 	}
 
-	protected void createPlayer(PlayerInfo p, TiledTextureRegion tex){
+	protected PlayerSprite createPlayer(Player p, TiledTextureRegion tex){
 		
 		ChangeableText playerText;
 		
-		final Body body;
-		final PlayerSprite newPlayer = new PlayerSprite(p, tex){
+		final PlayerSprite newPlayer = new PlayerSprite(p, p.getX(), p.getY(), tex){
 			
 				@Override
 				public boolean onMenuItemClicked(final MenuScene pMenuScene, final IMenuItem pMenuItem, final float pMenuItemLocalX, final float pMenuItemLocalY){
@@ -413,7 +422,7 @@ public abstract class BaseBoard extends Interface{
 					    		}
 
 					    	});
-					        /* Remove the menu and reset it. */
+					        // Remove the menu and reset it. 
 					        mMainScene.clearChildScene();
 
 					        return true;
@@ -441,19 +450,12 @@ public abstract class BaseBoard extends Interface{
 		
 		playerText = new ChangeableText(+20, +50, this.mPlayerInfoFont, "0");
 		newPlayer.addDisplayInfo(playerText);
-		
 		//this enables/disables the player info popup when touching a player
 		newPlayer.setupDisplay();
+				
+		return newPlayer;
 		
-		//enable physics
-		
-		body = PhysicsFactory.createBoxBody(this.mPhysicsWorld, newPlayer, BodyType.DynamicBody, FIXTURE_DEF);
-		this.mPhysicsWorld.registerPhysicsConnector(new PhysicsConnector(newPlayer, body, true, true));
-
-		this.mMainScene.getChild(PLAYER_LAYER).attachChild(newPlayer);
-		this.mMainScene.registerTouchArea(newPlayer);		
-		this.players.add(newPlayer);
-		selectedPlayer = newPlayer;
+	
 	}
 	
 	@Override
@@ -507,14 +509,14 @@ public abstract class BaseBoard extends Interface{
 			sprite = (PlayerSprite) pTouchArea;
 			selectedPlayer = sprite;
 			Body body = this.mPhysicsWorld.getPhysicsConnectorManager().findBodyByShape(sprite);
-			
+			/*
 			if(sprite.getPlayerInfo().getTeamColor().equalsIgnoreCase("red")){
 				LineFactory.setColor(LineFactory.RED);
 			}
 			else if(sprite.getPlayerInfo().getTeamColor().equalsIgnoreCase("blue")){
 				LineFactory.setColor(LineFactory.BLUE);
 			}
-
+			*/
 			switch(pSceneTouchEvent.getAction()) {
 				case TouchEvent.ACTION_DOWN:
 					

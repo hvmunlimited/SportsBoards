@@ -3,7 +3,7 @@ package com.sportsboards2d.sprites;
 import org.anddev.andengine.entity.text.ChangeableText;
 import org.anddev.andengine.opengl.texture.region.TiledTextureRegion;
 
-import com.sportsboards2d.db.objects.PlayerInfo;
+import com.sportsboards2d.db.objects.Player;
 
 /**
  * Coded by Nathan King
@@ -23,16 +23,16 @@ public class PlayerSprite extends BaseSprite{
 	 * Variables + Setters
 	 */
 	
-	private PlayerInfo pInfo;
-	public PlayerInfo getPlayerInfo(){ return pInfo;}
+	private Player player;
+	public Player getPlayer(){ return player;}
 	
 	/*
 	 * Constructors
 	 */
 	
-	public PlayerSprite(PlayerInfo pInfo, TiledTextureRegion tex){
-		super(pInfo.getX(), pInfo.getY(), tex);
-		this.pInfo = pInfo;
+	public PlayerSprite(Player player, float x, float y, TiledTextureRegion tex){
+		super(x, y, tex);
+		this.player = player;
 	}
 
 	public ChangeableText getNameDisplay() {

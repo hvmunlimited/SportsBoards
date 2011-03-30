@@ -38,7 +38,6 @@ public class testingboard extends BaseBoard{
 	@Override
 	public Engine onLoadEngine() {
 		NUM_PLAYERS = 5;
-		resID = R.raw.basketball;
 		SPORT_NAME = "BASKETBALL";
 		BALL_PATH_SMALL = "Basketball_Ball_";
 		return super.onLoadEngine();
@@ -75,7 +74,7 @@ public class testingboard extends BaseBoard{
 		
 		clearScene();
 		
-		createPlayer(new PlayerInfo("", "", "", new Coordinates(400, 400)), this.mRedPlayerTextureRegion);
+		//createPlayer(new PlayerInfo("", "", "", new Coordinates(400, 400)), this.mRedPlayerTextureRegion);
 
 		
 		float x = selectedPlayer.getX();

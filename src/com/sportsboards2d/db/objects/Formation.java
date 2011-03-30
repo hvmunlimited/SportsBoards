@@ -26,9 +26,9 @@ public class Formation{
 	public Coordinates getBall(){ return ballCoords;}
 	public void setBall(Coordinates coords){ this.ballCoords = coords;}
 	
-	private List<PlayerInfo> players;
-	public List<PlayerInfo> getPlayers(){ return players;}
-	public void setPlayers(List<PlayerInfo> players){ this.players = players;}
+	private List<Player> players;
+	public List<Player> getPlayers(){ return players;}
+	public void setPlayers(List<Player> players){ this.players = players;}
 	
 	/*
 	 * Constructors
@@ -36,7 +36,7 @@ public class Formation{
 	
 	public Formation(){}
 	
-	public Formation(String name, Coordinates ballCoords, ArrayList<PlayerInfo> players){
+	public Formation(String name, Coordinates ballCoords, List<Player> players){
 		this.setName(name);
 		this.setBall(ballCoords);
 		this.setPlayers(players);

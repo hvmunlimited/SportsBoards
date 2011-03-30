@@ -26,10 +26,7 @@ public class StringPrinting {
 			
 			for(PlayerInfo p:fn.getPlayers()){
 				
-				System.out.println(p.getTeamColor());
 				System.out.println(p.getType());
-				System.out.println(p.getPlayerName());
-				System.out.println(p.getX() + " " + p.getY());
 			}
 		}
 	}
