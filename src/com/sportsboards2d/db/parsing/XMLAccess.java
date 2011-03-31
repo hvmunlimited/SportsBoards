@@ -1,6 +1,5 @@
 package com.sportsboards2d.db.parsing;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -82,11 +81,12 @@ public class XMLAccess{
 			input = new FileInputStream(context.getFilesDir() + "/" + path + "forms");
 			System.out.println(context.getFilesDir() + "/" + path + "forms");
 			formEntries = parser.parseFormation(input);
+			System.out.println(formEntries.size());
 			input.close();
 			input = new FileInputStream(context.getFilesDir() + "/" + path + "players");
 			players = parser.parsePlayers(input);
 			input.close();
-			matchPlayers(formEntries, players);
+			forms = matchPlayers(formEntries, players);
 		}
 		catch(IOException oshit){
 			oshit.printStackTrace();
@@ -201,9 +201,6 @@ public class XMLAccess{
 			fn = new Formation(fEntry.getfName(), fEntry.getBall(), matchList);
 			forms.add(fn);
 		}
-		
-		
-		
 		
 		return forms;
 	}

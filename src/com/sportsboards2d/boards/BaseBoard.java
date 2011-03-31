@@ -10,7 +10,6 @@ import org.anddev.andengine.engine.options.EngineOptions;
 import org.anddev.andengine.engine.options.EngineOptions.ScreenOrientation;
 import org.anddev.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
 import org.anddev.andengine.entity.IEntity;
-import org.anddev.andengine.entity.modifier.PathModifier;
 import org.anddev.andengine.entity.primitive.Line;
 import org.anddev.andengine.entity.scene.Scene;
 import org.anddev.andengine.entity.scene.Scene.ITouchArea;
@@ -47,7 +46,6 @@ import com.sportsboards2d.db.objects.Configuration;
 import com.sportsboards2d.db.objects.Coordinates;
 import com.sportsboards2d.db.objects.Formation;
 import com.sportsboards2d.db.objects.Player;
-import com.sportsboards2d.db.objects.PlayerInfo;
 import com.sportsboards2d.db.parsing.XMLAccess;
 import com.sportsboards2d.sprites.BallSprite;
 import com.sportsboards2d.sprites.ButtonSprite;
@@ -320,25 +318,28 @@ public abstract class BaseBoard extends Interface{
 	
 	private Formation captureFormation(){
 		
-		Formation fn = new Formation();
+		Formation fn = null;
 		List<Player> playerList = new ArrayList<Player>();
 		PlayerSprite pSprite = null;
-		float x, y;
-		PlayerInfo pInfo = null;
+		Player pInfo = null;
+		
+		float xPlayer = 0.0f, yPlayer = 0.0f;
+		String team = "";
+		
 		
 		for(int i = 0; i < mMainScene.getChild(PLAYER_LAYER).getChildCount(); i++){
-			//pInfo = new PlayerInfo();
+			
 			if((IEntity) mMainScene.getChild(PLAYER_LAYER).getChild(i) instanceof PlayerSprite){
 				pSprite = (PlayerSprite)mMainScene.getChild(PLAYER_LAYER).getChild(i);
-				//pInfo.setPlayerName(pSprite.getPlayerInfo().getPlayerName());
-				//pInfo.setTeamColor(pSprite.getPlayerInfo().getTeamColor());
-				//pInfo.setType(pSprite.getPlayerInfo().getType());
-				x = pSprite.getX();
-				y = pSprite.getY();
-				//pInfo.setCoords(x, y);
-				//playerList.add(pInfo);
+				team = pSprite.getPlayer().getTeamColor();
+				xPlayer = pSprite.getX();
+				yPlayer = pSprite.getY();
+				pInfo = pSprite.getPlayer();
+				pInfo = new Player(xPlayer, yPlayer, team, pInfo.getpID(), pInfo.getjNum(), pInfo.getType(), pInfo.getPName());
+				playerList.add(pInfo);
 			}
 		}
+		fn = new Formation();
 		fn.setBall(new Coordinates(this.mBall.getX(), this.mBall.getY()));
 		fn.setPlayers(playerList);
 		return fn;

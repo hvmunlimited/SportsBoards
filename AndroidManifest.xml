@@ -16,6 +16,7 @@
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
+		
 		<activity android:name="com.sportsboards2d.launcher.LicenseCheck"
 			android:screenOrientation="landscape" />
 		<activity android:name="com.sportsboards2d.boards.SoccerBoard"
@@ -28,11 +29,11 @@
 			android:screenOrientation="landscape" />	
 		
 		
-		<activity android:name="formations.SaveForm"
+		<activity android:name="com.sportsboards2d.activities.SaveForm"
 			android:screenOrientation="landscape" />
-		<activity android:name="formations.DeleteForm"
+		<activity android:name="com.sportsboards2d.activities.DeleteForm"
 			android:screenOrientation="landscape" />
-		<activity android:name="formations.LoadForm"
+		<activity android:name="com.sportsboards2d.activities.LoadForm"
 			android:screenOrientation="landscape" />
 	
 	</application>

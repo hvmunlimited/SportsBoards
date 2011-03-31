@@ -1,6 +1,5 @@
 package com.sportsboards2d.db.objects;
 
-import java.util.ArrayList;
 import java.util.List;
 
 

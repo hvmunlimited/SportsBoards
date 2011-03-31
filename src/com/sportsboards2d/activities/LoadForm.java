@@ -6,17 +6,12 @@ package com.sportsboards2d.activities;
 import android.R;
 import android.app.ListActivity;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
-import com.sportsboards2d.db.parsing.XMLAccess;
-import com.sportsboards2d.db.parsing.XMLReader;
 import com.sportsboards2d.boards.BaseBoard;
 
 /**

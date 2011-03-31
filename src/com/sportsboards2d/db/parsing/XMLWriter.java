@@ -32,6 +32,7 @@ public class XMLWriter{
 	public XMLWriter(){}
 		
 	public String convertFormations(final Context context, List<Formation>forms){
+		
 		XmlSerializer serializer = Xml.newSerializer();
 	    StringWriter writer = new StringWriter();
 	    
@@ -171,7 +172,6 @@ public class XMLWriter{
         return writer.toString();
 	}
 	
-	@SuppressWarnings("unused")
 	public String convertStreamToString(InputStream input) throws IOException{
 		
 		if(input != null){

@@ -3,8 +3,6 @@ package com.sportsboards2d.boards;
 import org.anddev.andengine.engine.Engine;
 import org.anddev.andengine.opengl.texture.region.TextureRegionFactory;
 
-import com.sportsboards2d.R;
-
 /**
  * Coded by Nathan King
  */
