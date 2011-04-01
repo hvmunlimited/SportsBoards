@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+
+       xmlns:android="http://schemas.android.com/apk/res/android">
+       
+	<PreferenceCategory	
+	
+		android:title="@string/line_settings">
+		
+		<CheckBoxPreference
+                android:key="@string/lineEnabled"
+                android:title="@string/line_enable"
+                android:summary="@string/line_enable_description" />
+                
+        <ListPreference
+        		android:key="@string/rTeamLineColor"
+        		android:title="@string/rTeamLineColor"
+        		android:summary="@string/rTeamLineColor_description"
+        		android:entries="@array/colors"
+        		android:entryValues="@array/colors" />
+        		
+                
+	</PreferenceCategory>
+
+	<PreferenceCategory
+	
+		android:title="@string/app_settings">
+		
+		<ListPreference
+				android:key="@string/default_sport"
+				android:title="@string/default_sport"
+				android:summary="@string/default_sport_description" 
+				android:entries="@array/boards"
+                android:entryValues="@array/boards" />
+		
+		
+	</PreferenceCategory>
+
+</PreferenceScreen>

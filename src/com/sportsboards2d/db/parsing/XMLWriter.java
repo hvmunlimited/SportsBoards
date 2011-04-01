@@ -14,7 +14,6 @@ import org.xmlpull.v1.XmlSerializer;
 import android.content.Context;
 import android.util.Xml;
 
-import com.sportsboards2d.db.objects.Configuration;
 import com.sportsboards2d.db.objects.Formation;
 import com.sportsboards2d.db.objects.Player;
 import com.sportsboards2d.db.objects.PlayerInfo;
@@ -119,57 +118,6 @@ public class XMLWriter{
 	    	oshit.printStackTrace();
 	    }
 	    return writer.toString();   
-	}
-	
-	public String writeConfig(final Context context, Configuration config){
-		
-		XmlSerializer serializer = Xml.newSerializer();
-	    StringWriter writer = new StringWriter();
-	    
-	    String playerSize = "false";
-	    String load = "false";
-	    String line = "false";
-	    
-	    if(config.isLargePlayers()){
-	    	playerSize = "true";
-	    }
-	    if(config.isLastLoaded()){
-	    	load = "true";
-	    }
-	    if(config.isLineEnabled()){
-	    	line = "true";
-	    }
-	    
-	    try {			
-	    	serializer.setOutput(writer);
-	    	serializer.startDocument("UTF-8", true);
-	    	
-	    	serializer.startTag("", "config");
-	    	
-	    	serializer.startTag("", "player_size");
-	    	serializer.text(playerSize);
-	    	serializer.endTag("", "player_size");
-	    	
-	    	serializer.startTag("", "line_enabled");
-	    	serializer.text(line);
-	    	serializer.endTag("", "line_enabled");
-	    	
-	    	serializer.startTag("", "last_loaded");
-	    	serializer.text(load);
-	    	serializer.endTag("", "last_loaded");
-	    	
-	    	serializer.startTag("", "default_sport");
-	    	serializer.text(config.getDefault_sport());
-	    	serializer.endTag("", "default_sport");
-	    	
-	    	serializer.endTag("", "config");
-	    	
-	    	serializer.endDocument();
-	        
-	    } catch (Exception e) {
-	        throw new RuntimeException(e);
-	    } 
-        return writer.toString();
 	}
 	
 	public String convertStreamToString(InputStream input) throws IOException{

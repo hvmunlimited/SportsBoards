@@ -29,14 +29,13 @@ import org.anddev.andengine.ui.activity.BaseGameActivity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.graphics.Color;
+import android.content.SharedPreferences;
 import android.view.KeyEvent;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.sportsboards2d.db.objects.Configuration;
-import com.sportsboards2d.db.parsing.XMLAccess;
+import com.sportsboards2d.R;
 import com.sportsboards2d.sprites.ButtonSprite;
 import com.sportsboards2d.sprites.PlayerSprite;
 import com.sportsboards2d.util.Constants;
@@ -59,8 +58,8 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 	protected static final int CAMERA_HEIGHT = 600;
 	
 	protected static final int BACKGROUND_LAYER = 0;
-	protected static final int BALL_LAYER = 1;
-	protected static final int PLAYER_LAYER = 2;
+	protected static final int BALL_LAYER = 2;
+	protected static final int PLAYER_LAYER = 1;
 	protected static final int LINE_LAYER = 3;
 	protected static final int MENU_BORDER_LAYER = 4;
 	protected static final int MENU_LAYER = 5;
@@ -94,12 +93,11 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 	private TiledTextureRegion mRewindButtonTextureRegion;
 	private TiledTextureRegion mPauseButtonTextureRegion;
 	
-	private Texture mMenuFontTexture;
-	private Font mMenuFont;
+	protected Texture mMenuFontTexture;
+	protected Font mMenuFont;
 	
 	protected Scene mMainScene;
 	protected MenuScene mMainMenu;
-	
 	protected MenuScene mPlayerContextMenu;
 	
 	protected PlayerSprite selectedPlayer;
@@ -128,19 +126,8 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 		this.mPauseButtonTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mPauseButtonTexture, this, "pause_button.jpg", 0, 0, 1, 1);
 		this.mRecordButtonTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mRecordButtonTexture, this, "record_button.jpg", 0, 0, 1, 1);
 		this.mRewindButtonTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mRewindButtonTexture, this, "rewind_button.jpg", 0, 0, 1, 1);
-		
 		this.mEngine.getTextureManager().loadTextures(this.mPlayButtonTexture, this.mStopButtonTexture, this.mPauseButtonTexture, this.mRecordButtonTexture, this.mRewindButtonTexture);
 		
-//		this.mMenuBorderTexture = new Texture(512 ,512, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
-//		this.mMenuBorderTextureRegion = TextureRegionFactory.createFromAsset(this.mMenuBorderTexture, this, "menu_border.png", 0, 0);
-
-		this.mMenuFontTexture = new Texture(256, 256, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
-		this.mMenuFont = FontFactory.createFromAsset(this.mMenuFontTexture, this, "VeraBd.ttf", 36, true, Color.WHITE);
-
-		this.mEngine.getTextureManager().loadTexture(this.mMenuFontTexture);
-		this.mEngine.getFontManager().loadFont(this.mMenuFont);
-//		this.mEngine.getTextureManager().loadTexture(this.mMenuBorderTexture);
-	
 	}
 
 	@Override
@@ -194,8 +181,6 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 		this.mMainScene.getChild(BACKGROUND_LAYER).attachChild(roof);
 		this.mMainScene.getChild(BACKGROUND_LAYER).attachChild(left);
 		this.mMainScene.getChild(BACKGROUND_LAYER).attachChild(right);
-
-		
 		
 		this.mMainScene.registerUpdateHandler(this.mPhysicsWorld);
 		
@@ -229,44 +214,68 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 	}
 	
 	private void onLoadConfig(){
+	
+		SharedPreferences settings = getSharedPreferences("settings", 0);
+		String default_board = settings.getString("default_board", null);
 		
-		Configuration config = XMLAccess.readConfig(this, "config");
 		
-		LINE_ENABLED = config.isLineEnabled();
-		LARGE_PLAYERS = config.isLargePlayers();
+		//No preferences saved, (meaning first boot of the app)
+		if(default_board == null){
+			System.out.println("no prefs");
+			
+			SharedPreferences.Editor editor = settings.edit();
+			editor.putString("default_board", "basketball");
+			editor.putBoolean("lineEnabled", false);
+			editor.commit();
+		}
+		else{
+			LINE_ENABLED = settings.getBoolean("lineEnabled", false);
+		}
+		
+		//LINE_ENABLED = config.isLineEnabled();
+		//LARGE_PLAYERS = config.isLargePlayers();
 	}
 	
-	private void createMainMenu(){
+	/*
+	 * 0.0f, 1,0f, 0.0f, 255.0f, 255.0f, 255.0f = white unselected, green on select
+	 * 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f = black unselected, red on select
+	 */
+	
+	protected void createMainMenu(){
 	
 		this.mMainMenu = new MenuScene(this.mCamera);
 		
-		final IMenuItem reset = new ColorMenuItemDecorator(new TextMenuItem(Constants.MAIN_MENU_RESET, this.mMenuFont, "Reset"), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
+		final IMenuItem reset = new ColorMenuItemDecorator(new TextMenuItem(Constants.MAIN_MENU_RESET, this.mMenuFont, getString(R.string.reset)), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
 		reset.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 		this.mMainMenu.addMenuItem(reset);
 		
-		final IMenuItem lineEnable = new ColorMenuItemDecorator(new TextMenuItem(Constants.SETTINGS_LINE_ENABLE, this.mMenuFont, "Toggle Line Draw"), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
+		final IMenuItem lineEnable = new ColorMenuItemDecorator(new TextMenuItem(Constants.SETTINGS_LINE_ENABLE, this.mMenuFont, getString(R.string.line_enable)), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
 		lineEnable.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 		this.mMainMenu.addMenuItem(lineEnable);
 		
-		final IMenuItem clearLines = new ColorMenuItemDecorator(new TextMenuItem(Constants.MAIN_MENU_CLEARLINES, this.mMenuFont, "Clear Lines"), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
+		final IMenuItem clearLines = new ColorMenuItemDecorator(new TextMenuItem(Constants.MAIN_MENU_CLEARLINES, this.mMenuFont, getString(R.string.line_clear)), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
 		clearLines.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 		this.mMainMenu.addMenuItem(clearLines);
 		
-		final IMenuItem save = new ColorMenuItemDecorator(new TextMenuItem(Constants.MAIN_MENU_SAVE, this.mMenuFont, "Save Formation"), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
+		final IMenuItem save = new ColorMenuItemDecorator(new TextMenuItem(Constants.MAIN_MENU_SAVE, this.mMenuFont, getString(R.string.save_form)), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
 		save.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 		this.mMainMenu.addMenuItem(save);
 		
-		final IMenuItem delete = new ColorMenuItemDecorator(new TextMenuItem(Constants.MAIN_MENU_DELETE, this.mMenuFont, "Delete Formation"), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
+		final IMenuItem delete = new ColorMenuItemDecorator(new TextMenuItem(Constants.MAIN_MENU_DELETE, this.mMenuFont, getString(R.string.delete_form)), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
 		delete.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 		this.mMainMenu.addMenuItem(delete);
 		
-		final IMenuItem load = new ColorMenuItemDecorator(new TextMenuItem(Constants.MAIN_MENU_LOAD, this.mMenuFont, "Load Formation"), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
+		final IMenuItem load = new ColorMenuItemDecorator(new TextMenuItem(Constants.MAIN_MENU_LOAD, this.mMenuFont, getString(R.string.load_form)), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
 		load.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 		this.mMainMenu.addMenuItem(load);
-/////////////////////		
-		final IMenuItem playback = new ColorMenuItemDecorator(new TextMenuItem(Constants.MAIN_MENU_PLAYBACK, this.mMenuFont, "Playback Mode"), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
+
+		final IMenuItem playback = new ColorMenuItemDecorator(new TextMenuItem(Constants.MAIN_MENU_PLAYBACK, this.mMenuFont, getString(R.string.playback)), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
 		playback.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 		this.mMainMenu.addMenuItem(playback);
+		
+		final IMenuItem settings = new ColorMenuItemDecorator(new TextMenuItem(Constants.MAIN_MENU_SETTINGS, this.mMenuFont, getString(R.string.settings)), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
+		settings.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+		this.mMainMenu.addMenuItem(settings);
 		
 		this.mMainMenu.buildAnimations();
 		this.mMainMenu.setBackgroundEnabled(false);
@@ -281,13 +290,13 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 		this.mPlayerContextMenu.buildAnimations();
 		this.mPlayerContextMenu.setBackgroundEnabled(false);
 		
-		final IMenuItem deleteMenuItem = new ColorMenuItemDecorator(new TextMenuItem(Constants.PMENU_EXIT, this.mMenuFont, "EXIT"), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
+		final IMenuItem deleteMenuItem = new ColorMenuItemDecorator(new TextMenuItem(Constants.PMENU_EXIT, this.mMenuFont, getString(R.string.exit_player_menu)), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
 		deleteMenuItem.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 		mPlayerContextMenu.addMenuItem(deleteMenuItem);
 		menuItems.add(deleteMenuItem);
 		
 		
-		final IMenuItem hideMenuItem = new ColorMenuItemDecorator(new TextMenuItem(Constants.PMENU_HIDE, this.mMenuFont, "HIDE"), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
+		final IMenuItem hideMenuItem = new ColorMenuItemDecorator(new TextMenuItem(Constants.PMENU_HIDE, this.mMenuFont, getString(R.string.hide_player)), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
 		deleteMenuItem.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 		mPlayerContextMenu.addMenuItem(hideMenuItem);
 		menuItems.add(hideMenuItem);
@@ -302,13 +311,8 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 			if(this.mMainScene.hasChildScene()) {
 				/* Remove the menu and reset it. */
 				this.mMainMenu.back();
-				this.mMainScene.getChild(MENU_BORDER_LAYER).detachChildren();
-			} else {
-				/* Attach the menu. */
-				
-//				Sprite sprite = new Sprite(300, 165, this.mMenuBorderTextureRegion);
-				
-				//this.mMainScene.getChild(MENU_BORDER_LAYER).attachChild(sprite);
+			} 
+			else {
 				this.mMainScene.setChildScene(this.mMainMenu, false, true, true);
 			}
 			return true;
@@ -345,8 +349,15 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 				//attach settings menu
 				this.mMainMenu.back();
 				for(ButtonSprite b:buttons){
-					b.setVisible(true);
-					this.mMainScene.registerTouchArea(b);
+					if(b.isVisible()){
+						b.setVisible(false);
+						this.mMainScene.unregisterTouchArea(b);
+					}
+					else{
+						b.setVisible(true);
+						this.mMainScene.registerTouchArea(b);
+
+					}
 				}
 				//this.mMainMenu.setChildSceneModal(mPlayBackMenu);
 				return true;
@@ -368,6 +379,5 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 				return false;
 		}
 	}
-	
 
 }

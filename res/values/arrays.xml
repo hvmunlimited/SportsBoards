@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+    <resources>
+        <string-array name="boards">
+        	<item>Basketball</item>
+        	<item>Football</item>
+        	<item>Hockey</item>
+        	<item>Soccer</item>
+        	
+        </string-array>
+        
+        <string-array name="colors">
+        	<item>White</item>
+        	<item>Black</item>
+        	<item>Grey</item>
+	    	<item>Red</item>
+	        <item>Orange</item>
+	        <item>Yellow</item>
+	        <item>Green</item>
+	        <item>Blue</item>
+    </string-array>
+    </resources>

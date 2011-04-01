@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.sportsboards2d.db.objects.Configuration;
 import com.sportsboards2d.db.objects.FormationEntry;
+import com.sportsboards2d.db.objects.PlayerInfo;
 
 /**
  * Coded by Nathan King
@@ -16,5 +17,5 @@ import com.sportsboards2d.db.objects.FormationEntry;
 
 public interface FeedParser{
 	List<FormationEntry> parseFormation(InputStream input);
-	Configuration parseConfig(InputStream input);
+	List<PlayerInfo> parsePlayers(InputStream input);
 }

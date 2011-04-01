@@ -15,7 +15,7 @@ public abstract class Constants{
 	public static final int MAIN_MENU_RESET = 0;
 	public static final int MAIN_MENU_CLEARLINES = 1;
 	public static final int MAIN_MENU_PLAYBACK = 2;
-	
+	public static final int MAIN_MENU_SETTINGS = 3;
 	
 	public static final int SETTINGS_LINE_ENABLE = 6;
 	public static final int SETTINGS_PLAYER_SIZE = 9;

@@ -7,23 +7,31 @@
 	<string name="basketball_string">Basketball</string>
 	<string name="hockey_string">Hockey</string>
 	
-	<!--Current Settings Menu Strings -->
-	<string name="settings">Settings</string>
+	<!-- Main Menu Strings -->
 	<string name="reset">Reset</string>
+	<string name="line_enable">Toggle Line Enable</string>
+	<string name="line_enable_description">Enable/Disable line drawing</string>
 	<string name="line_clear">Clear Lines</string>
+	<string name="save_form">Save Formation</string>
+	<string name="delete_form">Delete Formation</string>
+	<string name="load_form">Load Formation</string>
+	<string name="playback">Playback Mode</string>
+	<string name="settings">Settings</string>
+	
+	<!--Current Settings Menu Strings -->
+	<string name="lineEnabled">lineEnabled</string>
+	<string name="app_settings">Application Settings</string>
+	
+	<string name="default_sport">Default board</string>
+	<string name="default_sport_description">App will automatically launch this board on startup</string>
+	
 	
 	<string name="line_settings">Line Settings</string>
 
 		<!--  Line Settings Strings -->
-		<string name="line_enable">Line Enable</string>
-		<string name="line_color">Line Color</string>
-		
-			<!--  Line Color Strings -->
-			<string name="line_white">White</string>
-			<string name="line_black">Black</string>
-			<string name="line_red">Red</string>
-			<string name="line_green">Green</string>
-			<string name="line_blue">Blue</string>
+		<string name="rTeamLineColor">Red Team Line Color</string>
+		<string name="rTeamLineColor_description">Color of the lines displayed when dragging a red player</string>
+		<string name="bTeamLineColor">Blue Team Line Color</string>
 		
 		<string name="line_type">Line Type</string>
 	
@@ -34,10 +42,21 @@
 		
 	
 	<!-- To be added -->
-	<string name="save">Save</string>
-	<string name="load">Load</string>
+	
 	<string name="enable">Enable Zoom</string>
 	<string name="disable">Disable Zoom</string>
+	
+	<!-- Player Context Menu Strings -->
+	
+	<string name="hide_player">Hide</string>
+	<string name="exit_player_menu">Exit</string>
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	<!-- Player Menu Strings -->

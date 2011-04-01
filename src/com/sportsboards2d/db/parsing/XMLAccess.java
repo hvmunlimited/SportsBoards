@@ -4,13 +4,11 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
 
-import com.sportsboards2d.db.objects.Configuration;
 import com.sportsboards2d.db.objects.Formation;
 import com.sportsboards2d.db.objects.FormationEntry;
 import com.sportsboards2d.db.objects.Player;
@@ -27,8 +25,6 @@ import com.sportsboards2d.db.objects.PlayerInfo;
 
 public class XMLAccess{
 	
-	public static OutputStream op;
-
 	public static void writeFormations(final Context context, List<Formation>forms, String path){
 		
 		XMLWriter writer = new XMLWriter();
@@ -38,7 +34,6 @@ public class XMLAccess{
 		try {
 			fOut = context.openFileOutput(path + "forms", Context.MODE_PRIVATE);
 			output = writer.convertFormations(context, forms);
-			System.out.println(output);
 			fOut.write(output.getBytes());
 			fOut.close();
 			
@@ -58,7 +53,6 @@ public class XMLAccess{
 		try {
 			fOut = context.openFileOutput(path + "players", Context.MODE_PRIVATE);
 			output = writer.convertPlayers(context, players);
-			System.out.println(output);
 			fOut.write(output.getBytes());
 			fOut.close();
 			
@@ -79,9 +73,7 @@ public class XMLAccess{
 		
 		try{
 			input = new FileInputStream(context.getFilesDir() + "/" + path + "forms");
-			System.out.println(context.getFilesDir() + "/" + path + "forms");
 			formEntries = parser.parseFormation(input);
-			System.out.println(formEntries.size());
 			input.close();
 			input = new FileInputStream(context.getFilesDir() + "/" + path + "players");
 			players = parser.parsePlayers(input);
@@ -90,7 +82,6 @@ public class XMLAccess{
 		}
 		catch(IOException oshit){
 			oshit.printStackTrace();
-			System.out.println("internal formation not found");
 			input = null;
 		}
 		if(input == null){
@@ -115,63 +106,6 @@ public class XMLAccess{
 		}
 		
 		return forms;
-	}
-	
-	public static void writeConfig(final Context context, Configuration config, String path){
-		
-		XMLWriter writer = new XMLWriter();
-		String output;
-		FileOutputStream fOut;
-		
-		try {
-			fOut = context.openFileOutput(path, Context.MODE_PRIVATE);
-			output = writer.writeConfig(context, config);
-			fOut.write(output.getBytes());
-			fOut.close();
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	public static Configuration readConfig(final Context context, String path){
-		
-		XMLReader parser = new XMLReader();
-		InputStream input = null;
-		Configuration result = null;
-		
-		try{
-			
-			input = new FileInputStream(context.getFilesDir() + "/" + path);
-			result = parser.parseConfig(input);
-			input.close();		
-		}
-		catch(IOException oshit){
-			input = null;
-			System.out.println("internal config not found");
-		}
-		if(input == null){
-			
-			try{
-				
-				input = context.getAssets().open("database/config.xml");
-				result = parser.parseConfig(input);
-				input.close();
-				
-				writeConfig(context, result, path);
-				
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		return result;
-	}
-	
-	public static List<PlayerInfo> readPlayers(final Context context, String path){
-		
-		return null;
 	}
 	
 	private static List<Formation> matchPlayers(List<FormationEntry> formEntries, List<PlayerInfo> players){

@@ -111,79 +111,8 @@ public class XMLReader extends BaseFeedParser{
         }	
 		return entries;
 	}
-	
-	@Override
-	public Configuration parseConfig(InputStream input) {
-		
-		Configuration config = null;
-		String temp = null;
-		XmlPullParser parser = Xml.newPullParser();
-		
-		try {
-            // auto-detect the encoding from the stream
-            parser.setInput(input, null);
-            int eventType = parser.getEventType();
-            boolean done = false;
-            while (eventType != XmlPullParser.END_DOCUMENT && !done){
-                String name = null;
-                switch (eventType){
-                    case XmlPullParser.START_DOCUMENT:
-                        break;
-                    case XmlPullParser.START_TAG:
-                    	
-                        name = parser.getName();
-                        
-                        if(name.equalsIgnoreCase(CONFIG)){
-                        	config = new Configuration();
-                        }
-                        else if(name.equalsIgnoreCase(PLAYER_SIZE)){
-                        	temp = parser.nextText();
-                        	if(temp.equalsIgnoreCase("true")){
-                        		config.setLargePlayers(true);
-                        	}
-                        	else{
-                        		config.setLargePlayers(false);
-                        	}
-                        }
-                        else if(name.equalsIgnoreCase(DEFAULT)){
-                        	config.setDefault_sport(parser.nextText());
-                        }
-                        else if(name.equalsIgnoreCase(LINE_ENABLED)){
 
-                        	temp = parser.nextText();
-                        	if(temp.equalsIgnoreCase("true")){
-                        		config.setLineEnabled(true);
-
-                        	}
-                        	else{
-                        		config.setLineEnabled(false);
-                        	}
-                        }
-                        else if(name.equalsIgnoreCase(LOAD_LAST)){
-                        	temp = parser.nextText();
-                        	if(temp.equalsIgnoreCase("true")){
-                        		config.setLastLoaded(true);
-                        	}
-                        	else{
-                        		config.setLastLoaded(false);    
-                        	}
-                        }
-                        
-                        break;
-                        
-                    case XmlPullParser.END_TAG:
-                    
-                        break;
-                }
-                eventType = parser.next();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return config;
-	}
-	
-	public ArrayList<PlayerInfo> parsePlayers(InputStream input){
+	public List<PlayerInfo> parsePlayers(InputStream input){
 		
 		ArrayList<PlayerInfo> pList = new ArrayList<PlayerInfo>();
 		
@@ -253,7 +182,7 @@ public class XMLReader extends BaseFeedParser{
             e.printStackTrace();
         }
 		
-		System.out.println(pList.size() + " players in the database");
+		//System.out.println(pList.size() + " players in the database");
 		//System.out.println(newPlayer.getPName());
 		return pList;
 	}
