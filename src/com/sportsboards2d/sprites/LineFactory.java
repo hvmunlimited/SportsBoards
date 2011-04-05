@@ -1,6 +1,8 @@
 package com.sportsboards2d.sprites;
 
 import org.anddev.andengine.entity.primitive.Line;
+
+import com.sportsboards2d.util.Colors;
 	
 /**
  * Copyright 2011 5807400 Manitoba Inc. All rights reserved.
@@ -12,13 +14,6 @@ public class LineFactory {
 	private static float pRed = 100.0f;
 	private static float pGreen = 100.0f;
 	private static float pBlue = 100.0f;
-	
-	public static final int WHITE = 0;
-	public static final int BLACK = 1;
-	public static final int RED = 2;
-	public static final int GREEN = 3;
-	public static final int BLUE = 4;
-	
 	
 	public static Line createLine(float pStartX, float pStartY, float pEndX, float pEndY){
 		Line line = new Line(pStartX, pStartY, pEndX, pEndY, LINEWIDTH_DEFAULT);
@@ -33,36 +28,48 @@ public class LineFactory {
 	}
 	
 	public static void setColor(int id){
+		System.out.println(id);
 		switch(id){
 		
-			case WHITE:
-				pRed = 100.0f;
-				pGreen = 100.0f;
-				pBlue = 100.0f;
-				
+			case Colors.WHITE:
+				pRed = 1.0f;
+				pGreen = 1.0f;
+				pBlue = 1.0f;
 				break;
-			case BLACK:
+			case Colors.BLACK:
 				pRed = 0.0f;
 				pGreen = 0.0f;
 				pBlue = 0.0f;
-				break;
-				
-			case RED:
-				pRed = 255.0f;
+				break;	
+			case Colors.RED:
+				pRed = 1.0f;
 				pGreen = 0.0f;
 				pBlue = 0.0f;
 				break;
-				
-			case GREEN:
+			case Colors.GREEN:
 				pRed = 0.0f;
-				pGreen = 255.0f;
+				pGreen = 1.0f;
 				pBlue = 0.0f;
 				break;
-				
-			case BLUE:
+			case Colors.BLUE:
 				pRed = 0.0f;
 				pGreen = 0.0f;
-				pBlue = 255.0f;
+				pBlue = 1.0f;
+				break;
+			case Colors.ORANGE:
+				pRed = 1.0f;
+				pGreen = 0.38f;
+				pBlue = 0.0f;
+				break;
+			case Colors.GREY:
+				pRed = 0.6f;
+				pGreen = 0.6f;
+				pBlue = 0.6f;
+				break;
+			case Colors.YELLOW:
+				pRed = 1.0f;
+				pGreen = 1.0f;
+				pBlue = 0.0f;
 				break;
 		}	
 	}

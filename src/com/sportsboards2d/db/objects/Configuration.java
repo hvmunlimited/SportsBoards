@@ -20,7 +20,10 @@ public class Configuration {
 	public int menuTextColor;
 	
 	public String default_formation;
-	public int playerInfoDisplayToggle;
-	public int playerInfoDisplayStuff;
+	public boolean playerInfoDisplayToggle;
+	public int playerInfoDisplayWhenMode;
+	public int playerInfoDisplayWhatMode;
+	
+	public Configuration(){}
 	
 }

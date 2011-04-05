@@ -40,6 +40,7 @@ import android.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.sportsboards2d.R;
 import com.sportsboards2d.activities.DeleteForm;
 import com.sportsboards2d.activities.LoadForm;
 import com.sportsboards2d.activities.SaveForm;
@@ -151,7 +152,7 @@ public abstract class BaseBoard extends Interface{
 		this.mBluePlayerTexture = new Texture(64, 64, TextureOptions.BILINEAR);
 		this.mBallTexture = new Texture(64, 64, TextureOptions.BILINEAR);
 		
-		if(LARGE_PLAYERS){
+		if(config.largePlayers){
 			this.mRedPlayerTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mRedPlayerTexture, this, "48x48RED.png", 0, 0, 1, 1);
 			this.mBluePlayerTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mBluePlayerTexture, this, "48x48BLUE.png", 0, 0, 1, 1);
 			this.mBallTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mBallTexture, this, BALL_PATH_SMALL, 0, 0, 1, 1);
@@ -363,12 +364,10 @@ public abstract class BaseBoard extends Interface{
 		
 		playerText = new ChangeableText(+20, +50, this.mPlayerInfoFont, "0");
 		newPlayer.addDisplayInfo(playerText);
-		//this enables/disables the player info popup when touching a player
-		newPlayer.setupDisplay();
-				
+		if(config.playerInfoDisplayToggle && config.playerInfoDisplayWhenMode == 1){
+			newPlayer.displayInfo(true);
+		}
 		return newPlayer;
-		
-	
 	}
 	
 	@Override
@@ -422,10 +421,10 @@ public abstract class BaseBoard extends Interface{
 			Body body = this.mPhysicsWorld.getPhysicsConnectorManager().findBodyByShape(sprite);
 			
 			if(sprite.getPlayer().getTeamColor().equalsIgnoreCase("red")){
-				LineFactory.setColor(LineFactory.RED);
+				LineFactory.setColor(config.rTeamLineColor);
 			}
 			else if(sprite.getPlayer().getTeamColor().equalsIgnoreCase("blue")){
-				LineFactory.setColor(LineFactory.BLUE);
+				LineFactory.setColor(config.bTeamLineColor);
 			}
 			
 			switch(pSceneTouchEvent.getAction()) {
@@ -433,8 +432,9 @@ public abstract class BaseBoard extends Interface{
 					
 					sprite.setScale(2.0f);	
 					sprite.setmGrabbed(true);
-					
-					sprite.displayInfo(true);
+					if(config.playerInfoDisplayToggle && config.playerInfoDisplayWhenMode == 0){
+						sprite.displayInfo(true);
+					}
 					path.clear();
 					sprite.setStartX(sprite.getX()+24);
 					sprite.setStartY(sprite.getY()+24);
@@ -460,7 +460,7 @@ public abstract class BaseBoard extends Interface{
 						path.add(new Coordinates(sprite.getX(), sprite.getY()));
 
 						
-						if(LINE_ENABLED){
+						if(config.lineEnabled){
 						
 							diff = MathUtils.distance(sprite.getStartX(), sprite.getStartY(), moveX, moveY);
 							
@@ -493,7 +493,9 @@ public abstract class BaseBoard extends Interface{
 					if(sprite.ismGrabbed()) {
 						sprite.setmGrabbed(false);
 						sprite.setScale(1.0f);
-						sprite.displayInfo(false);
+						if(config.playerInfoDisplayToggle && config.playerInfoDisplayWhenMode == 0){
+							sprite.displayInfo(false);
+						}
 						
 						if(recording){
 							if(path.size()>1){
@@ -627,20 +629,20 @@ public abstract class BaseBoard extends Interface{
 				this.mBluePlayerTexture.clearTextureSources();
 				this.mBallTexture.clearTextureSources();
 				
-				if(LARGE_PLAYERS){
+				if(config.largePlayers){
 					
 					this.mRedPlayerTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mRedPlayerTexture, this, "32x32RED.png", 0, 0, 1, 1);
 					this.mBluePlayerTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mBluePlayerTexture, this, "32x32BLUE.png", 0, 0, 1, 1);
 					this.mBallTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mBallTexture, this, BALL_PATH_SMALL, 0, 0, 1, 1);
 
-					LARGE_PLAYERS = false;
+					config.largePlayers = false;
 				}
 				else{
 					this.mRedPlayerTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mRedPlayerTexture, this, "48x48RED.png", 0, 0, 1, 1);
 					this.mBluePlayerTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mBluePlayerTexture, this, "48x48BLUE.png", 0, 0, 1, 1);
 					this.mBallTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mBallTexture, this, BALL_PATH_SMALL, 0, 0, 1, 1);
 
-					LARGE_PLAYERS = true;
+					config.largePlayers = true;
 
 				}
 				this.mMainMenu.back();
@@ -697,7 +699,28 @@ public abstract class BaseBoard extends Interface{
 		}
 		else if(requestCode == 4){
 			SharedPreferences prefs = getSharedPreferences("settings", 0);
-			LINE_ENABLED = prefs.getBoolean("lineEnabled", false);
+			
+			int menuTextColor = config.menuTextColor;
+			System.out.println(menuTextColor);
+			
+			updateConfig(prefs);
+			System.out.println(config.menuTextColor);
+			PlayerSprite.displayMode = config.playerInfoDisplayWhatMode;
+			if(config.playerInfoDisplayToggle == true && config.playerInfoDisplayWhenMode == 1){
+				for(PlayerSprite p:players){
+					p.displayInfo(true);
+				}
+			}
+			else if(config.playerInfoDisplayToggle == false){
+				for(PlayerSprite p:players){
+					p.displayInfo(false);
+				}
+			}
+			if(menuTextColor != config.menuTextColor){
+				
+				updateMenuText();
+				
+			}
 		}
 
 	}

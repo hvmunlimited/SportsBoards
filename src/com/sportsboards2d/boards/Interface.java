@@ -36,8 +36,10 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.sportsboards2d.R;
+import com.sportsboards2d.db.objects.Configuration;
 import com.sportsboards2d.sprites.ButtonSprite;
 import com.sportsboards2d.sprites.PlayerSprite;
+import com.sportsboards2d.util.Colors;
 import com.sportsboards2d.util.Constants;
 
 /**
@@ -75,8 +77,6 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 	protected Camera mCamera;
 	protected HoldDetector mHoldDetector;
 	
-	protected boolean LARGE_PLAYERS = true;
-	protected boolean LINE_ENABLED = false;
 	protected boolean playBackEnabled = false;
 	
 	//private Texture mMenuBorderTexture;
@@ -106,6 +106,8 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 	protected List<ButtonSprite> buttons = new ArrayList<ButtonSprite>();
 
 	protected PhysicsWorld mPhysicsWorld;
+	
+	protected Configuration config;
 	
 	@Override 
 	public void onLoadResources(){
@@ -217,7 +219,8 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 	
 		SharedPreferences settings = getSharedPreferences("settings", 0);
 		String default_board = settings.getString("default_board", null);
-		
+		config = new Configuration();
+
 		
 		//No preferences saved, (meaning first boot of the app)
 		if(default_board == null){
@@ -225,15 +228,87 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 			
 			SharedPreferences.Editor editor = settings.edit();
 			editor.putString("default_board", "basketball");
-			editor.putBoolean("lineEnabled", false);
+			editor.putBoolean(getString(R.string.lineEnabled), false);
+			editor.putInt(getString(R.string.rTeamLineColor), Colors.RED);
+			editor.putInt(getString(R.string.bTeamLineColor), Colors.BLUE);
+			editor.putBoolean(getString(R.string.player_info_display), false);
+			editor.putInt(getString(R.string.display_when), 0);
+			editor.putInt(getString(R.string.display_what), 0);
+			editor.putInt(getString(R.string.menuTextColor), 0);
+			
+			
 			editor.commit();
+			updateConfig(settings);
 		}
 		else{
-			LINE_ENABLED = settings.getBoolean("lineEnabled", false);
-		}
+			updateConfig(settings);
+		}	
+	}
+	protected void updateConfig(SharedPreferences settings){
+		config.largePlayers = true;
+		config.lineEnabled = settings.getBoolean("lineEnabled", false);
+		config.rTeamLineColor = settings.getInt(getString(R.string.rTeamLineColor), Colors.RED);
+		config.bTeamLineColor = settings.getInt(getString(R.string.bTeamLineColor), Colors.BLUE);
+		config.playerInfoDisplayToggle = settings.getBoolean(getString(R.string.player_info_display), false);
+		config.playerInfoDisplayWhenMode = settings.getInt(getString(R.string.display_when), 0);
+		config.playerInfoDisplayWhatMode = settings.getInt(getString(R.string.display_what), 0);
+		config.menuTextColor = settings.getInt(getString(R.string.menuTextColor), 0);
+	}
+	
+	protected void updateMenuText(){
 		
-		//LINE_ENABLED = config.isLineEnabled();
-		//LARGE_PLAYERS = config.isLargePlayers();
+		int max = this.mMainMenu.getChild(0).getChildCount();
+		IMenuItem item = null;
+
+		switch(config.menuTextColor){
+		
+			case Colors.WHITE:
+				
+				for(int i = 0; i < max; i++){
+					item = (IMenuItem)this.mMainMenu.getChild(0).getChild(i);
+					item.setColor(1.0f, 1.0f, 1.0f);
+					item.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+				}
+				break;
+			case Colors.BLACK:
+				for(int i = 0; i < max; i++){
+					item = (IMenuItem)this.mMainMenu.getChild(0).getChild(i);
+					item.setColor(0.0f, 0.0f, 0.0f);
+					item.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+				}
+				break;	
+			case Colors.RED:
+				for(int i = 0; i < max; i++){
+					this.mMainMenu.getChild(0).getChild(i).setColor(1.0f, 0.0f, 0.0f);
+				}
+				break;
+			case Colors.GREEN:
+				for(int i = 0; i < max; i++){
+					this.mMainMenu.getChild(0).getChild(i).setColor(0.0f, 1.0f, 0.0f);
+				}
+				break;
+			case Colors.BLUE:
+				for(int i = 0; i < max; i++){
+					this.mMainMenu.getChild(0).getChild(i).setColor(0.0f, 0.0f, 1.0f);
+				}
+				break;
+			case Colors.ORANGE:
+				for(int i = 0; i < max; i++){
+					this.mMainMenu.getChild(0).getChild(i).setColor(1.0f, 0.35f, 0.0f);
+				}
+				break;
+			case Colors.GREY:
+				for(int i = 0; i < max; i++){
+					this.mMainMenu.getChild(0).getChild(i).setColor(0.6f, 0.6f, 0.6f);
+				}
+				break;
+			case Colors.YELLOW:
+				for(int i = 0; i < max; i++){
+					this.mMainMenu.getChild(0).getChild(i).setColor(1.0f, 1.0f, 0.0f);
+				}
+				break;
+			
+		}
 	}
 	
 	/*
@@ -248,10 +323,10 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 		final IMenuItem reset = new ColorMenuItemDecorator(new TextMenuItem(Constants.MAIN_MENU_RESET, this.mMenuFont, getString(R.string.reset)), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
 		reset.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 		this.mMainMenu.addMenuItem(reset);
-		
+				
 		final IMenuItem lineEnable = new ColorMenuItemDecorator(new TextMenuItem(Constants.SETTINGS_LINE_ENABLE, this.mMenuFont, getString(R.string.line_enable)), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
 		lineEnable.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-		this.mMainMenu.addMenuItem(lineEnable);
+		//this.mMainMenu.addMenuItem(lineEnable);
 		
 		final IMenuItem clearLines = new ColorMenuItemDecorator(new TextMenuItem(Constants.MAIN_MENU_CLEARLINES, this.mMenuFont, getString(R.string.line_clear)), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
 		clearLines.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
@@ -364,11 +439,11 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 				
 			
 			case Constants.SETTINGS_LINE_ENABLE:
-				if(LINE_ENABLED){
-					LINE_ENABLED = false;
+				if(config.lineEnabled){
+					config.lineEnabled = false;
 				}
 				else{
-					LINE_ENABLED = true;
+					config.lineEnabled = true;
 				}
 				//this.mSettingsMenu.back();
 				this.mMainMenu.back();

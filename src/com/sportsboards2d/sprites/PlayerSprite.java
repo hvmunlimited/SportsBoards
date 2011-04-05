@@ -19,6 +19,15 @@ public class PlayerSprite extends BaseSprite{
 	private final int POSITION_DISPLAY = 1;
 	private final int NUMBER_DISPLAY = 2;
 	
+	public static int displayMode;
+	private final int NIP = 0;
+	private final int NI = 1;
+	private final int NP = 2;
+	private final int N = 3;
+	private final int IP = 4;
+	private final int P = 5;
+	private final int I = 6;
+	
 	/*
 	 * Variables + Setters
 	 */
@@ -44,26 +53,42 @@ public class PlayerSprite extends BaseSprite{
 	public ChangeableText getNumberDisplay(){
 		return this.displayInfo.get(NUMBER_DISPLAY);
 	}
-	public void setupDisplay(){
-		getNameDisplay().setVisible(false);
-		getPositionDisplay().setVisible(false);
-		getNumberDisplay().setVisible(false);
-		this.attachChild(getNameDisplay());
-		this.attachChild(getPositionDisplay());
-		this.attachChild(getNumberDisplay());
-	}
 	public void displayInfo(boolean bool){
 		
-		if(bool){
-			getNameDisplay().setVisible(true);
-			getPositionDisplay().setVisible(true);
-			getNumberDisplay().setVisible(true);
-		}
-		else{
-			getNameDisplay().setVisible(false);
-			getPositionDisplay().setVisible(false);
-			getNumberDisplay().setVisible(false);
-		}
+		this.detachChildren();
 		
+		if(bool){
+			
+			switch(displayMode){
+			
+				case NIP:
+					this.attachChild(getNameDisplay());
+					this.attachChild(getPositionDisplay());
+					this.attachChild(getNumberDisplay());
+					break;
+				case NI:
+					this.attachChild(getNameDisplay());
+					this.attachChild(getNumberDisplay());
+					break;
+				case NP:
+					this.attachChild(getPositionDisplay());
+					this.attachChild(getNumberDisplay());
+					break;
+				case N:
+					this.attachChild(getNumberDisplay());
+					break;
+				case IP:
+					this.attachChild(getNameDisplay());
+					this.attachChild(getPositionDisplay());
+					break;
+				case P:
+					this.attachChild(getPositionDisplay());
+					break;
+				case I:
+					this.attachChild(getNameDisplay());
+					break;
+			}
+			
+		}
 	}
 }

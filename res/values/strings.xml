@@ -9,8 +9,6 @@
 	
 	<!-- Main Menu Strings -->
 	<string name="reset">Reset</string>
-	<string name="line_enable">Toggle Line Enable</string>
-	<string name="line_enable_description">Enable/Disable line drawing</string>
 	<string name="line_clear">Clear Lines</string>
 	<string name="save_form">Save Formation</string>
 	<string name="delete_form">Delete Formation</string>
@@ -19,7 +17,6 @@
 	<string name="settings">Settings</string>
 	
 	<!--Current Settings Menu Strings -->
-	<string name="lineEnabled">lineEnabled</string>
 	<string name="app_settings">Application Settings</string>
 	
 	<string name="default_sport">Default board</string>
@@ -27,18 +24,38 @@
 	
 	
 	<string name="line_settings">Line Settings</string>
+	<string name="lineEnabled">lineEnabled</string>
+	<string name="line_enable">Toggle Line Draw</string>
+	<string name="line_enable_description">Enable/Disable line drawing</string>
 
 		<!--  Line Settings Strings -->
-		<string name="rTeamLineColor">Red Team Line Color</string>
+		<string name="rTeamLineColor">rTeamLineColor</string>
+		<string name="rTeamLineColor_title">Red Team Line Color</string>
 		<string name="rTeamLineColor_description">Color of the lines displayed when dragging a red player</string>
-		<string name="bTeamLineColor">Blue Team Line Color</string>
-		
+		<string name="bTeamLineColor">bTeamLineColor</string>
+		<string name="bTeamLineColor_title">Blue Team Line Color</string>
+		<string name="bTeamLineColor_description">Color of the lines displayed when dragging a blue player</string>
 		<string name="line_type">Line Type</string>
 	
 	<string name="player_settings">Player Settings</string>
 		<!--  Player Settings Strings -->
+		<string name="player_info_display">player_info_display</string>
+		<string name="player_info_display_title">Enable/Disable player info display</string>
+		<string name="player_info_display_description">This will cause information about the player to be displayed</string>
+
+		
+		<string name="display_when">display_when</string>
+		<string name="display_when_title">Display Mode</string>
+		<string name="display_when_description">Choose when the information is displayed</string>		
+		<string name="display_what">display_what</string>
+		<string name="display_what_title">Filter Display</string>
+		<string name="display_what_description">Choose what information is displayed</string>
+		
+		<string name="menuTextColor">menuTextColor</string>		
+		<string name="menuTextColor_title">Main Menu Text Color</string>
+		<string name="menuTextColor_description">You can change the color of the text for the main menu</string>
+		
 		<string name="change_player_size">Change Player Size</string>
-	
 		
 	
 	<!-- To be added -->

@@ -163,7 +163,7 @@ public class testingboard extends BaseBoard{
 						
 						
 						
-						if(LINE_ENABLED){
+						if(true){
 						
 							diff = MathUtils.distance(sprite.getStartX(), sprite.getStartY(), moveX, moveY);
 							
