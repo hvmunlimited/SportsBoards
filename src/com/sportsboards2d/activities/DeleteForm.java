@@ -3,9 +3,7 @@
  */
 package com.sportsboards2d.activities;
 
-import com.sportsboards2d.boards.BaseBoard;
 
-import android.R;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;
@@ -15,6 +13,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
+
+import com.sportsboards2d.R;
+import com.sportsboards2d.boards.BaseBoard;
 
 /**
  * Coded by Nathan King
@@ -32,7 +33,7 @@ public class DeleteForm extends ListActivity{
 
 	  setResult(-1, null);
 	 
-	  setListAdapter(new ArrayAdapter<String>(this, R.layout.simple_list_item_1, BaseBoard.formNames));
+	  setListAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, BaseBoard.formNames));
 
 	  ListView lv = getListView();
 	  lv.setTextFilterEnabled(true);
@@ -40,16 +41,16 @@ public class DeleteForm extends ListActivity{
 	  lv.setOnItemClickListener(new OnItemClickListener() {
 	    public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
 	    	
-			builder.setMessage("Are you sure you want to delete?")
+			builder.setMessage(R.string.alert_dialog_confirm)
 			       .setCancelable(false)
-			       .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+			       .setPositiveButton(R.string.confirm_yes, new DialogInterface.OnClickListener() {
 			           public void onClick(DialogInterface dialog, int id) {
 			    	    	setResult(position, null);
 			                DeleteForm.this.finish();
 
 			           }
 			       })
-			       .setNegativeButton("No", new DialogInterface.OnClickListener() {
+			       .setNegativeButton(R.string.confirm_no, new DialogInterface.OnClickListener() {
 			           public void onClick(DialogInterface dialog, int id) {
 			                dialog.cancel();
 			           }

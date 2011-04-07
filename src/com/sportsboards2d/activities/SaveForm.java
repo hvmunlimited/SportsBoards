@@ -10,6 +10,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.EditText;
 
+import com.sportsboards2d.R;
+
 /**
  * Coded by Nathan King
  */
@@ -24,13 +26,13 @@ public class SaveForm extends Activity{
 		 super.onCreate(savedInstanceState);
 		 AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
-			alert.setTitle("Save Formation");
-			alert.setMessage("Enter a name for the formation");
+			alert.setTitle(R.string.save_form);
+			alert.setMessage(R.string.enter_form_name);
 			alert.setCancelable(false);
 			final EditText input = new EditText(this);
 			alert.setView(input);
 			
-			alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+			alert.setPositiveButton(R.string.alert_dialog_ok, new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int whichButton){
 					
 					Intent value = new Intent();
@@ -41,7 +43,7 @@ public class SaveForm extends Activity{
 				}
 			});
 			
-			alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
+			alert.setNegativeButton(R.string.alert_dialog_cancel, new DialogInterface.OnClickListener(){
 				public void onClick(DialogInterface dialog, int whichButton){
 					setResult(-1, null);
 					SaveForm.this.finish();

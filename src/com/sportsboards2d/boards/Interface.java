@@ -98,6 +98,8 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 	
 	protected Scene mMainScene;
 	protected MenuScene mMainMenu;
+	protected MenuScene mFormationsSubMenu;
+	protected MenuScene mPlayersSubMenu;
 	protected MenuScene mPlayerContextMenu;
 	
 	protected PlayerSprite selectedPlayer;
@@ -137,6 +139,8 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 		
 		this.mMainScene = new Scene(7);
 		createMainMenu();
+		createFormationsSubMenu();
+		createPlayersSubMenu();
 		createPlayerContextMenu();
 		
 		this.mHoldDetector = new HoldDetector(new IHoldDetectorListener(){
@@ -217,7 +221,7 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 	
 	private void onLoadConfig(){
 	
-		SharedPreferences settings = getSharedPreferences("settings", 0);
+		SharedPreferences settings = getSharedPreferences(getString(R.string.settings), 0);
 		String default_board = settings.getString("default_board", null);
 		config = new Configuration();
 
@@ -324,25 +328,18 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 		reset.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 		this.mMainMenu.addMenuItem(reset);
 				
-		final IMenuItem lineEnable = new ColorMenuItemDecorator(new TextMenuItem(Constants.SETTINGS_LINE_ENABLE, this.mMenuFont, getString(R.string.line_enable)), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
-		lineEnable.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-		//this.mMainMenu.addMenuItem(lineEnable);
-		
 		final IMenuItem clearLines = new ColorMenuItemDecorator(new TextMenuItem(Constants.MAIN_MENU_CLEARLINES, this.mMenuFont, getString(R.string.line_clear)), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
 		clearLines.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 		this.mMainMenu.addMenuItem(clearLines);
 		
-		final IMenuItem save = new ColorMenuItemDecorator(new TextMenuItem(Constants.MAIN_MENU_SAVE, this.mMenuFont, getString(R.string.save_form)), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
-		save.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-		this.mMainMenu.addMenuItem(save);
+		final IMenuItem formations = new ColorMenuItemDecorator(new TextMenuItem(Constants.MAIN_MENU_FORMATIONS, this.mMenuFont, getString(R.string.formations)), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
+		formations.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+		this.mMainMenu.addMenuItem(formations);
 		
-		final IMenuItem delete = new ColorMenuItemDecorator(new TextMenuItem(Constants.MAIN_MENU_DELETE, this.mMenuFont, getString(R.string.delete_form)), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
-		delete.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-		this.mMainMenu.addMenuItem(delete);
 		
-		final IMenuItem load = new ColorMenuItemDecorator(new TextMenuItem(Constants.MAIN_MENU_LOAD, this.mMenuFont, getString(R.string.load_form)), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
-		load.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-		this.mMainMenu.addMenuItem(load);
+		final IMenuItem players = new ColorMenuItemDecorator(new TextMenuItem(Constants.MAIN_MENU_PLAYERS, this.mMenuFont, getString(R.string.players)), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
+		players.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+		this.mMainMenu.addMenuItem(players);
 
 		final IMenuItem playback = new ColorMenuItemDecorator(new TextMenuItem(Constants.MAIN_MENU_PLAYBACK, this.mMenuFont, getString(R.string.playback)), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
 		playback.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
@@ -357,7 +354,49 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 		this.mMainMenu.setOnMenuItemClickListener(this);
 	}
 	
+	private void createFormationsSubMenu(){
+		
+		this.mFormationsSubMenu = new MenuScene(this.mCamera);
+		
+		final IMenuItem save = new ColorMenuItemDecorator(new TextMenuItem(Constants.FORMATIONS_SUBMENU_SAVE, this.mMenuFont, getString(R.string.save_form)), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
+		save.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+		this.mFormationsSubMenu.addMenuItem(save);
+		
+		final IMenuItem delete = new ColorMenuItemDecorator(new TextMenuItem(Constants.FORMATIONS_SUBMENU_DELETE, this.mMenuFont, getString(R.string.delete_form)), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
+		delete.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+		this.mFormationsSubMenu.addMenuItem(delete);
+		
+		final IMenuItem load = new ColorMenuItemDecorator(new TextMenuItem(Constants.FORMATIONS_SUBMENU_LOAD, this.mMenuFont, getString(R.string.load_form)), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
+		load.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+		this.mFormationsSubMenu.addMenuItem(load);
+		
+		this.mFormationsSubMenu.buildAnimations();
+		this.mFormationsSubMenu.setBackgroundEnabled(false);
+		this.mFormationsSubMenu.setOnMenuItemClickListener(this);
+		
+	}
 	
+	private void createPlayersSubMenu(){
+		
+		this.mPlayersSubMenu = new MenuScene(this.mCamera);
+		
+		final IMenuItem create = new ColorMenuItemDecorator(new TextMenuItem(Constants.PLAYERS_SUBMENU_CREATE, this.mMenuFont, getString(R.string.players_create)), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
+		create.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+		this.mPlayersSubMenu.addMenuItem(create);
+		
+		//final IMenuItem delete = new ColorMenuItemDecorator(new TextMenuItem(Constants.MAIN_MENU_DELETE, this.mMenuFont, getString(R.string.delete_form)), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
+		//delete.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+		//this.mPlayersSubMenu.addMenuItem(delete);
+		
+		//final IMenuItem load = new ColorMenuItemDecorator(new TextMenuItem(Constants.MAIN_MENU_LOAD, this.mMenuFont, getString(R.string.load_form)), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
+		//load.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+		//this.mPlayersSubMenu.addMenuItem(load);
+		
+		this.mPlayersSubMenu.buildAnimations();
+		this.mPlayersSubMenu.setBackgroundEnabled(false);
+		this.mPlayersSubMenu.setOnMenuItemClickListener(this);
+		
+	}
 	
 	private void createPlayerContextMenu(){
 		
@@ -395,14 +434,14 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 		
 		else if(key == KeyEvent.KEYCODE_BACK){
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setMessage("Are you sure you want to exit?")
+			builder.setMessage(R.string.confirm_quit)
 			       .setCancelable(false)
-			       .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+			       .setPositiveButton(R.string.confirm_yes, new DialogInterface.OnClickListener() {
 			           public void onClick(DialogInterface dialog, int id) {
 			                Interface.this.finish();
 			           }
 			       })
-			       .setNegativeButton("No", new DialogInterface.OnClickListener() {
+			       .setNegativeButton(R.string.confirm_no, new DialogInterface.OnClickListener() {
 			           public void onClick(DialogInterface dialog, int id) {
 			                dialog.cancel();
 			           }
@@ -436,20 +475,19 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 				}
 				//this.mMainMenu.setChildSceneModal(mPlayBackMenu);
 				return true;
+		
+			case Constants.MAIN_MENU_FORMATIONS:
 				
-			
-			case Constants.SETTINGS_LINE_ENABLE:
-				if(config.lineEnabled){
-					config.lineEnabled = false;
-				}
-				else{
-					config.lineEnabled = true;
-				}
-				//this.mSettingsMenu.back();
-				this.mMainMenu.back();
+				this.mMainMenu.setChildSceneModal(this.mFormationsSubMenu);
+				
 				return true;
-
-	
+				
+			case Constants.MAIN_MENU_PLAYERS:
+				
+				this.mMainMenu.setChildSceneModal(this.mPlayersSubMenu);
+				
+				return true;
+				
 			default:
 				return false;
 		}

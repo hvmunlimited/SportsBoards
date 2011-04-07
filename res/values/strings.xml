@@ -10,11 +10,18 @@
 	<!-- Main Menu Strings -->
 	<string name="reset">Reset</string>
 	<string name="line_clear">Clear Lines</string>
-	<string name="save_form">Save Formation</string>
-	<string name="delete_form">Delete Formation</string>
-	<string name="load_form">Load Formation</string>
+	<string name="formations">Formations</string>
+			<string name="save_form">Save Formation</string>
+			<string name="delete_form">Delete Formation</string>
+			<string name="load_form">Load Formation</string>
 	<string name="playback">Playback Mode</string>
+	<string name="players">Players</string>
+		<string name="players_create">Create a Player</string>
 	<string name="settings">Settings</string>
+	
+	
+	
+	
 	
 	<!--Current Settings Menu Strings -->
 	<string name="app_settings">Application Settings</string>
@@ -73,12 +80,40 @@
 	
 	
 	
+	<string name="enter_form_name">Enter a name for the formation</string>
 	
 	
 	
-	<!-- Player Menu Strings -->
-	<string name="delete_player">Remove this player</string>
-
+	
+	<string name="confirm_quit">Are you sure you want to exit?</string>
+	<string name="confirm_yes">Yes</string>
+	<string name="confirm_no">No</string>
+	
+	<string name="alert_dialog_confirm">Are you sure you want to delete this formation?</string>
+	<string name="alert_dialog_ok">OK</string>
+	<string name="alert_dialog_cancel">Cancel</string>
+	
+	
+	
+	
+	
+	
+	<string name="player_create_title">Create a Player</string>
+	<string name="enter_first_name">First Name</string>
+	<string name="enter_last_name">Last Name</string>
+	<string name="enter_jersey">Jersey #</string>
+	<string name="enter_position">Position</string>
+	
+	
+	
+	
+	
+	<!-- Regex -->
+	<string name="regex_first_name">"[A-Z][a-zA-Z]*"</string>
+	<string name="regex_last_name">"[a-zA-z]+([ '-][a-zA-Z]+)*"</string>
+	<string name="regex_jerseynum">"[1-9]?[0-9]"</string>
+	<string name="regex_position">"[A-Z][A-Z]?[A-Z]?"</string>
+	
 	<string name="check_license">Check license</string>
     <string name="checking_license">Checking license...</string>
     <string name="dont_allow">Don\'t allow the user access</string>

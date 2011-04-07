@@ -55,7 +55,7 @@ public class HockeyBoard extends BaseBoard {
 		final IMenuItem reset = new ColorMenuItemDecorator(new TextMenuItem(Constants.MAIN_MENU_RESET, this.mMenuFont, "Reset"), 1.0f, 0.0f,0.0f, 0.0f, 0.0f, 0.0f);
 		reset.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 		this.mMainMenu.addMenuItem(reset);
-		
+		/*
 		final IMenuItem lineEnable = new ColorMenuItemDecorator(new TextMenuItem(Constants.SETTINGS_LINE_ENABLE, this.mMenuFont, "Toggle Line Draw"), 1.0f, 0.0f,0.0f, 0.0f, 0.0f, 0.0f);
 		lineEnable.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 		this.mMainMenu.addMenuItem(lineEnable);
@@ -75,7 +75,7 @@ public class HockeyBoard extends BaseBoard {
 		final IMenuItem load = new ColorMenuItemDecorator(new TextMenuItem(Constants.MAIN_MENU_LOAD, this.mMenuFont, "Load Formation"), 1.0f, 0.0f,0.0f, 0.0f, 0.0f, 0.0f);
 		load.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 		this.mMainMenu.addMenuItem(load);
-
+*/
 		final IMenuItem playback = new ColorMenuItemDecorator(new TextMenuItem(Constants.MAIN_MENU_PLAYBACK, this.mMenuFont, "Playback Mode"), 1.0f, 0.0f,0.0f, 0.0f, 0.0f, 0.0f);
 		playback.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 		this.mMainMenu.addMenuItem(playback);

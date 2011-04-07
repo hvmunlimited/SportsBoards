@@ -30,5 +30,13 @@ public class StringPrinting {
 			}
 		}
 	}
+	
+	public static void printPlayerInfo(PlayerInfo player){
+		
+		System.out.println("Player name: " + player.getPName());
+		System.out.println("Player ID: " + player.getpID());
+		System.out.println("Player jersey#: " + player.getjNum());
+		System.out.println("Player position: " + player.getType());
+	}
 
 }

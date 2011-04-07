@@ -41,6 +41,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.sportsboards2d.R;
+import com.sportsboards2d.activities.CreatePlayer;
 import com.sportsboards2d.activities.DeleteForm;
 import com.sportsboards2d.activities.LoadForm;
 import com.sportsboards2d.activities.SaveForm;
@@ -48,6 +49,7 @@ import com.sportsboards2d.activities.SettingsViewer;
 import com.sportsboards2d.db.objects.Coordinates;
 import com.sportsboards2d.db.objects.Formation;
 import com.sportsboards2d.db.objects.Player;
+import com.sportsboards2d.db.objects.PlayerInfo;
 import com.sportsboards2d.db.parsing.XMLAccess;
 import com.sportsboards2d.sprites.BallSprite;
 import com.sportsboards2d.sprites.ButtonSprite;
@@ -56,6 +58,7 @@ import com.sportsboards2d.sprites.PlayerSprite;
 import com.sportsboards2d.util.Constants;
 import com.sportsboards2d.util.PausablePathModifier;
 import com.sportsboards2d.util.SpritePath;
+import com.sportsboards2d.util.StringPrinting;
 
 /**
  * Coded by Nathan King
@@ -101,9 +104,12 @@ public abstract class BaseBoard extends Interface{
 	private int currentFormation;
 	private  List<Formation> formsList;
 	public static String[] formNames;
-	private List<PlayerSprite> players = new ArrayList<PlayerSprite>();
+	private List<PlayerSprite> playerSprites = new ArrayList<PlayerSprite>();
+	private List<PlayerInfo> players;
 	private List<Line>lines = new ArrayList<Line>();
 	protected BallSprite mBall;
+	
+	
 	
 	private List<SpritePath> pathList = new ArrayList<SpritePath>();
 	private List<PausablePathModifier> pauseList = new ArrayList<PausablePathModifier>();
@@ -171,6 +177,7 @@ public abstract class BaseBoard extends Interface{
 		this.mMainScene.setOnAreaTouchListener(this);
 		this.mMainScene.setTouchAreaBindingEnabled(true);
 		this.mMainScene.getChild(BACKGROUND_LAYER).attachChild(new Sprite(0, 0, this.mBackGroundTextureRegion));
+		players = loadPlayers(SPORT_NAME);
 		loadFormation(DEFAULT_NAME);
 		this.mBall = new BallSprite(0, 0, this.mBallTextureRegion);
 		if(formsList!=null){
@@ -185,20 +192,20 @@ public abstract class BaseBoard extends Interface{
 	}
 	
 	private void clearPlayers(){
-		for(final PlayerSprite p: players){
+		for(final PlayerSprite p: playerSprites){
 			mEngine.runOnUpdateThread(new Runnable() {
 	    		@Override
 	    		public void run() {
 	    			Body body = BaseBoard.this.mPhysicsWorld.getPhysicsConnectorManager().findBodyByShape(p);
 	    			BaseBoard.this.mPhysicsWorld.destroyBody(body);
 	    			BaseBoard.this.mMainScene.getChild(PLAYER_LAYER).detachChild(p);
-	    			BaseBoard.this.players.remove(p);
+	    			BaseBoard.this.playerSprites.remove(p);
 	    			BaseBoard.this.mMainScene.unregisterTouchArea(p);
 	    			//BaseBoard.this.mMainScene.
 	    		}
 	    	});
 		}
-		this.players.clear();
+		this.playerSprites.clear();
 	}
 	private void clearBall(){
 		
@@ -258,6 +265,12 @@ public abstract class BaseBoard extends Interface{
 		return fn;
 	}
 	
+	private List<PlayerInfo> loadPlayers(String path){
+		
+		
+		return XMLAccess.loadPlayers(this, SPORT_NAME);
+	}
+	
 	private void loadFormation(String name){
 		
 		if(formsList == null){
@@ -300,7 +313,7 @@ public abstract class BaseBoard extends Interface{
 
 			this.mMainScene.getChild(PLAYER_LAYER).attachChild(newPlayer);
 			this.mMainScene.registerTouchArea(newPlayer);		
-			this.players.add(newPlayer);
+			this.playerSprites.add(newPlayer);
 		}
 		
 		this.mBall.setPosition(fn.getBall().getX(), fn.getBall().getY());
@@ -330,7 +343,7 @@ public abstract class BaseBoard extends Interface{
 					    			final Body body = BaseBoard.this.mPhysicsWorld.getPhysicsConnectorManager().findBodyByShape(selectedPlayer);
 					    			BaseBoard.this.mPhysicsWorld.destroyBody(body);
 					    			BaseBoard.this.mMainScene.getChild(PLAYER_LAYER).detachChild(selectedPlayer);
-					    			BaseBoard.this.players.remove(selectedPlayer);
+					    			BaseBoard.this.playerSprites.remove(selectedPlayer);
 					    			BaseBoard.this.mMainScene.unregisterTouchArea(selectedPlayer);
 							   
 					    		}
@@ -561,6 +574,9 @@ public abstract class BaseBoard extends Interface{
 
 	@Override
 	public boolean onMenuItemClicked(final MenuScene pMenuScene, final IMenuItem pMenuItem, final float pMenuItemLocalX, final float pMenuItemLocalY) {
+		
+		updateMenuText();
+		
 		switch(pMenuItem.getID()) {
 			case Constants.MAIN_MENU_SETTINGS:
 				this.startActivityForResult(new Intent(this, SettingsViewer.class), 4);
@@ -568,11 +584,7 @@ public abstract class BaseBoard extends Interface{
 				return true;
 			case Constants.MAIN_MENU_PLAYBACK:
 				this.playBackEnabled = true;
-				super.onMenuItemClicked(pMenuScene, pMenuItem, pMenuItemLocalX, pMenuItemLocalY);
-				return true;
-			case Constants.SETTINGS_LINE_ENABLE:
-				super.onMenuItemClicked(pMenuScene, pMenuItem, pMenuItemLocalX, pMenuItemLocalY);
-				return true;	
+				return super.onMenuItemClicked(pMenuScene, pMenuItem, pMenuItemLocalX, pMenuItemLocalY);
 			case Constants.MAIN_MENU_RESET:
 				
 				clearScene();
@@ -591,13 +603,17 @@ public abstract class BaseBoard extends Interface{
 
 				return true;
 				
-			case Constants.MAIN_MENU_SAVE:
+			case Constants.MAIN_MENU_FORMATIONS:
+				
+				return super.onMenuItemClicked(pMenuScene, pMenuItem, pMenuItemLocalX, pMenuItemLocalY);
+				
+			case Constants.FORMATIONS_SUBMENU_SAVE:
 				
 				this.startActivityForResult(new Intent(this, SaveForm.class), 1);
 				this.mMainMenu.back();
 				return true;
 			
-			case Constants.MAIN_MENU_DELETE:
+			case Constants.FORMATIONS_SUBMENU_DELETE:
 				
 				formNames = new String[this.formsList.size()];
 				for(int i = 0; i < formsList.size(); i++){
@@ -605,12 +621,11 @@ public abstract class BaseBoard extends Interface{
 				}
 				
 				this.startActivityForResult(new Intent(this, DeleteForm.class), 3);
-				
 				this.mMainMenu.back();
 				return true;
 				
 			//get a list of formations	
-			case Constants.MAIN_MENU_LOAD:
+			case Constants.FORMATIONS_SUBMENU_LOAD:
 				
 				formNames = new String[this.formsList.size()];
 				for(int i = 0; i < formsList.size(); i++){
@@ -618,33 +633,16 @@ public abstract class BaseBoard extends Interface{
 				}
 				
 				this.startActivityForResult(new Intent(this, LoadForm.class), 2);
-				
 				this.mMainMenu.back();
 				return true;
 				
+			case Constants.MAIN_MENU_PLAYERS:
 				
-			case Constants.SETTINGS_PLAYER_SIZE:
-
-				this.mRedPlayerTexture.clearTextureSources();
-				this.mBluePlayerTexture.clearTextureSources();
-				this.mBallTexture.clearTextureSources();
+				return super.onMenuItemClicked(pMenuScene, pMenuItem, pMenuItemLocalX, pMenuItemLocalY);
 				
-				if(config.largePlayers){
-					
-					this.mRedPlayerTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mRedPlayerTexture, this, "32x32RED.png", 0, 0, 1, 1);
-					this.mBluePlayerTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mBluePlayerTexture, this, "32x32BLUE.png", 0, 0, 1, 1);
-					this.mBallTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mBallTexture, this, BALL_PATH_SMALL, 0, 0, 1, 1);
-
-					config.largePlayers = false;
-				}
-				else{
-					this.mRedPlayerTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mRedPlayerTexture, this, "48x48RED.png", 0, 0, 1, 1);
-					this.mBluePlayerTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mBluePlayerTexture, this, "48x48BLUE.png", 0, 0, 1, 1);
-					this.mBallTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mBallTexture, this, BALL_PATH_SMALL, 0, 0, 1, 1);
-
-					config.largePlayers = true;
-
-				}
+			case Constants.PLAYERS_SUBMENU_CREATE:
+				
+				this.startActivityForResult(new Intent(this, CreatePlayer.class), 5);
 				this.mMainMenu.back();
 				return true;
 				
@@ -707,12 +705,12 @@ public abstract class BaseBoard extends Interface{
 			System.out.println(config.menuTextColor);
 			PlayerSprite.displayMode = config.playerInfoDisplayWhatMode;
 			if(config.playerInfoDisplayToggle == true && config.playerInfoDisplayWhenMode == 1){
-				for(PlayerSprite p:players){
+				for(PlayerSprite p:playerSprites){
 					p.displayInfo(true);
 				}
 			}
 			else if(config.playerInfoDisplayToggle == false){
-				for(PlayerSprite p:players){
+				for(PlayerSprite p:playerSprites){
 					p.displayInfo(false);
 				}
 			}
@@ -721,6 +719,43 @@ public abstract class BaseBoard extends Interface{
 				updateMenuText();
 				
 			}
+		}
+		else if(requestCode == 5 && receiveCode == 5){
+			
+			PlayerInfo newPlayer = (PlayerInfo)intent.getParcelableExtra(getString(R.string.players_create));
+			
+			StringPrinting.printPlayerInfo(newPlayer);
+			
+			List<PlayerInfo> players = new ArrayList<PlayerInfo>();
+			
+			int id = 0;
+			int temp = id;
+			boolean result;
+			
+			for(PlayerSprite p:playerSprites){
+				
+				id = p.getPlayer().getpID();
+				
+				if(players.size()==0){
+					players.add(p.getPlayer());
+				}
+				else{
+					result = false;
+					for(PlayerInfo player:players){
+						if(id == player.getpID()){
+							result = true;
+							break;
+						}
+					}
+					if(!result){
+						players.add(p.getPlayer());
+					}
+				}
+			
+			}
+			players.add(newPlayer);
+			System.out.println(players.size());
+			XMLAccess.writePlayers(this, players, SPORT_NAME);
 		}
 
 	}
@@ -732,8 +767,6 @@ public abstract class BaseBoard extends Interface{
 			final PlayerSprite player = (PlayerSprite) this.mMainScene.getChild(PLAYER_LAYER).getChild(i);
 			
 			for(final ButtonSprite button:buttons){
-				
-			
 				
 				this.mMainScene.registerUpdateHandler(new IUpdateHandler() {
 	
@@ -752,6 +785,30 @@ public abstract class BaseBoard extends Interface{
 			}
 		}
 		
+	}
+	
+	public void changePlayerSize(){
+		this.mRedPlayerTexture.clearTextureSources();
+		this.mBluePlayerTexture.clearTextureSources();
+		this.mBallTexture.clearTextureSources();
+		
+		if(config.largePlayers){
+			
+			this.mRedPlayerTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mRedPlayerTexture, this, "32x32RED.png", 0, 0, 1, 1);
+			this.mBluePlayerTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mBluePlayerTexture, this, "32x32BLUE.png", 0, 0, 1, 1);
+			this.mBallTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mBallTexture, this, BALL_PATH_SMALL, 0, 0, 1, 1);
+
+			config.largePlayers = false;
+		}
+		else{
+			this.mRedPlayerTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mRedPlayerTexture, this, "48x48RED.png", 0, 0, 1, 1);
+			this.mBluePlayerTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mBluePlayerTexture, this, "48x48BLUE.png", 0, 0, 1, 1);
+			this.mBallTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mBallTexture, this, BALL_PATH_SMALL, 0, 0, 1, 1);
+
+			config.largePlayers = true;
+
+		}
+		this.mMainMenu.back();
 	}
 }
 

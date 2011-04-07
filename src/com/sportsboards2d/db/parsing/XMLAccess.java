@@ -108,6 +108,13 @@ public class XMLAccess{
 		return forms;
 	}
 	
+	public static List<PlayerInfo> loadPlayers(final Context context, String path){
+		
+		XMLReader reader = new XMLReader();
+		
+		return null;
+	}
+	
 	private static List<Formation> matchPlayers(List<FormationEntry> formEntries, List<PlayerInfo> players){
 		
 		List<Formation> forms = new ArrayList<Formation>();

@@ -14,15 +14,17 @@ public abstract class Constants{
 	
 	public static final int MAIN_MENU_RESET = 0;
 	public static final int MAIN_MENU_CLEARLINES = 1;
-	public static final int MAIN_MENU_PLAYBACK = 2;
-	public static final int MAIN_MENU_SETTINGS = 3;
+	public static final int MAIN_MENU_FORMATIONS = 2;
+	public static final int MAIN_MENU_PLAYERS = 3;
+	public static final int MAIN_MENU_PLAYBACK = 4;
+	public static final int MAIN_MENU_SETTINGS = 5;
 	
-	public static final int SETTINGS_LINE_ENABLE = 6;
-	public static final int SETTINGS_PLAYER_SIZE = 9;
+	public static final int FORMATIONS_SUBMENU_SAVE = 6;
+	public static final int FORMATIONS_SUBMENU_LOAD = 7;
+	public static final int FORMATIONS_SUBMENU_DELETE = 8;
 	
-	public static final int MAIN_MENU_SAVE = 10;
-	public static final int MAIN_MENU_LOAD = 11;
-	public static final int MAIN_MENU_DELETE = 12;
+	public static final int PLAYERS_SUBMENU_CREATE = 9;
+	
 
 	public static final int PLAYBACK_MENU_PLAY = 13;
 	public static final int PLAYBACK_MENU_STOP = 14;

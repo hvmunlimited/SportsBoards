@@ -1,5 +1,8 @@
 package com.sportsboards2d.db.objects;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 
 
 /**
@@ -10,7 +13,7 @@ package com.sportsboards2d.db.objects;
  * Copyright 2011 5807400 Manitoba Inc. All rights reserved.
  */
 
-public class PlayerInfo{
+public class PlayerInfo implements Parcelable{
 	
 	/*
 	 * Variables + Getters/Setters
@@ -72,5 +75,40 @@ public class PlayerInfo{
 	public String getPName() {
 		return pName;
 	}
+
+	
+	@Override
+	public int describeContents() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	/* (non-Javadoc)
+	 * @see android.os.Parcelable#writeToParcel(android.os.Parcel, int)
+	 */
+	@Override
+	public void writeToParcel(Parcel out, int arg1) {
+		out.writeInt(pID);
+		out.writeInt(jNum);
+		out.writeString(type);
+		out.writeString(pName);
+		
+	}
+	public static final Parcelable.Creator<PlayerInfo> CREATOR = new Parcelable.Creator<PlayerInfo>() {
+        public PlayerInfo createFromParcel(Parcel in) {
+            return new PlayerInfo(in);
+        }
+
+        public PlayerInfo[] newArray(int size) {
+            return new PlayerInfo[size];
+        }
+    };
+    private PlayerInfo(Parcel in) {
+        this.pID = in.readInt();
+        this.jNum = in.readInt();
+        this.type = in.readString();
+        this.pName = in.readString();
+    }
+
 	
 }
