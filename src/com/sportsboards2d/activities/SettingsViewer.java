@@ -3,14 +3,10 @@ package com.sportsboards2d.activities;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
-import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
-import android.preference.Preference;
 import android.preference.PreferenceActivity;
-import android.preference.Preference.OnPreferenceClickListener;
 
 import com.sportsboards2d.R;
-import com.sportsboards2d.util.Colors;
 
 /**
  * Coded by Nathan King
@@ -30,7 +26,7 @@ public class SettingsViewer extends PreferenceActivity implements OnSharedPrefer
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
 		
-		SharedPreferences.Editor editor = getSharedPreferences("settings", 0).edit();
+		SharedPreferences.Editor editor = getSharedPreferences(getString(R.string.settings), 0).edit();
 
 		if(key.equals(getString(R.string.lineEnabled))){
 			boolean result = sharedPreferences.getBoolean(key, false);
@@ -65,7 +61,7 @@ public class SettingsViewer extends PreferenceActivity implements OnSharedPrefer
 	@Override
     protected void onResume() {
         super.onResume();
-        SharedPreferences sharedPreferences = getSharedPreferences("settings", 0);
+        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.settings), 0);
         // Setup the initial values
         ListPreference list = (ListPreference)getPreferenceScreen().findPreference(getString(R.string.rTeamLineColor));
         list.setValueIndex(sharedPreferences.getInt(getString(R.string.rTeamLineColor), 0));

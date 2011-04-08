@@ -13,13 +13,12 @@ import android.os.Parcelable;
  * Copyright 2011 5807400 Manitoba Inc. All rights reserved.
  */
 
-public class PlayerInfo implements Parcelable{
+public class PlayerInfo extends PlayerObject implements Parcelable{
 	
 	/*
 	 * Variables + Getters/Setters
 	 */
 	
-	private int pID;
 	private int jNum;
 	private String type;
 	private String pName;
@@ -30,7 +29,7 @@ public class PlayerInfo implements Parcelable{
 	
 	public PlayerInfo(int id, int num, String type, String name){
 		
-		this.setpID(id);
+		super(id);
 		this.setjNum(num);
 		this.setType(type);
 		this.pName = name;
@@ -39,22 +38,17 @@ public class PlayerInfo implements Parcelable{
 	public String getInitials(){
 		
 		String result = "";
-		int index;
 		
-		if(this.pName==""){
-			return "";
+		for(int i = 0; i < this.pName.length()-1; i++){
+			
+			if(Character.isUpperCase(this.pName.charAt(i))){
+				result += this.pName.charAt(i);
+			}
 		}
-		result += this.pName.charAt(0);
-		index = this.pName.indexOf(" ");
-		result += this.pName.charAt(index+1);
+		
 		return result;
 	}
-	public void setpID(int pID) {
-		this.pID = pID;
-	}
-	public int getpID() {
-		return pID;
-	}
+	
 	public void setjNum(int jNum) {
 		this.jNum = jNum;
 	}
@@ -88,7 +82,7 @@ public class PlayerInfo implements Parcelable{
 	 */
 	@Override
 	public void writeToParcel(Parcel out, int arg1) {
-		out.writeInt(pID);
+		out.writeInt(this.getpID());
 		out.writeInt(jNum);
 		out.writeString(type);
 		out.writeString(pName);
@@ -104,7 +98,7 @@ public class PlayerInfo implements Parcelable{
         }
     };
     private PlayerInfo(Parcel in) {
-        this.pID = in.readInt();
+        super(in.readInt());
         this.jNum = in.readInt();
         this.type = in.readString();
         this.pName = in.readString();

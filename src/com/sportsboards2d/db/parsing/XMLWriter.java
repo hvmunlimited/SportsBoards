@@ -14,9 +14,11 @@ import org.xmlpull.v1.XmlSerializer;
 import android.content.Context;
 import android.util.Xml;
 
-import com.sportsboards2d.db.objects.Formation;
+import com.sportsboards2d.db.objects.FormationObject;
 import com.sportsboards2d.db.objects.Player;
+import com.sportsboards2d.db.objects.PlayerEntry;
 import com.sportsboards2d.db.objects.PlayerInfo;
+import com.sportsboards2d.db.objects.PlayerObject;
 
 /**
  * Coded by Nathan King
@@ -30,7 +32,7 @@ public class XMLWriter{
 	
 	public XMLWriter(){}
 		
-	public String convertFormations(final Context context, List<Formation>forms){
+	public String convertFormations(final Context context, List<FormationObject>forms){
 		
 		XmlSerializer serializer = Xml.newSerializer();
 	    StringWriter writer = new StringWriter();
@@ -40,18 +42,27 @@ public class XMLWriter{
 	    	serializer.setOutput(writer);
 	    	serializer.startDocument("UTF-8", true);
 	    	serializer.startTag("", "forms");
-	    	for(Formation fn: forms){
+	    	
+	    	for(FormationObject fn: forms){
 	
 		    	serializer.startTag("", "form");
 		    	serializer.startTag("", "name");
-		    	serializer.text(fn.getName());
+		    	serializer.text(fn.getfName());
 		    	serializer.endTag("", "name");
 		    	serializer.startTag("", "ball");
 		    	serializer.attribute("", "x", String.valueOf(fn.getBall().getX()));
 		    	serializer.attribute("", "y", String.valueOf(fn.getBall().getY()));
 		    	serializer.endTag("", "ball");
-	
-		    	for(Player pInfo:fn.getPlayers()){
+		    	int counter = 0;
+		    	for(PlayerObject pInfo:fn.getPlayers()){
+		    		if(pInfo instanceof PlayerEntry){
+		    			pInfo = (PlayerEntry) pInfo;
+		    		}
+		    		else if(pInfo instanceof Player){
+		    			
+		    			pInfo = (Player)pInfo;
+		    		}
+		    		
 			    	serializer.startTag("", "pEntry");
 
 		    		serializer.startTag("", "pID");
@@ -59,15 +70,16 @@ public class XMLWriter{
 		    		serializer.endTag("", "pID");
 		    		
 		    		serializer.startTag("", "team");
-		    		serializer.text(pInfo.getTeamColor());
+		    		serializer.text(((PlayerEntry) pInfo).getpTeam());
 		    		serializer.endTag("", "team");
 		    		
 		    		serializer.startTag("", "coords");
-		    		serializer.attribute("", "x", String.valueOf(pInfo.getX()));
-		    		serializer.attribute("", "y", String.valueOf(pInfo.getY()));
+		    		serializer.attribute("", "x", String.valueOf(((PlayerEntry) pInfo).getX()));
+		    		serializer.attribute("", "y", String.valueOf(((PlayerEntry) pInfo).getY()));
 		    		serializer.endTag("", "coords");
 		    		
 		    		serializer.endTag("", "pEntry");
+		    		counter++;
 		    	}
 		    	serializer.endTag("", "form");
 	    	}

@@ -4,6 +4,7 @@ import org.anddev.andengine.entity.text.ChangeableText;
 import org.anddev.andengine.opengl.texture.region.TiledTextureRegion;
 
 import com.sportsboards2d.db.objects.Player;
+import com.sportsboards2d.db.objects.PlayerInfo;
 
 /**
  * Coded by Nathan King
@@ -53,6 +54,17 @@ public class PlayerSprite extends BaseSprite{
 	public ChangeableText getNumberDisplay(){
 		return this.displayInfo.get(NUMBER_DISPLAY);
 	}
+	
+	public void swap(PlayerInfo swap){
+		
+		player.setpInfo(swap);
+				
+		getNameDisplay().setText(player.getpInfo().getInitials());
+		getPositionDisplay().setText(player.getpInfo().getType());
+		getNumberDisplay().setText(String.valueOf(player.getpInfo().getjNum()));
+
+	}
+	
 	public void displayInfo(boolean bool){
 		
 		this.detachChildren();

@@ -10,24 +10,17 @@ package com.sportsboards2d.db.objects;
 /**
  * Copyright 2011 5807400 Manitoba Inc. All rights reserved.
  */
-public class PlayerEntry {
+public class PlayerEntry extends PlayerObject{
 	
-	private int pID;
 	private String pTeam;
 	private Coordinates coords;
 	
 	public PlayerEntry(int pID, String pTeam, Coordinates coords){
-		this.setpID(pID);
+		super(pID);
 		this.setpTeam(pTeam);
 		this.setCoords(coords);
 	}
 	
-	public void setpID(int pID) {
-		this.pID = pID;
-	}
-	public int getpID() {
-		return pID;
-	}
 	public void setpTeam(String pTeam) {
 		this.pTeam = pTeam;
 	}
@@ -39,5 +32,21 @@ public class PlayerEntry {
 	}
 	public Coordinates getCoords() {
 		return coords;
+	}
+
+	public void setX(float x) {
+		this.coords.setX(x);
+	}
+
+	public float getX() {
+		return this.coords.getX();
+	}
+
+	public void setY(float y) {
+		this.coords.setY(y);
+	}
+
+	public float getY() {
+		return this.coords.getY();
 	}
 }

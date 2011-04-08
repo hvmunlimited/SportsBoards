@@ -3,8 +3,7 @@ package com.sportsboards2d.db.parsing;
 import java.io.InputStream;
 import java.util.List;
 
-import com.sportsboards2d.db.objects.Configuration;
-import com.sportsboards2d.db.objects.FormationEntry;
+import com.sportsboards2d.db.objects.FormationObject;
 import com.sportsboards2d.db.objects.PlayerInfo;
 
 /**
@@ -16,6 +15,6 @@ import com.sportsboards2d.db.objects.PlayerInfo;
  */
 
 public interface FeedParser{
-	List<FormationEntry> parseFormation(InputStream input);
+	List<FormationObject> parseFormation(InputStream input);
 	List<PlayerInfo> parsePlayers(InputStream input);
 }

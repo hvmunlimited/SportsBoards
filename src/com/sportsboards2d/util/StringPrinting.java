@@ -5,8 +5,10 @@ package com.sportsboards2d.util;
 
 import java.util.List;
 
-import com.sportsboards2d.db.objects.Formation;
+import com.sportsboards2d.db.objects.FormationObject;
+import com.sportsboards2d.db.objects.PlayerEntry;
 import com.sportsboards2d.db.objects.PlayerInfo;
+import com.sportsboards2d.db.objects.PlayerObject;
 
 /**
  * Coded by Nathan King
@@ -18,16 +20,18 @@ import com.sportsboards2d.db.objects.PlayerInfo;
 public class StringPrinting {
 	
 	
-	public static void printAllFormation(List<Formation> forms){
+	public static void printAllFormation(List<FormationObject> forms){
 		
-		for(Formation fn:forms){
-			System.out.println(fn.getName());
+		for(FormationObject fn:forms){
+			System.out.println(fn.getfName());
 			System.out.println(fn.getBall().getX() + " " + fn.getBall().getY());
 			
-			for(PlayerInfo p:fn.getPlayers()){
-				
-				System.out.println(p.getType());
+			for(PlayerObject p:fn.getPlayers()){
+				System.out.println(((PlayerEntry) p).getCoords().getX());
+				System.out.println(((PlayerEntry) p).getpID());
 			}
+			
+			System.out.println(fn.getPlayers().size());
 		}
 	}
 	

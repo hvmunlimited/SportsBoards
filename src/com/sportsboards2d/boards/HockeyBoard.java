@@ -15,10 +15,10 @@ import org.anddev.andengine.opengl.texture.Texture;
 import org.anddev.andengine.opengl.texture.TextureOptions;
 import org.anddev.andengine.opengl.texture.region.TextureRegionFactory;
 
-import com.sportsboards2d.util.Constants;
-
 import android.graphics.Color;
 import android.view.KeyEvent;
+
+import com.sportsboards2d.util.Constants;
 
 /**
  * Coded by Nathan King

@@ -37,7 +37,8 @@ public abstract class Constants{
 	public static final int PAUSE_BUTTON = 4;
 
 	public static final int PMENU_HIDE = 0;
-	public static final int PMENU_EXIT = 1;
+	public static final int PMENU_SWAP = 1;
+	public static final int PMENU_EXIT = 2;
 	
 	
 }

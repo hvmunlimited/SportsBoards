@@ -152,12 +152,14 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 			public void onHoldFinished(final HoldDetector pHoldDetector, long pHoldTimeMilliseconds, final float pHoldX, final float pHoldY){
 				
 				if(pHoldX >= 900){
-					Interface.this.menuItems.get(Constants.PMENU_HIDE).setPosition(pHoldX-128, pHoldY);
-					Interface.this.menuItems.get(Constants.PMENU_EXIT).setPosition(pHoldX-128, pHoldY-48);
+					Interface.this.menuItems.get(Constants.PMENU_SWAP).setPosition(pHoldX-128, pHoldY);
+					Interface.this.menuItems.get(Constants.PMENU_HIDE).setPosition(pHoldX-128, pHoldY-48);
+					Interface.this.menuItems.get(Constants.PMENU_EXIT).setPosition(pHoldX-128, pHoldY-96);
 				}
 				else{
-					Interface.this.menuItems.get(Constants.PMENU_HIDE).setPosition(pHoldX+24, pHoldY);
-					Interface.this.menuItems.get(Constants.PMENU_EXIT).setPosition(pHoldX+24, pHoldY-48);
+					Interface.this.menuItems.get(Constants.PMENU_SWAP).setPosition(pHoldX+24, pHoldY);
+					Interface.this.menuItems.get(Constants.PMENU_HIDE).setPosition(pHoldX+24, pHoldY-48);
+					Interface.this.menuItems.get(Constants.PMENU_EXIT).setPosition(pHoldX+24, pHoldY-96);
 				}
 				Interface.this.mPlayerContextMenu.setOnMenuItemClickListener(selectedPlayer);
 				Interface.this.mMainScene.setChildScene(Interface.this.mPlayerContextMenu, false, true, true);
@@ -242,13 +244,15 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 			
 			
 			editor.commit();
-			updateConfig(settings);
+			updateConfig();
 		}
 		else{
-			updateConfig(settings);
+			updateConfig();
 		}	
 	}
-	protected void updateConfig(SharedPreferences settings){
+	protected void updateConfig(){
+		SharedPreferences settings = getSharedPreferences(getString(R.string.settings), 0);
+
 		config.largePlayers = true;
 		config.lineEnabled = settings.getBoolean("lineEnabled", false);
 		config.rTeamLineColor = settings.getInt(getString(R.string.rTeamLineColor), Colors.RED);
@@ -257,6 +261,7 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 		config.playerInfoDisplayWhenMode = settings.getInt(getString(R.string.display_when), 0);
 		config.playerInfoDisplayWhatMode = settings.getInt(getString(R.string.display_what), 0);
 		config.menuTextColor = settings.getInt(getString(R.string.menuTextColor), 0);
+		PlayerSprite.displayMode = config.playerInfoDisplayWhatMode;
 	}
 	
 	protected void updateMenuText(){
@@ -384,7 +389,7 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 		create.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 		this.mPlayersSubMenu.addMenuItem(create);
 		
-		//final IMenuItem delete = new ColorMenuItemDecorator(new TextMenuItem(Constants.MAIN_MENU_DELETE, this.mMenuFont, getString(R.string.delete_form)), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
+		//final IMenuItem view = new ColorMenuItemDecorator(new TextMenuItem(Constants.MAIN_MENU_DELETE, this.mMenuFont, getString(R.string.delete_form)), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
 		//delete.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 		//this.mPlayersSubMenu.addMenuItem(delete);
 		
@@ -404,7 +409,12 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 		this.mPlayerContextMenu.buildAnimations();
 		this.mPlayerContextMenu.setBackgroundEnabled(false);
 		
-		final IMenuItem deleteMenuItem = new ColorMenuItemDecorator(new TextMenuItem(Constants.PMENU_EXIT, this.mMenuFont, getString(R.string.exit_player_menu)), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
+		final IMenuItem swap = new ColorMenuItemDecorator(new TextMenuItem(Constants.PMENU_SWAP, this.mMenuFont, getString(R.string.swap_player)), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
+		swap.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+		mPlayerContextMenu.addMenuItem(swap);
+		menuItems.add(swap);
+		
+		final IMenuItem deleteMenuItem = new ColorMenuItemDecorator(new TextMenuItem(Constants.PMENU_EXIT, this.mMenuFont, getString(R.string.exit_player)), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
 		deleteMenuItem.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 		mPlayerContextMenu.addMenuItem(deleteMenuItem);
 		menuItems.add(deleteMenuItem);

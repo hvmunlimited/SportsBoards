@@ -72,8 +72,9 @@
 	
 	<!-- Player Context Menu Strings -->
 	
+	<string name="swap_player">Swap</string>
 	<string name="hide_player">Hide</string>
-	<string name="exit_player_menu">Exit</string>
+	<string name="exit_player">Exit</string>
 	
 	
 	

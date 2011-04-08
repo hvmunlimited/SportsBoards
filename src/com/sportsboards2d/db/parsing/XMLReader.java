@@ -8,11 +8,11 @@ import org.xmlpull.v1.XmlPullParser;
 
 import android.util.Xml;
 
-import com.sportsboards2d.db.objects.Configuration;
 import com.sportsboards2d.db.objects.Coordinates;
-import com.sportsboards2d.db.objects.FormationEntry;
+import com.sportsboards2d.db.objects.FormationObject;
 import com.sportsboards2d.db.objects.PlayerEntry;
 import com.sportsboards2d.db.objects.PlayerInfo;
+import com.sportsboards2d.db.objects.PlayerObject;
 
 /**
  * Coded by Nathan King
@@ -26,13 +26,13 @@ public class XMLReader extends BaseFeedParser{
 	
 	public XMLReader(){}
 	
-	public List<FormationEntry> parseFormation(InputStream input){
+	public List<FormationObject> parseFormation(InputStream input){
 
-		List<FormationEntry> entries = null;
-		List<PlayerEntry> players = null;
+		List<FormationObject> entries = null;
+		List<PlayerObject> players = null;
 		
 		PlayerEntry pEntry;
-		FormationEntry fEntry;
+		FormationObject fEntry;
 		
 		String formName = "", pTeam = "";
 		int pID = 0;
@@ -58,10 +58,10 @@ public class XMLReader extends BaseFeedParser{
                         name = parser.getName();
                         
                         if (name.equalsIgnoreCase(FORMS)){
-                            entries = new ArrayList<FormationEntry>();
+                            entries = new ArrayList<FormationObject>();
                         } 
                         else if (name.equalsIgnoreCase(FORM)){
-                        	players = new ArrayList<PlayerEntry>();
+                        	players = new ArrayList<PlayerObject>();
                         }
                         else if (name.equalsIgnoreCase(FNAME)){
                         	formName = parser.nextText();
@@ -91,8 +91,9 @@ public class XMLReader extends BaseFeedParser{
                         
                         if (name.equalsIgnoreCase(FORM)){
                         	
-                        	fEntry = new FormationEntry(formName, new Coordinates(xBall, yBall), players);
+                        	fEntry = new FormationObject(formName, new Coordinates(xBall, yBall), players);
                         	entries.add(fEntry);
+                            System.out.println(fEntry.getPlayers().size() + " players in this formation");
 
                         }
                         else if (name.equalsIgnoreCase(PENTRY)){
@@ -108,7 +109,7 @@ public class XMLReader extends BaseFeedParser{
             }
         } catch (Exception e) {
             e.printStackTrace();
-        }	
+        }
 		return entries;
 	}
 
@@ -182,7 +183,7 @@ public class XMLReader extends BaseFeedParser{
             e.printStackTrace();
         }
 		
-		//System.out.println(pList.size() + " players in the database");
+		System.out.println(pList.size() + " players in the database");
 		//System.out.println(newPlayer.getPName());
 		return pList;
 	}
