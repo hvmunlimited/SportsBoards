@@ -44,7 +44,9 @@ import com.sportsboards2d.activities.CreatePlayer;
 import com.sportsboards2d.activities.DeleteForm;
 import com.sportsboards2d.activities.LoadForm;
 import com.sportsboards2d.activities.SaveForm;
+import com.sportsboards2d.activities.SelectPlayer;
 import com.sportsboards2d.activities.SettingsViewer;
+import com.sportsboards2d.activities.ViewPlayer;
 import com.sportsboards2d.db.objects.Coordinates;
 import com.sportsboards2d.db.objects.FormationObject;
 import com.sportsboards2d.db.objects.Player;
@@ -83,7 +85,6 @@ public abstract class BaseBoard extends Interface{
 	// Fields
 	// ===========================================================
 	
-	protected int NUM_PLAYERS;
 	protected String SPORT_NAME;
 	protected String BALL_PATH_SMALL;
 	protected String BALL_PATH_LARGE;
@@ -105,6 +106,7 @@ public abstract class BaseBoard extends Interface{
 	private int currentFormation;
 	private  List<FormationObject> formsList;
 	public static String[] formNames;
+	public static String[] playerNames;
 	private List<PlayerSprite> playerSprites = new ArrayList<PlayerSprite>();
 	private List<PlayerInfo> players = new ArrayList<PlayerInfo>();
 	private List<Line>lines = new ArrayList<Line>();
@@ -181,9 +183,9 @@ public abstract class BaseBoard extends Interface{
 		this.mMainScene.setTouchAreaBindingEnabled(true);
 		this.mMainScene.getChild(BACKGROUND_LAYER).attachChild(new Sprite(0, 0, this.mBackGroundTextureRegion));
 		
-		players = XMLAccess.loadPlayers(this, SPORT_NAME);
+		players = XMLAccess.loadPlayers(this, SPORT_NAME.toLowerCase());
 		fEntries = XMLAccess.loadFormations(this, SPORT_NAME.toLowerCase());
-		formsList = matchPlayers(fEntries, players);
+		formsList = matchPlayers(fEntries);
 		loadFormation(DEFAULT_NAME);
 		this.mBall = new BallSprite(0, 0, this.mBallTextureRegion);
 		if(formsList!=null){
@@ -324,7 +326,7 @@ public abstract class BaseBoard extends Interface{
 		this.mMainScene.registerTouchArea(this.mBall);
 	}
 
-	protected PlayerSprite createPlayer(Player p, TiledTextureRegion tex){
+	protected PlayerSprite createPlayer(final Player p, TiledTextureRegion tex){
 		
 		ChangeableText playerText;
 		
@@ -334,14 +336,32 @@ public abstract class BaseBoard extends Interface{
 				public boolean onMenuItemClicked(final MenuScene pMenuScene, final IMenuItem pMenuItem, final float pMenuItemLocalX, final float pMenuItemLocalY){
 					
 					switch(pMenuItem.getID()) {
+					
+						case Constants.PMENU_VIEW:
+							System.out.println("here");
+							Intent intent = new Intent(BaseBoard.this, ViewPlayer.class);
+							//p.getpInfo().writeToParcel(data, 0);
+							
+		
+							intent.putExtra("player", p.getpInfo());
+							BaseBoard.this.startActivity(intent);
 	
 						case Constants.PMENU_SWAP:
 							
-							this.swap(players.get(1));
+							Intent intent1 = new Intent(BaseBoard.this, SelectPlayer.class);
+							playerNames = new String[BaseBoard.this.players.size()];
+							for(int i = 0; i < players.size(); i++){
+								playerNames[i] = players.get(i).getFirstName();
+							}
+							//intent1.putExtra("size", players.size());
+							//for(PlayerInfo p:players){
+								//intent1.putExtra("player", p);
+							//}
+							BaseBoard.this.startActivity(intent1);
 							
 							return true;
 							
-					    case Constants.PMENU_HIDE:
+	/*				    case Constants.PMENU_HIDE:
 					    	
 					    	mEngine.runOnUpdateThread(new Runnable() {
 					    	
@@ -360,7 +380,7 @@ public abstract class BaseBoard extends Interface{
 					        // Remove the menu and reset it. 
 					        mMainScene.clearChildScene();
 
-					        return true;
+					        return true;*/
 					   
 					    case Constants.PMENU_EXIT:
 					    	mMainScene.clearChildScene();
@@ -581,9 +601,7 @@ public abstract class BaseBoard extends Interface{
 
 	@Override
 	public boolean onMenuItemClicked(final MenuScene pMenuScene, final IMenuItem pMenuItem, final float pMenuItemLocalX, final float pMenuItemLocalY) {
-		
-		updateMenuText();
-		
+				
 		switch(pMenuItem.getID()) {
 			case Constants.MAIN_MENU_SETTINGS:
 				this.startActivityForResult(new Intent(this, SettingsViewer.class), 4);
@@ -723,7 +741,10 @@ public abstract class BaseBoard extends Interface{
 			}
 			if(menuTextColor != config.menuTextColor){
 				
-				updateMenuText();
+				createMainMenu();
+				createFormationsSubMenu();
+				createPlayersSubMenu();
+				createPlayerContextMenu();
 				
 			}
 		}
@@ -736,7 +757,10 @@ public abstract class BaseBoard extends Interface{
 			players.add(newPlayer);
 			
 			XMLAccess.writePlayers(this, players, SPORT_NAME);
+			
+
 		}
+		this.mMainScene.getChild(BALL_LAYER).getChild(0).setVisible(true);
 
 	}
 	
@@ -766,7 +790,7 @@ public abstract class BaseBoard extends Interface{
 		}
 		
 	}
-	private List<FormationObject> matchPlayers(List<FormationObject> formEntries, List<PlayerInfo> players){
+	private List<FormationObject> matchPlayers(List<FormationObject> formEntries){
 		
 		List<FormationObject> forms = new ArrayList<FormationObject>();
 		Player newPlayer = null;

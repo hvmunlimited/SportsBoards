@@ -24,6 +24,7 @@ public abstract class Constants{
 	public static final int FORMATIONS_SUBMENU_DELETE = 8;
 	
 	public static final int PLAYERS_SUBMENU_CREATE = 9;
+	public static final int PLAYERS_SUBMENU_VIEW = 10;
 	
 
 	public static final int PLAYBACK_MENU_PLAY = 13;
@@ -36,9 +37,9 @@ public abstract class Constants{
 	public static final int REWIND_BUTTON = 3;
 	public static final int PAUSE_BUTTON = 4;
 
-	public static final int PMENU_HIDE = 0;
+	public static final int PMENU_VIEW = 0;
 	public static final int PMENU_SWAP = 1;
 	public static final int PMENU_EXIT = 2;
-	
+
 	
 }

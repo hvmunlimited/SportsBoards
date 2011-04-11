@@ -35,6 +35,26 @@ public class PlayerInfo extends PlayerObject implements Parcelable{
 		this.pName = name;
 	}
 	
+	public String getFirstName(){
+		String[]result;
+		
+		result = pName.split("\\s+");
+		
+		return result[0];
+	}
+	
+	public String getLastName(){
+		String[]result;
+		
+		result = pName.split("\\s+");
+		try{
+			return result[1];
+		}
+		catch(ArrayIndexOutOfBoundsException oshit){
+			return "";
+		}
+	}
+	
 	public String getInitials(){
 		
 		String result = "";

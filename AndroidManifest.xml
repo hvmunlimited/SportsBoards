@@ -17,6 +17,10 @@
 			</intent-filter>
 		</activity>
 		
+		<activity android:name="com.google.ads.AdActivity"
+		          android:configChanges="keyboard|keyboardHidden|orientation"/>
+		
+		
 		<activity android:name="com.sportsboards2d.launcher.LicenseCheck"
 			android:screenOrientation="landscape" />
 		<activity android:name="com.sportsboards2d.boards.SoccerBoard"
@@ -36,18 +40,22 @@
 		<activity android:name="com.sportsboards2d.activities.LoadForm"
 			android:screenOrientation="landscape" />
 		<activity android:name="com.sportsboards2d.activities.CreatePlayer"
-			android:screenOrientation="landscape" />	
+			android:screenOrientation="landscape" />
+		<activity android:name="com.sportsboards2d.activities.ViewPlayer"
+			android:screenOrientation="landscape" />
 		<activity android:name="com.sportsboards2d.activities.SettingsViewer"
+			android:screenOrientation="landscape" />
+		<activity android:name="com.sportsboards2d.activities.SelectPlayer"
 			android:screenOrientation="landscape" />
 	
 	</application>
 
 	<supports-screens android:largeScreens="true"></supports-screens>
 	<uses-sdk android:targetSdkVersion="8" android:minSdkVersion="8"></uses-sdk>
-
+	
+	<uses-permission android:name="android.permission.INTERNET"/>
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 	<uses-permission android:name="android.permission.WAKE_LOCK" />
-	<uses-permission android:name="com.android.vending.CHECK_LICENSE">
-
-	</uses-permission>
-
+	<uses-permission android:name="com.android.vending.CHECK_LICENSE"/>
+	
 </manifest> 

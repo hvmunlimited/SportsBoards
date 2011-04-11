@@ -6,6 +6,8 @@ import org.anddev.andengine.opengl.texture.Texture;
 import org.anddev.andengine.opengl.texture.TextureOptions;
 import org.anddev.andengine.opengl.texture.region.TextureRegionFactory;
 
+import com.sportsboards2d.R;
+
 import android.graphics.Color;
 
 /**
@@ -26,8 +28,7 @@ public class BBallBoard extends BaseBoard{
 	
 	@Override
 	public Engine onLoadEngine() {
-		NUM_PLAYERS = 5;
-		SPORT_NAME = "basketball";
+		SPORT_NAME = getString(R.string.basketball_string);
 		BALL_PATH_SMALL = "Basketball_Ball_32.png";
 		return super.onLoadEngine();
 	}

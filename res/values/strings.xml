@@ -17,6 +17,9 @@
 	<string name="playback">Playback Mode</string>
 	<string name="players">Players</string>
 		<string name="players_create">Create a Player</string>
+		<string name="players_view">View info</string>
+		<string name="player_delete">Delete this player</string>
+		<string name="players_edit">Edit this players information</string>
 	<string name="settings">Settings</string>
 	
 	
@@ -72,9 +75,9 @@
 	
 	<!-- Player Context Menu Strings -->
 	
-	<string name="swap_player">Swap</string>
-	<string name="hide_player">Hide</string>
-	<string name="exit_player">Exit</string>
+	<string name="swap">Swap</string>
+	<string name="hide">Hide</string>
+	<string name="exit">Exit</string>
 	
 	
 	

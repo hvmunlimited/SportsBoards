@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
 
+import com.google.ads.AdRequest;
+import com.google.ads.AdView;
 import com.sportsboards2d.R;
 
 /**
@@ -24,6 +26,12 @@ public class Launcher extends ListActivity{
 	public void onCreate(Bundle savedInstanceState){
 		 super.onCreate(savedInstanceState);
 		 this.setContentView(R.layout.launcher_menu);
+		 
+		 AdView adView = (AdView)this.findViewById(R.id.adView);
+	      AdRequest request = new AdRequest();
+	      request.setTesting(true);
+	      adView.loadAd(request);
+		 
 		 mListAdapter = new LauncherMenuAdapter(this); 
 		 this.setListAdapter(mListAdapter);
 	}

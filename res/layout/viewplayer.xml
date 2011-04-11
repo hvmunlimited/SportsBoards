@@ -27,19 +27,14 @@
 		        android:gravity="left"
 		        android:textAppearance="?android:attr/textAppearanceMedium" />
 		            
-		    <EditText
-		        android:id="@+id/playername_first_edit"
+		   	<TextView
+		        android:id="@+id/playername_first_text"
 		        android:layout_height="wrap_content"
-		        android:layout_width="fill_parent"
-		        android:layout_marginLeft="20dip"
+		        android:layout_width="wrap_content"
+		        android:layout_marginLeft="50dip"
 		        android:layout_marginRight="20dip"
-		        android:scrollHorizontally="true"
-		        android:autoText="false"
-		        android:capitalize="characters"
-		        android:gravity="fill_horizontal"
-		        android:imeOptions="actionDone"
-		        android:textAppearance="?android:attr/textAppearanceMedium" 
-		        android:inputType="textCapWords" />
+		        android:gravity="left"
+		        android:textAppearance="?android:attr/textAppearanceLarge" />
 		        
 		    <TextView 
 		        android:id="@+id/playername_last_view"
@@ -51,18 +46,14 @@
 		        android:gravity="left"
 		        android:textAppearance="?android:attr/textAppearanceMedium" />
 		            
-		    <EditText
-		        android:id="@+id/playername_last_edit"
+		  	<TextView
+		        android:id="@+id/playername_last_text"
 		        android:layout_height="wrap_content"
-		        android:layout_width="fill_parent"
-		        android:layout_marginLeft="20dip"
+		        android:layout_width="wrap_content"
+		        android:layout_marginLeft="50dip"
 		        android:layout_marginRight="20dip"
-		        android:scrollHorizontally="true"
-		        android:gravity="fill_horizontal"
-		        android:imeOptions="actionDone"
-		        android:textAppearance="?android:attr/textAppearanceMedium" 
-		        android:inputType="textCapWords" />
-		    
+		        android:gravity="left"
+		        android:textAppearance="?android:attr/textAppearanceLarge" />
 		
 		    <TextView
 		        android:id="@+id/playernum_view"
@@ -73,18 +64,14 @@
 		        android:text="@string/enter_jersey"
 		        android:gravity="left"
 		        android:textAppearance="?android:attr/textAppearanceMedium" />
-		            
-		    <EditText
-		        android:id="@+id/playernum_edit"
+			<TextView
+		        android:id="@+id/playernum_text"
 		        android:layout_height="wrap_content"
-		        android:layout_width="fill_parent"
-		        android:layout_marginLeft="20dip"
+		        android:layout_width="wrap_content"
+		        android:layout_marginLeft="50dip"
 		        android:layout_marginRight="20dip"
-		        android:scrollHorizontally="true"
-		     	android:imeOptions="actionDone"		        
-		        android:gravity="fill_horizontal"
-		        android:textAppearance="?android:attr/textAppearanceMedium" 
-		        android:inputType="number"/>
+		        android:gravity="left"
+		        android:textAppearance="?android:attr/textAppearanceLarge" />
 		        
 		   	<TextView
 		        android:id="@+id/playerposition_view"
@@ -92,23 +79,19 @@
 		        android:layout_width="wrap_content"
 		        android:layout_marginLeft="20dip"
 		        android:layout_marginRight="20dip"
-		        android:text="@string/enter_position"
-		        android:capitalize="characters"
-		        android:autoText="true"
+		       	android:text="@string/enter_position"
+		        
 		        android:gravity="left"
 		        android:textAppearance="?android:attr/textAppearanceMedium" />
 		            
-		    <EditText
-		        android:id="@+id/playerposition_edit"
+		   <TextView
+		        android:id="@+id/playerposition_text"
 		        android:layout_height="wrap_content"
-		        android:layout_width="fill_parent"
-		        android:layout_marginLeft="20dip"
+		        android:layout_width="wrap_content"
+		        android:layout_marginLeft="50dip"
 		        android:layout_marginRight="20dip"
-		        android:scrollHorizontally="true"
-		        android:imeOptions="actionDone"
-		        android:gravity="fill_horizontal"
-		        android:textAppearance="?android:attr/textAppearanceMedium" 
-		        android:inputType="textCapCharacters"/>
+		        android:gravity="left"
+		        android:textAppearance="?android:attr/textAppearanceLarge" />
 		        
 		</LinearLayout>
 			
@@ -129,14 +112,6 @@
 	            android:text="OK" 
 	            android:onClick="okClicked" />
 
-	    	<Button 
-				android:id="@+id/cancel_button" 	    	
-	    		android:layout_width="100dip" 
-	            android:layout_height="wrap_content"
-	            android:layout_toRightOf="@id/ok_button"
-	            android:layout_alignTop="@id/ok_button"
-	            android:text="Cancel"
-	            android:onClick="cancelClicked" />
 	            
 	</RelativeLayout>			
 

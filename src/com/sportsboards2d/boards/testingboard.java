@@ -5,13 +5,24 @@ import org.anddev.andengine.entity.primitive.Line;
 import org.anddev.andengine.entity.scene.Scene;
 import org.anddev.andengine.entity.scene.Scene.ITouchArea;
 import org.anddev.andengine.entity.scene.background.ColorBackground;
+import org.anddev.andengine.extension.physics.box2d.PhysicsConnector;
+import org.anddev.andengine.extension.physics.box2d.PhysicsFactory;
 import org.anddev.andengine.input.touch.TouchEvent;
+import org.anddev.andengine.opengl.font.FontFactory;
+import org.anddev.andengine.opengl.texture.Texture;
+import org.anddev.andengine.opengl.texture.TextureOptions;
 import org.anddev.andengine.opengl.texture.region.TextureRegionFactory;
 import org.anddev.andengine.util.MathUtils;
 
+import android.graphics.Color;
+
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.sportsboards2d.R;
 import com.sportsboards2d.db.objects.Coordinates;
+import com.sportsboards2d.db.objects.Player;
+import com.sportsboards2d.db.objects.PlayerInfo;
 import com.sportsboards2d.sprites.PlayerSprite;
 
 /**
@@ -35,9 +46,8 @@ public class testingboard extends BaseBoard{
 	
 	@Override
 	public Engine onLoadEngine() {
-		NUM_PLAYERS = 5;
-		SPORT_NAME = "BASKETBALL";
-		BALL_PATH_SMALL = "Basketball_Ball_";
+		SPORT_NAME = getString(R.string.basketball_string);
+		BALL_PATH_SMALL = "Basketball_Ball_32.png";
 		return super.onLoadEngine();
 	}
 	
@@ -46,7 +56,11 @@ public class testingboard extends BaseBoard{
 	public void onLoadResources() {
 		super.onLoadResources();	
 		this.mBackGroundTextureRegion = TextureRegionFactory.createFromAsset(this.mBackgroundTexture, this, "basketball_court.jpg", 0, 0);
-		this.mEngine.getTextureManager().loadTextures(this.mBackgroundTexture);
+		this.mMenuFontTexture = new Texture(256, 256, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
+		this.mMenuFont = FontFactory.createFromAsset(this.mMenuFontTexture, this, "VeraBd.ttf", 36, true, Color.WHITE);
+		
+		this.mEngine.getTextureManager().loadTextures(this.mBackgroundTexture, this.mMenuFontTexture);
+		this.mEngine.getFontManager().loadFont(this.mMenuFont);
 	}
 	@Override
 	public Scene onLoadScene(){
@@ -68,28 +82,23 @@ public class testingboard extends BaseBoard{
 
 		this.mMainScene.getChild(BACKGROUND_LAYER).detachChildren();
 		
-		this.mMainScene.setBackground(new ColorBackground(0, 0, 0));
+		this.mMainScene.setBackground(new ColorBackground(100, 100, 100));
+		
+		Body body = null;
 		
 		clearScene();
-		
-		//createPlayer(new PlayerInfo("", "", "", new Coordinates(400, 400)), this.mRedPlayerTextureRegion);
+		PlayerInfo info = new PlayerInfo(0, 0, "", "");
+		Player p = new Player(0, "", new Coordinates(400,400), info);
 
-		
-		float x = selectedPlayer.getX();
-		float y = selectedPlayer.getY();
-		
-		arrowLineMain = new Line(0, 0, 0, 0, 10);
-		arrowLineWingLeft = new Line(0, 0, 0, 0, 10);
-		arrowLineWingRight = new Line(0, 0, 0, 0, 10);
+		PlayerSprite newPlayer = createPlayer(p, this.mRedPlayerTextureRegion);
 
-		this.mMainScene.getChild(LINE_LAYER).attachChild(arrowLineMain);
-		this.mMainScene.getChild(LINE_LAYER).attachChild(arrowLineWingLeft);
-		this.mMainScene.getChild(LINE_LAYER).attachChild(arrowLineWingRight);
-		
-		arrowLineMain.setPosition(x, y, x, y - 300);
-		arrowLineWingLeft.setPosition(x, y, x -50, y - 50);
-		arrowLineWingRight.setPosition(x, y, x +50, y - 50);
+		body = PhysicsFactory.createBoxBody(this.mPhysicsWorld, newPlayer, BodyType.DynamicBody, FIXTURE_DEF);
+		this.mPhysicsWorld.registerPhysicsConnector(new PhysicsConnector(newPlayer, body, true, true));
 
+		this.mMainScene.getChild(PLAYER_LAYER).attachChild(newPlayer);
+		this.mMainScene.registerTouchArea(newPlayer);
+		
+		
 		//this.mMainScene.setChildScene(analog);
 
 		//
@@ -152,15 +161,6 @@ public class testingboard extends BaseBoard{
 						angleDeg = MathUtils.radToDeg((float)Math.atan2(-relativeX, relativeY));
 
 						
-						System.out.println("My pX: " +relativeX);
-						
-						path.add(new Coordinates(sprite.getX(), sprite.getY()));
-						
-						arrowLineMain.setPosition(moveX, moveY, moveX, moveY - 300);
-						arrowLineWingLeft.setPosition(moveX, moveY, moveX - 50, moveY - 50);
-						arrowLineWingRight.setPosition(moveX, moveY, moveX + 50, moveY - 50);
-												
-						
 						
 						
 						if(true){
@@ -168,12 +168,8 @@ public class testingboard extends BaseBoard{
 							diff = MathUtils.distance(sprite.getStartX(), sprite.getStartY(), moveX, moveY);
 							
 							if(diff > 30){
-								arrowLineMain.setRotation(angleDeg);
-								arrowLineWingLeft.setRotation(angleDeg);
-								arrowLineWingRight.setRotation(angleDeg);
-
-								//arrowLineMain = LineFactory.createLine(sprite.getStartX(), sprite.getStartY(), moveX, moveY, 8);
-								//mMainScene.getChild(LINE_LAYER).attachChild(arrowLineMain);
+							
+								
 								sprite.setStartX(moveX);
 								sprite.setStartY(moveY);
 							}

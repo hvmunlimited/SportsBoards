@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sportsboards2d.R;
 import com.sportsboards2d.db.objects.PlayerInfo;
@@ -128,6 +129,10 @@ public class CreatePlayer extends Activity{
 			setResult(5, result);
 			
 			this.finish();
+		}
+		else{
+			Toast toast = Toast.makeText(getApplicationContext(), "Invalid input", Toast.LENGTH_SHORT);
+			toast.show();
 		}
 		
 	}
