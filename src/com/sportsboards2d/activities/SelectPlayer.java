@@ -5,7 +5,11 @@ package com.sportsboards2d.activities;
 
 import android.app.ListActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.AdapterView.OnItemClickListener;
 
 import com.sportsboards2d.boards.BaseBoard;
 
@@ -26,6 +30,15 @@ public class SelectPlayer extends ListActivity{
 		//int size = bundle.getParcelable("size");
 		setListAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, BaseBoard.playerNames));
 	  
+		ListView lv = getListView();
+		
+		lv.setOnItemClickListener(new OnItemClickListener() {
+		    public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+		    	
+		    	setResult(position, null);
+		    	SelectPlayer.this.finish();
+		    }
+		});
 	}
 
 }

@@ -18,8 +18,10 @@ public class Configuration {
 	public int rTeamLineColor;
 	public int bTeamLineColor;
 	public int menuTextColor;
+	public int playerIDCounter;
 	
 	public String default_formation;
+	public String lastLoaded;
 	public boolean playerInfoDisplayToggle;
 	public int playerInfoDisplayWhenMode;
 	public int playerInfoDisplayWhatMode;

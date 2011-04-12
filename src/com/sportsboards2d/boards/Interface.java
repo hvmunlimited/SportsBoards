@@ -153,10 +153,16 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 			public void onHoldFinished(final HoldDetector pHoldDetector, long pHoldTimeMilliseconds, final float pHoldX, final float pHoldY){
 				
 				if(pHoldX >= 900){
-					Interface.this.menuItems.get(Constants.PMENU_VIEW).setPosition(pHoldX, pHoldY);
-					Interface.this.menuItems.get(Constants.PMENU_SWAP).setPosition(pHoldX, pHoldY+48);
+					Interface.this.menuItems.get(Constants.PMENU_VIEW).setPosition(pHoldX-128, pHoldY);
+					Interface.this.menuItems.get(Constants.PMENU_SWAP).setPosition(pHoldX-128, pHoldY+40);
 					//Interface.this.menuItems.get(Constants.PMENU_HIDE).setPosition(pHoldX-128, pHoldY-48);
-					Interface.this.menuItems.get(Constants.PMENU_EXIT).setPosition(pHoldX, pHoldY+96);
+					Interface.this.menuItems.get(Constants.PMENU_EXIT).setPosition(pHoldX-128, pHoldY+90);
+				}
+				else if(pHoldY >= 500){
+					Interface.this.menuItems.get(Constants.PMENU_VIEW).setPosition(pHoldX+24, pHoldY-90);
+					Interface.this.menuItems.get(Constants.PMENU_SWAP).setPosition(pHoldX+24, pHoldY-40);
+					//Interface.this.menuItems.get(Constants.PMENU_HIDE).setPosition(pHoldX-128, pHoldY-48);
+					Interface.this.menuItems.get(Constants.PMENU_EXIT).setPosition(pHoldX+24, pHoldY);
 				}
 				else{
 					Interface.this.menuItems.get(Constants.PMENU_VIEW).setPosition(pHoldX+24, pHoldY-48);
@@ -176,7 +182,7 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 		this.mHoldDetector.setTriggerHoldMinimumMilliseconds(500);
 		this.mMainScene.registerUpdateHandler(this.mHoldDetector);
 		
-		this.mPhysicsWorld = new PhysicsWorld(new Vector2(0, 0.0f), false);
+		this.mPhysicsWorld = new PhysicsWorld(new Vector2(0.0f, 0.0f), false);
 
 		final Shape ground = new Rectangle(0, CAMERA_HEIGHT - 2, CAMERA_WIDTH, 2);
 		final Shape roof = new Rectangle(0, 0, CAMERA_WIDTH, 2);
@@ -245,7 +251,8 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 			editor.putInt(getString(R.string.display_when), 0);
 			editor.putInt(getString(R.string.display_what), 0);
 			editor.putInt(getString(R.string.menuTextColor), 0);
-			
+			editor.putInt(getString(R.string.playerIDCounter), 1);
+			editor.putString("last loaded", getString(R.string.default_string));
 			
 			editor.commit();
 			updateConfig();
@@ -266,6 +273,9 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 		config.playerInfoDisplayWhatMode = settings.getInt(getString(R.string.display_what), 0);
 		config.menuTextColor = settings.getInt(getString(R.string.menuTextColor), 0);
 		PlayerSprite.displayMode = config.playerInfoDisplayWhatMode;
+		config.playerIDCounter = settings.getInt(getString(R.string.playerIDCounter), 1);
+		BaseBoard.playerIDCounter = config.playerIDCounter;
+		config.lastLoaded = settings.getString("last loaded", "default");
 		
 		MenuTextSettings.setColor(config.menuTextColor);
 	}
@@ -496,5 +506,6 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 				return false;
 		}
 	}
-
+	
+	
 }

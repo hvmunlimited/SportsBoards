@@ -14,11 +14,12 @@ import org.xmlpull.v1.XmlSerializer;
 import android.content.Context;
 import android.util.Xml;
 
+import com.sportsboards2d.R;
 import com.sportsboards2d.db.objects.FormationObject;
-import com.sportsboards2d.db.objects.Player;
 import com.sportsboards2d.db.objects.PlayerEntry;
 import com.sportsboards2d.db.objects.PlayerInfo;
 import com.sportsboards2d.db.objects.PlayerObject;
+import com.sportsboards2d.util.StringPrinting;
 
 /**
  * Coded by Nathan King
@@ -36,37 +37,38 @@ public class XMLWriter{
 		
 		XmlSerializer serializer = Xml.newSerializer();
 	    StringWriter writer = new StringWriter();
+	    String name = "";
 	    
 	    try {
 			
 	    	serializer.setOutput(writer);
 	    	serializer.startDocument("UTF-8", true);
 	    	serializer.startTag("", "forms");
-	    	
 	    	for(FormationObject fn: forms){
-	
+		    	//StringPrinting.printForm(fn);
+	    		name = fn.getfName();
 		    	serializer.startTag("", "form");
 		    	serializer.startTag("", "name");
 		    	serializer.text(fn.getfName());
+		    	
 		    	serializer.endTag("", "name");
 		    	serializer.startTag("", "ball");
 		    	serializer.attribute("", "x", String.valueOf(fn.getBall().getX()));
 		    	serializer.attribute("", "y", String.valueOf(fn.getBall().getY()));
 		    	serializer.endTag("", "ball");
-		    	int counter = 0;
 		    	for(PlayerObject pInfo:fn.getPlayers()){
-		    		if(pInfo instanceof PlayerEntry){
-		    			pInfo = (PlayerEntry) pInfo;
-		    		}
-		    		else if(pInfo instanceof Player){
-		    			
-		    			pInfo = (Player)pInfo;
-		    		}
+		    		
 		    		
 			    	serializer.startTag("", "pEntry");
-
+			    	//getString(R.string.default_string);
 		    		serializer.startTag("", "pID");
-		    		serializer.attribute("", "id", String.valueOf(pInfo.getpID()));
+		    		if(name.equalsIgnoreCase("Default")){
+		    			//System.out.println("here");
+		    			serializer.attribute("", "id", "0");
+		    		}
+		    		else{
+			    		serializer.attribute("", "id", String.valueOf(pInfo.getpID()));
+		    		}
 		    		serializer.endTag("", "pID");
 		    		
 		    		serializer.startTag("", "team");
@@ -79,7 +81,6 @@ public class XMLWriter{
 		    		serializer.endTag("", "coords");
 		    		
 		    		serializer.endTag("", "pEntry");
-		    		counter++;
 		    	}
 		    	serializer.endTag("", "form");
 	    	}

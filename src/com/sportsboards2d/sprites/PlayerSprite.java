@@ -58,7 +58,11 @@ public class PlayerSprite extends BaseSprite{
 	public void swap(PlayerInfo swap){
 		
 		player.setpInfo(swap);
-				
+		player.setpID(swap.getpID());
+		
+		System.out.println(swap.getpID());
+		System.out.println(player.getpID());
+		
 		getNameDisplay().setText(player.getpInfo().getInitials());
 		getPositionDisplay().setText(player.getpInfo().getType());
 		getNumberDisplay().setText(String.valueOf(player.getpInfo().getjNum()));
@@ -70,6 +74,12 @@ public class PlayerSprite extends BaseSprite{
 		this.detachChildren();
 		
 		if(bool){
+			
+			//+10, -20, TOP
+			//+50, +10, RIGHT
+			//+10, +50, BOTTOM
+			
+			
 			
 			switch(displayMode){
 			
@@ -93,10 +103,11 @@ public class PlayerSprite extends BaseSprite{
 					this.attachChild(getNameDisplay());
 					this.attachChild(getPositionDisplay());
 					break;
-				case P:
+				case I:
 					this.attachChild(getPositionDisplay());
 					break;
-				case I:
+				case P:
+					//this.setPosition(+10, +15);
 					this.attachChild(getNameDisplay());
 					break;
 			}

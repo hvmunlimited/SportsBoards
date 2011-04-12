@@ -28,7 +28,6 @@ public class LineFactory {
 	}
 	
 	public static void setColor(int id){
-		System.out.println(id);
 		switch(id){
 		
 			case Colors.WHITE:

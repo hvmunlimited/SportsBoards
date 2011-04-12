@@ -34,6 +34,7 @@ import org.anddev.andengine.opengl.texture.region.TiledTextureRegion;
 import org.anddev.andengine.util.MathUtils;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 
 import com.badlogic.gdx.math.Vector2;
@@ -84,11 +85,11 @@ public abstract class BaseBoard extends Interface{
 	// ===========================================================
 	// Fields
 	// ===========================================================
-	
+	public static int playerIDCounter;
 	protected String SPORT_NAME;
 	protected String BALL_PATH_SMALL;
 	protected String BALL_PATH_LARGE;
-	protected final String DEFAULT_NAME = "DEFAULT";
+	protected String DEFAULT_NAME;
 		
 	protected Texture mBackgroundTexture;
 	protected Texture mBallTexture;
@@ -131,7 +132,7 @@ public abstract class BaseBoard extends Interface{
 	
 	@Override
 	public Engine onLoadEngine() {
-		
+		DEFAULT_NAME = getString(R.string.default_string);
 		this.mCamera = new Camera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
 		final EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.LANDSCAPE, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), mCamera);
 		engineOptions.getTouchOptions().setRunOnUpdateThread(true);
@@ -151,7 +152,7 @@ public abstract class BaseBoard extends Interface{
 		super.onLoadResources();
 		//load menu textures
 		this.mPlayerInfoFontTexture = new Texture(128, 128, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
-		this.mPlayerInfoFont = FontFactory.createFromAsset(this.mPlayerInfoFontTexture, this, "VeraBd.ttf", 24, true, Color.BLACK);
+		this.mPlayerInfoFont = FontFactory.createFromAsset(this.mPlayerInfoFontTexture, this, "VeraBd.ttf", 18, true, Color.BLACK);
 		//this.mPlayerInfoFont = new Font(this.mPlayerInfoFontTexture, Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 48, true, Color.BLACK);
 		this.mEngine.getTextureManager().loadTexture(this.mPlayerInfoFontTexture);
 		this.mEngine.getFontManager().loadFont(this.mPlayerInfoFont);
@@ -186,7 +187,7 @@ public abstract class BaseBoard extends Interface{
 		players = XMLAccess.loadPlayers(this, SPORT_NAME.toLowerCase());
 		fEntries = XMLAccess.loadFormations(this, SPORT_NAME.toLowerCase());
 		formsList = matchPlayers(fEntries);
-		loadFormation(DEFAULT_NAME);
+		loadFormation(config.lastLoaded);
 		this.mBall = new BallSprite(0, 0, this.mBallTextureRegion);
 		if(formsList!=null){
 			showFormation();
@@ -261,6 +262,7 @@ public abstract class BaseBoard extends Interface{
 				xPlayer = pSprite.getX();
 				yPlayer = pSprite.getY();
 				newPlayer = pSprite.getPlayer();
+				//System.out.println(pSprite.getPlayer().getpID());
 				pInfo = new PlayerInfo(newPlayer.getpID(), newPlayer.getpInfo().getjNum(), newPlayer.getpInfo().getType(),
 						newPlayer.getpInfo().getPName());
 				newPlayer = new Player(newPlayer.getpID(), team, new Coordinates(xPlayer, yPlayer), pInfo);
@@ -307,7 +309,7 @@ public abstract class BaseBoard extends Interface{
 			this.playerSprites.add(newPlayer);
 		}
 		
-		System.out.println(config.playerInfoDisplayToggle);
+		//System.out.println(config.playerInfoDisplayToggle);
 		
 		if(config.playerInfoDisplayToggle == true && config.playerInfoDisplayWhenMode == 1){
 			for(PlayerSprite p1:playerSprites){
@@ -345,19 +347,32 @@ public abstract class BaseBoard extends Interface{
 		
 							intent.putExtra("player", p.getpInfo());
 							BaseBoard.this.startActivity(intent);
+							BaseBoard.this.mMainScene.clearChildScene();
+
+							return true;
 	
 						case Constants.PMENU_SWAP:
+							String display;
 							
 							Intent intent1 = new Intent(BaseBoard.this, SelectPlayer.class);
 							playerNames = new String[BaseBoard.this.players.size()];
 							for(int i = 0; i < players.size(); i++){
-								playerNames[i] = players.get(i).getFirstName();
+								display = "";
+								display += players.get(i).getFirstName().charAt(0);
+						        display += ". ";						         
+						        display += players.get(i).getLastName();
+						        display += "\t\t\t\t\t#";
+						        display += players.get(i).getjNum();
+						        display += "\t\t\t" + players.get(i).getType();
+								playerNames[i] = display;
 							}
 							//intent1.putExtra("size", players.size());
 							//for(PlayerInfo p:players){
 								//intent1.putExtra("player", p);
 							//}
-							BaseBoard.this.startActivity(intent1);
+							BaseBoard.this.startActivityForResult(intent1, 6);
+							
+							BaseBoard.this.mMainScene.clearChildScene();
 							
 							return true;
 							
@@ -394,14 +409,15 @@ public abstract class BaseBoard extends Interface{
 			};
 			
 		
-		playerText = new ChangeableText(+15, -30, this.mPlayerInfoFont, p.getpInfo().getInitials(), 30);
+		playerText = new ChangeableText(+10, -20, this.mPlayerInfoFont, p.getpInfo().getInitials(), 30);
 		newPlayer.addDisplayInfo(playerText);
 		
-		playerText = new ChangeableText(+50, +10, this.mPlayerInfoFont, p.getpInfo().getType(), 30);
+		playerText = new ChangeableText(-25, +10, this.mPlayerInfoFont, p.getpInfo().getType(), 30);
 		newPlayer.addDisplayInfo(playerText);
 		
-		playerText = new ChangeableText(+20, +50, this.mPlayerInfoFont, String.valueOf(p.getpInfo().getjNum()), 30);
+		playerText = new ChangeableText(+10, +50, this.mPlayerInfoFont, String.valueOf(p.getpInfo().getjNum()), 30);
 		newPlayer.addDisplayInfo(playerText);
+		
 		
 		return newPlayer;
 	}
@@ -694,8 +710,8 @@ public abstract class BaseBoard extends Interface{
 				fn = new FormationObject(intent.getType(), new Coordinates(this.mBall.getX(), this.mBall.getY()), playerList);
 				formsList.add(fn);
 				
-				//StringPrinting.printAllFormation(fns);
-				XMLAccess.writeFormations(this, formsList, SPORT_NAME);
+				StringPrinting.printAllFormation(formsList);
+				XMLAccess.writeFormations(this, formsList, SPORT_NAME.toLowerCase());
 			}
 		}
 		//load form activity
@@ -707,22 +723,21 @@ public abstract class BaseBoard extends Interface{
 				showFormation();
 			}
 		}
-
+		//delete form activity
 		else if(requestCode == 3){
 			
 			if(receiveCode != -1){
 
-				if(formsList.get(receiveCode).getfName().equals(DEFAULT_NAME)){
-	
-					//do nothing
-	
+				if(formsList.get(receiveCode).getfName().equalsIgnoreCase(DEFAULT_NAME)){
+					
 				}
 				else{
 					formsList.remove(receiveCode);
-					XMLAccess.writeFormations(this, formsList, SPORT_NAME);
+					XMLAccess.writeFormations(this, formsList, SPORT_NAME.toLowerCase());
 				}
 			}
 		}
+		//check results of settings
 		else if(requestCode == 4){
 			
 			int menuTextColor = config.menuTextColor;
@@ -748,6 +763,7 @@ public abstract class BaseBoard extends Interface{
 				
 			}
 		}
+		//create a new player
 		else if(requestCode == 5 && receiveCode == 5){
 			
 			PlayerInfo newPlayer = (PlayerInfo)intent.getParcelableExtra(getString(R.string.players_create));
@@ -756,9 +772,12 @@ public abstract class BaseBoard extends Interface{
 			
 			players.add(newPlayer);
 			
-			XMLAccess.writePlayers(this, players, SPORT_NAME);
-			
-
+			XMLAccess.writePlayers(this, players, SPORT_NAME.toLowerCase());
+			playerIDCounter++;
+		}
+		//player swap from player context menu
+		else if(requestCode == 6 && receiveCode > 0){
+			selectedPlayer.swap(players.get(receiveCode));
 		}
 		this.mMainScene.getChild(BALL_LAYER).getChild(0).setVisible(true);
 
@@ -842,5 +861,18 @@ public abstract class BaseBoard extends Interface{
 		}
 		this.mMainMenu.back();
 	}
+	
+	@Override
+	public void finish(){
+		
+		SharedPreferences settings = getSharedPreferences(getString(R.string.settings), 0);
+
+		SharedPreferences.Editor editor = settings.edit();
+		
+		editor.putString("last loaded", formsList.get(currentFormation).getfName());
+		editor.commit();
+		super.finish();
+	}
+
 }
 

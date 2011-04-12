@@ -2,7 +2,7 @@
 <players>
 	<player>
 		<pID id="0" />
-		<jNum num="50" />
+		<jNum num="0" />
 		<type>D</type>
 		<pName>Default</pName>
 	</player>

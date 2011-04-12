@@ -24,7 +24,7 @@
 	
 	
 	
-	
+	<string name="default_string">Default</string>
 	
 	<!--Current Settings Menu Strings -->
 	<string name="app_settings">Application Settings</string>
@@ -60,6 +60,7 @@
 		<string name="display_what">display_what</string>
 		<string name="display_what_title">Filter Display</string>
 		<string name="display_what_description">Choose what information is displayed</string>
+		<string name="playerIDCounter">pID counter</string>
 		
 		<string name="menuTextColor">menuTextColor</string>		
 		<string name="menuTextColor_title">Main Menu Text Color</string>

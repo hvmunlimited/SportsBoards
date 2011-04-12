@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sportsboards2d.R;
+import com.sportsboards2d.boards.BaseBoard;
 import com.sportsboards2d.db.objects.PlayerInfo;
 
 /**
@@ -122,7 +123,7 @@ public class CreatePlayer extends Activity{
 			int num = Integer.parseInt(jerseyNumber.getText().toString());
 			String type = position.getText().toString();
 			String name = textFirstName.getText().toString() + " " + textLastName.getText().toString();
-			newPlayer = new PlayerInfo(1, num, type, name);
+			newPlayer = new PlayerInfo(BaseBoard.playerIDCounter, num, type, name);
 			
 			Intent result = new Intent();
 			result.putExtra(getString(R.string.players_create), newPlayer);

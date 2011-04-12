@@ -32,10 +32,14 @@ public class ViewPlayer extends Activity{
 		 PlayerInfo player = bundle.getParcelable("player");
 		 setContentView(R.layout.viewplayer);
 		 
+		
+		 
 		 textFirstName = (TextView)findViewById(R.id.playername_first_text);
          textLastName = (TextView)findViewById(R.id.playername_last_text);
          textJersey = (TextView)findViewById(R.id.playernum_text);
          textPosition = (TextView)findViewById(R.id.playerposition_text);
+         
+         
          
          textFirstName.setText(player.getFirstName());
          textLastName.setText(player.getLastName());
