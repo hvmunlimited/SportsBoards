@@ -17,7 +17,7 @@
 	<string name="playback">Playback Mode</string>
 	<string name="players">Players</string>
 		<string name="players_create">Create a Player</string>
-		<string name="players_view">View info</string>
+		<string name="players_view">View Players</string>
 		<string name="player_delete">Delete this player</string>
 		<string name="players_edit">Edit this players information</string>
 	<string name="settings">Settings</string>
@@ -110,8 +110,24 @@
 	<string name="enter_position">Position</string>
 	
 	
+	<!-- Sport Positions -->
+	<string name="bball_center">Center</string>
+	<string name="bball_powerForward">Power Forward</string>
+	<string name="bball_smallForward">Small Forward</string>
+	<string name="bball_shootingGuard">Shooting Guard</string>
+	<string name="bball_pointGuard">Point Guard</string>
 	
+	<string name="soccer_goalie">Goal Keeper</string>
+	<string name="soccer_striker">Striker</string>
+	<string name="soccer_midFielder">Midfielder</string>
+	<string name="soccer_defense">Defense</string>
 	
+	<string name="hockey_center">Center</string>
+	<string name="hockey_goalie">Goalie</string>
+	<string name="hockey_leftWing">Left Wing</string>
+	<string name="hockey_rightWing">Right Wing</string>
+	<string name="hockey_leftDefense">Left Defense</string>
+	<string name="hockey_rightDefense">Right Defense</string>
 	
 	<!-- Regex -->
 	<string name="regex_first_name">"[A-Z][a-zA-Z]*"</string>

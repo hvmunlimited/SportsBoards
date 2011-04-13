@@ -153,19 +153,19 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 			public void onHoldFinished(final HoldDetector pHoldDetector, long pHoldTimeMilliseconds, final float pHoldX, final float pHoldY){
 				
 				if(pHoldX >= 900){
-					Interface.this.menuItems.get(Constants.PMENU_VIEW).setPosition(pHoldX-128, pHoldY);
+					//Interface.this.menuItems.get(Constants.PMENU_VIEW).setPosition(pHoldX-128, pHoldY);
 					Interface.this.menuItems.get(Constants.PMENU_SWAP).setPosition(pHoldX-128, pHoldY+40);
 					//Interface.this.menuItems.get(Constants.PMENU_HIDE).setPosition(pHoldX-128, pHoldY-48);
 					Interface.this.menuItems.get(Constants.PMENU_EXIT).setPosition(pHoldX-128, pHoldY+90);
 				}
 				else if(pHoldY >= 500){
-					Interface.this.menuItems.get(Constants.PMENU_VIEW).setPosition(pHoldX+24, pHoldY-90);
+					//Interface.this.menuItems.get(Constants.PMENU_VIEW).setPosition(pHoldX+24, pHoldY-90);
 					Interface.this.menuItems.get(Constants.PMENU_SWAP).setPosition(pHoldX+24, pHoldY-40);
 					//Interface.this.menuItems.get(Constants.PMENU_HIDE).setPosition(pHoldX-128, pHoldY-48);
 					Interface.this.menuItems.get(Constants.PMENU_EXIT).setPosition(pHoldX+24, pHoldY);
 				}
 				else{
-					Interface.this.menuItems.get(Constants.PMENU_VIEW).setPosition(pHoldX+24, pHoldY-48);
+					//Interface.this.menuItems.get(Constants.PMENU_VIEW).setPosition(pHoldX+24, pHoldY-48);
 
 					Interface.this.menuItems.get(Constants.PMENU_SWAP).setPosition(pHoldX+24, pHoldY);
 	//				Interface.this.menuItems.get(Constants.PMENU_HIDE).setPosition(pHoldX+24, pHoldY-48);
@@ -381,7 +381,12 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 		create.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 		this.mPlayersSubMenu.addMenuItem(create);
 		
-		
+		final IMenuItem view = new ColorMenuItemDecorator(new TextMenuItem
+				(Constants.PLAYERS_SUBMENU_VIEW, this.mMenuFont, getString(R.string.players_view)), 
+				MenuTextSettings.unSelectR, MenuTextSettings.unSelectG, MenuTextSettings.unSelectB,
+				MenuTextSettings.onSelectR, MenuTextSettings.onSelectG, MenuTextSettings.onSelectB);
+		view.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+		this.mPlayersSubMenu.addMenuItem(view);
 		
 		
 		//final IMenuItem load = new ColorMenuItemDecorator(new TextMenuItem(Constants.MAIN_MENU_LOAD, this.mMenuFont, getString(R.string.load_form)), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
@@ -405,7 +410,7 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 				MenuTextSettings.unSelectR, MenuTextSettings.unSelectG, MenuTextSettings.unSelectB,
 				MenuTextSettings.onSelectR, MenuTextSettings.onSelectG, MenuTextSettings.onSelectB);
 		view.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-		this.mPlayerContextMenu.addMenuItem(view);
+		//this.mPlayerContextMenu.addMenuItem(view);
 		menuItems.add(view);
 		
 		final IMenuItem swap = new ColorMenuItemDecorator(new TextMenuItem

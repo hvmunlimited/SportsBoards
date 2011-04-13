@@ -132,7 +132,7 @@ public class CreatePlayer extends Activity{
 			this.finish();
 		}
 		else{
-			Toast toast = Toast.makeText(getApplicationContext(), "Invalid input", Toast.LENGTH_SHORT);
+			Toast toast = Toast.makeText(getApplicationContext(), "Invalid input. Try something like, John Smith, #27, PG", Toast.LENGTH_SHORT);
 			toast.show();
 		}
 		

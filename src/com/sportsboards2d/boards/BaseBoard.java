@@ -649,8 +649,12 @@ public abstract class BaseBoard extends Interface{
 				return super.onMenuItemClicked(pMenuScene, pMenuItem, pMenuItemLocalX, pMenuItemLocalY);
 				
 			case Constants.FORMATIONS_SUBMENU_SAVE:
-				
+				formNames = new String[this.formsList.size()];
+				for(int i = 0; i < formsList.size(); i++){
+					formNames[i] = formsList.get(i).getfName();
+				}
 				this.startActivityForResult(new Intent(this, SaveForm.class), 1);
+				
 				this.mMainMenu.back();
 				return true;
 			
@@ -687,6 +691,23 @@ public abstract class BaseBoard extends Interface{
 				this.mMainMenu.back();
 				return true;
 				
+			case Constants.PLAYERS_SUBMENU_VIEW:
+				String display;
+				playerNames = new String[BaseBoard.this.players.size()];
+				for(int i = 0; i < players.size(); i++){
+					display = "";
+					display += players.get(i).getFirstName().charAt(0);
+			        display += ". ";						         
+			        display += players.get(i).getLastName();
+			        display += "\t\t\t\t\t#";
+			        display += players.get(i).getjNum();
+			        display += "\t\t\t" + players.get(i).getType();
+					playerNames[i] = display;
+				}
+				this.startActivity(new Intent(this, SelectPlayer.class));
+				this.mMainMenu.back();
+				return true;
+				
 			default:
 				return false;
 		}
@@ -707,8 +728,16 @@ public abstract class BaseBoard extends Interface{
 			if(receiveCode == 1){
 
 				playerList = captureFormation();
-				fn = new FormationObject(intent.getType(), new Coordinates(this.mBall.getX(), this.mBall.getY()), playerList);
-				formsList.add(fn);
+				
+				if(intent == null){
+					fn = new FormationObject(formsList.get(receiveCode).getfName(), new Coordinates(this.mBall.getX(), this.mBall.getY()), playerList);
+					formsList.set(receiveCode, fn);
+				}
+				else{
+					fn = new FormationObject(intent.getType(), new Coordinates(this.mBall.getX(), this.mBall.getY()), playerList);
+					formsList.add(fn);
+				}
+				
 				
 				StringPrinting.printAllFormation(formsList);
 				XMLAccess.writeFormations(this, formsList, SPORT_NAME.toLowerCase());

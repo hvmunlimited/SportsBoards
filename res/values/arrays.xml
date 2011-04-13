@@ -56,6 +56,30 @@
 	    	<item>6</item>
 	    	<item>7</item>
 	    </string-array>
-	        
+	    
+	    
+	    <string-array name="bball_positions">
+	    	<item>C</item>
+	    	<item>PF</item>
+	    	<item>SF</item>
+	    	<item>SG</item>
+	    	<item>PG</item>
+	    </string-array>
+	    
+	    <string-array name="soccer_positions">
+	    	<item>GK</item>
+	    	<item>ST</item>
+	    	<item>MF</item>
+	    	<item>DF</item>
+	    </string-array>
+	    
+	    <string-array name="hockey_positions">
+	    	<item>G</item>
+	    	<item>LW</item>
+	    	<item>RW</item>
+	    	<item>C</item>
+	    	<item>LD</item>
+	    	<item>RD</item>
+	    </string-array>
     
     </resources>
