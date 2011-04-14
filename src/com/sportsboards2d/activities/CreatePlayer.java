@@ -9,9 +9,13 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemSelectedListener;
 
 import com.sportsboards2d.R;
 import com.sportsboards2d.boards.BaseBoard;
@@ -24,12 +28,14 @@ import com.sportsboards2d.db.objects.PlayerInfo;
 /**
  * Copyright 2011 5807400 Manitoba Inc. All rights reserved.
  */
-public class CreatePlayer extends Activity{
+public class CreatePlayer extends Activity implements OnItemSelectedListener{
 	
 	private EditText textFirstName;
 	private EditText textLastName;
 	private EditText jerseyNumber;
-	private EditText position;
+	private Spinner spinner;
+	
+	private int arrayID;
 
 	private boolean validFirstName = false;
 	private boolean validLastName = false;
@@ -43,11 +49,21 @@ public class CreatePlayer extends Activity{
 		 setContentView(R.layout.createplayer);
 		
         // Builder dialog = new Builder(this);
+		 
+		 arrayID = getIntent().getExtras().getInt("arrayID");
          
          textFirstName = (EditText)findViewById(R.id.playername_first_edit);
          textLastName = (EditText)findViewById(R.id.playername_last_edit);
          jerseyNumber = (EditText)findViewById(R.id.playernum_edit);
-         position = (EditText)findViewById(R.id.playerposition_edit);
+         
+         spinner = (Spinner) findViewById(R.id.spinner);
+         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+                 this, arrayID, android.R.layout.simple_spinner_item);
+         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+         spinner.setAdapter(adapter);
+         
+         spinner.setOnItemSelectedListener(this);
+
          
          textFirstName.setOnEditorActionListener(new EditText.OnEditorActionListener() {
         	 @Override
@@ -98,21 +114,7 @@ public class CreatePlayer extends Activity{
         	 }
          }
          );
-         position.setOnEditorActionListener(new EditText.OnEditorActionListener() {
-        	 @Override
-        	 public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-        		 if (actionId == EditorInfo.IME_ACTION_DONE) {
-        			 boolean result = v.getText().toString().matches(getString(R.string.regex_position));
-        			 System.out.println(v.getText());
-        			 System.out.println(result);
-        			 if(result){
-            			 validPosition = true;
-            		 }
-        		 }
-        		 return false;
-        	 }
-         }
-         );
+         
         
 	}
 	
@@ -121,7 +123,8 @@ public class CreatePlayer extends Activity{
 		
 		if(validFirstName && validLastName && validJerseyNumber && validPosition){
 			int num = Integer.parseInt(jerseyNumber.getText().toString());
-			String type = position.getText().toString();
+			String type = spinner.getSelectedItem().toString();
+			System.out.println(type);
 			String name = textFirstName.getText().toString() + " " + textLastName.getText().toString();
 			newPlayer = new PlayerInfo(BaseBoard.playerIDCounter, num, type, name);
 			
@@ -141,6 +144,21 @@ public class CreatePlayer extends Activity{
 	public void cancelClicked(View v){
 		this.setResult(-1, null);
 		this.finish();
+	}
+
+	@Override
+	public void onItemSelected(AdapterView<?> parent, View view, int pos, long id){
+		// TODO Auto-generated method stub
+		validPosition = true;
+		System.out.println(parent.getItemAtPosition(pos).toString());
+
+	}
+
+	
+	@Override
+	public void onNothingSelected(AdapterView<?> parent) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

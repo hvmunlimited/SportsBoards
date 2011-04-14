@@ -28,6 +28,7 @@ public class BBallBoard extends BaseBoard{
 	
 	@Override
 	public Engine onLoadEngine() {
+		arrayID = R.array.bball_positions;
 		SPORT_NAME = getString(R.string.basketball_string);
 		BALL_PATH_SMALL = "Basketball_Ball_32.png";
 		return super.onLoadEngine();

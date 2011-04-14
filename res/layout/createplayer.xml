@@ -38,7 +38,7 @@
 		        android:capitalize="characters"
 		        android:gravity="fill_horizontal"
 		        android:imeOptions="actionDone"
-		        android:textAppearance="?android:attr/textAppearanceMedium" 
+		        android:textAppearance="?android:attr/textAppearanceLarge" 
 		        android:inputType="textCapWords" />
 		        
 		    <TextView 
@@ -60,7 +60,7 @@
 		        android:scrollHorizontally="true"
 		        android:gravity="fill_horizontal"
 		        android:imeOptions="actionDone"
-		        android:textAppearance="?android:attr/textAppearanceMedium" 
+		        android:textAppearance="?android:attr/textAppearanceLarge" 
 		        android:inputType="textCapWords" />
 		    
 		
@@ -83,33 +83,27 @@
 		        android:scrollHorizontally="true"
 		     	android:imeOptions="actionDone"		        
 		        android:gravity="fill_horizontal"
-		        android:textAppearance="?android:attr/textAppearanceMedium" 
+		        android:textAppearance="?android:attr/textAppearanceLarge" 
 		        android:inputType="number"/>
-		        
-		   	<TextView
-		        android:id="@+id/playerposition_view"
-		        android:layout_height="wrap_content"
-		        android:layout_width="wrap_content"
-		        android:layout_marginLeft="20dip"
+		     
+		    <TextView 
+				android:layout_width="fill_parent"
+       			android:layout_height="wrap_content"
+       			 android:layout_marginLeft="20dip"
 		        android:layout_marginRight="20dip"
-		        android:text="@string/enter_position"
-		        android:capitalize="characters"
-		        android:autoText="true"
-		        android:gravity="left"
-		        android:textAppearance="?android:attr/textAppearanceMedium" />
-		            
-		    <EditText
-		        android:id="@+id/playerposition_edit"
-		        android:layout_height="wrap_content"
+        		android:layout_marginTop="10dip"
+        		android:text="@string/position_prompt" />
+        		
+        	 <Spinner 
+		        android:id="@+id/spinner"
+		         android:layout_marginLeft="20dip"
+		        android:layout_marginRight="20dip"
 		        android:layout_width="fill_parent"
-		        android:layout_marginLeft="20dip"
-		        android:layout_marginRight="20dip"
-		        android:scrollHorizontally="true"
-		        android:imeOptions="actionDone"
-		        android:gravity="fill_horizontal"
-		        android:textAppearance="?android:attr/textAppearanceMedium" 
-		        android:inputType="textCapCharacters"/>
-		        
+		        android:layout_height="wrap_content"
+		        android:prompt="@string/position_prompt"
+    		/>
+        
+			
 		</LinearLayout>
 			
 	</ScrollView>

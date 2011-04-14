@@ -109,6 +109,7 @@
 	<string name="enter_jersey">Jersey #</string>
 	<string name="enter_position">Position</string>
 	
+	<string name="position_prompt">Enter a position</string>
 	
 	<!-- Sport Positions -->
 	<string name="bball_center">Center</string>

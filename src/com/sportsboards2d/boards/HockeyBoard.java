@@ -32,6 +32,7 @@ public class HockeyBoard extends BaseBoard {
 
 	@Override
 	public Engine onLoadEngine() {
+		arrayID = R.array.hockey_positions;
 		SPORT_NAME = getString(R.string.hockey_string);
 		BALL_PATH_SMALL = "hockey_puck.png";
 		return super.onLoadEngine();

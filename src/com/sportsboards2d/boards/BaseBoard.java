@@ -47,7 +47,7 @@ import com.sportsboards2d.activities.LoadForm;
 import com.sportsboards2d.activities.SaveForm;
 import com.sportsboards2d.activities.SelectPlayer;
 import com.sportsboards2d.activities.SettingsViewer;
-import com.sportsboards2d.activities.ViewPlayer;
+import com.sportsboards2d.activities.ViewPlayers;
 import com.sportsboards2d.db.objects.Coordinates;
 import com.sportsboards2d.db.objects.FormationObject;
 import com.sportsboards2d.db.objects.Player;
@@ -90,6 +90,8 @@ public abstract class BaseBoard extends Interface{
 	protected String BALL_PATH_SMALL;
 	protected String BALL_PATH_LARGE;
 	protected String DEFAULT_NAME;
+	
+	protected int arrayID;
 		
 	protected Texture mBackgroundTexture;
 	protected Texture mBallTexture;
@@ -341,7 +343,7 @@ public abstract class BaseBoard extends Interface{
 					
 						case Constants.PMENU_VIEW:
 							System.out.println("here");
-							Intent intent = new Intent(BaseBoard.this, ViewPlayer.class);
+							Intent intent = new Intent(BaseBoard.this, ViewPlayers.class);
 							//p.getpInfo().writeToParcel(data, 0);
 							
 		
@@ -687,7 +689,11 @@ public abstract class BaseBoard extends Interface{
 				
 			case Constants.PLAYERS_SUBMENU_CREATE:
 				
-				this.startActivityForResult(new Intent(this, CreatePlayer.class), 5);
+				Intent intent = new Intent(this, CreatePlayer.class);
+				
+				intent.putExtra("arrayID", arrayID);
+				
+				this.startActivityForResult(intent, 5);
 				this.mMainMenu.back();
 				return true;
 				
@@ -704,7 +710,7 @@ public abstract class BaseBoard extends Interface{
 			        display += "\t\t\t" + players.get(i).getType();
 					playerNames[i] = display;
 				}
-				this.startActivity(new Intent(this, SelectPlayer.class));
+				this.startActivity(new Intent(this, ViewPlayers.class));
 				this.mMainMenu.back();
 				return true;
 				

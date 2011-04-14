@@ -41,7 +41,7 @@
 			android:screenOrientation="landscape" />
 		<activity android:name="com.sportsboards2d.activities.CreatePlayer"
 			android:screenOrientation="landscape" />
-		<activity android:name="com.sportsboards2d.activities.ViewPlayer"
+		<activity android:name="com.sportsboards2d.activities.ViewPlayers"
 			android:screenOrientation="landscape" />
 		<activity android:name="com.sportsboards2d.activities.SettingsViewer"
 			android:screenOrientation="landscape" />

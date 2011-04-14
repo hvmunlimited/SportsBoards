@@ -21,7 +21,7 @@ class LauncherMenuAdapter extends BaseAdapter{
 
 	private static final Activity[] Activities = {
 		Activity.SOCCER,
-		Activity.FOOTBALL,
+		//Activity.FOOTBALL,
 		Activity.BBALL,
 		Activity.HOCKEY,
 	};
