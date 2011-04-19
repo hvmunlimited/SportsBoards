@@ -24,6 +24,7 @@ class LauncherMenuAdapter extends BaseAdapter{
 		//Activity.FOOTBALL,
 		Activity.BBALL,
 		Activity.HOCKEY,
+		Activity.RINGETTE,
 	};
 	
 	private final Context mContext;

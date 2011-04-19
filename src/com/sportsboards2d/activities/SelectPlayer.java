@@ -11,8 +11,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 
-import com.sportsboards2d.boards.BaseBoard;
-
 /**
  * Coded by Nathan King
  */
@@ -25,20 +23,15 @@ public class SelectPlayer extends ListActivity{
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Bundle bundle = getIntent().getExtras();
-		
-		//int size = bundle.getParcelable("size");
-		setListAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, BaseBoard.playerNames));
-	  
+		String[]list = getIntent().getStringArrayExtra("list");
+		setListAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, list));  
 		ListView lv = getListView();
-		
 		lv.setOnItemClickListener(new OnItemClickListener() {
+			
 		    public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
-		    	
 		    	setResult(position, null);
 		    	SelectPlayer.this.finish();
 		    }
 		});
 	}
-
 }

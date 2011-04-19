@@ -17,15 +17,11 @@ public class Player extends PlayerEntry{
 	public Player(int pID, String pTeam, Coordinates xy, PlayerInfo pInfo) {
 		super(pID, pTeam, xy);
 		this.pInfo = pInfo;
-		// TODO Auto-generated constructor stub
 	}
-
 	public void setpInfo(PlayerInfo pInfo) {
 		this.pInfo = pInfo;
 	}
-
 	public PlayerInfo getpInfo() {
 		return pInfo;
 	}
-
 }

@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.anddev.andengine.engine.Engine;
 import org.anddev.andengine.engine.camera.Camera;
-import org.anddev.andengine.engine.handler.IUpdateHandler;
 import org.anddev.andengine.engine.options.EngineOptions;
 import org.anddev.andengine.engine.options.EngineOptions.ScreenOrientation;
 import org.anddev.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
@@ -78,20 +77,19 @@ public abstract class BaseBoard extends Interface{
 	// Constants
 	// ===========================================================
 
-
-	
-
-
 	// ===========================================================
 	// Fields
 	// ===========================================================
-	public static int playerIDCounter;
 	protected String SPORT_NAME;
 	protected String BALL_PATH_SMALL;
 	protected String BALL_PATH_LARGE;
 	protected String DEFAULT_NAME;
 	
+	public static int playerIDCounter;
 	protected int arrayID;
+	private int currentFormation;
+	
+	private boolean recording = false;
 		
 	protected Texture mBackgroundTexture;
 	protected Texture mBallTexture;
@@ -106,34 +104,24 @@ public abstract class BaseBoard extends Interface{
 	protected TiledTextureRegion mRedPlayerTextureRegion;
 	private TiledTextureRegion mBluePlayerTextureRegion;
 	
-	private int currentFormation;
 	private  List<FormationObject> formsList;
-	public static String[] formNames;
-	public static String[] playerNames;
+	protected BallSprite mBall;
+	
 	private List<PlayerSprite> playerSprites = new ArrayList<PlayerSprite>();
 	private List<PlayerInfo> players = new ArrayList<PlayerInfo>();
 	private List<Line>lines = new ArrayList<Line>();
-	protected BallSprite mBall;
-	
-	
-	
 	private List<SpritePath> pathList = new ArrayList<SpritePath>();
-	private List<PausablePathModifier> pauseList = new ArrayList<PausablePathModifier>();
-	//private List<Shape> undoList = new ArrayList<Shape>();
-	protected List<Coordinates> path = new ArrayList<Coordinates>();
+	private List<Coordinates> path = new ArrayList<Coordinates>();
 	
 	private Line left, right;
 	
-	
-	private boolean recording = false;
-
-
 	// ===========================================================
 	// Methods for/from SuperClass/Interfaces
 	// ===========================================================
 	
 	@Override
 	public Engine onLoadEngine() {
+		
 		DEFAULT_NAME = getString(R.string.default_string);
 		this.mCamera = new Camera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
 		final EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.LANDSCAPE, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), mCamera);
@@ -155,7 +143,6 @@ public abstract class BaseBoard extends Interface{
 		//load menu textures
 		this.mPlayerInfoFontTexture = new Texture(128, 128, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
 		this.mPlayerInfoFont = FontFactory.createFromAsset(this.mPlayerInfoFontTexture, this, "VeraBd.ttf", 18, true, Color.BLACK);
-		//this.mPlayerInfoFont = new Font(this.mPlayerInfoFontTexture, Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 48, true, Color.BLACK);
 		this.mEngine.getTextureManager().loadTexture(this.mPlayerInfoFontTexture);
 		this.mEngine.getFontManager().loadFont(this.mPlayerInfoFont);
 		//load player and ball textures
@@ -212,7 +199,6 @@ public abstract class BaseBoard extends Interface{
 	    			BaseBoard.this.mMainScene.getChild(PLAYER_LAYER).detachChild(p);
 	    			BaseBoard.this.playerSprites.remove(p);
 	    			BaseBoard.this.mMainScene.unregisterTouchArea(p);
-	    			//BaseBoard.this.mMainScene.
 	    		}
 	    	});
 		}
@@ -256,7 +242,6 @@ public abstract class BaseBoard extends Interface{
 		float xPlayer = 0.0f, yPlayer = 0.0f;
 		String team = "";
 		
-		
 		for(int i = 0; i < mMainScene.getChild(PLAYER_LAYER).getChildCount(); i++){
 			if((IEntity) mMainScene.getChild(PLAYER_LAYER).getChild(i) instanceof PlayerSprite){
 				pSprite = (PlayerSprite)mMainScene.getChild(PLAYER_LAYER).getChild(i);
@@ -264,7 +249,6 @@ public abstract class BaseBoard extends Interface{
 				xPlayer = pSprite.getX();
 				yPlayer = pSprite.getY();
 				newPlayer = pSprite.getPlayer();
-				//System.out.println(pSprite.getPlayer().getpID());
 				pInfo = new PlayerInfo(newPlayer.getpID(), newPlayer.getpInfo().getjNum(), newPlayer.getpInfo().getType(),
 						newPlayer.getpInfo().getPName());
 				newPlayer = new Player(newPlayer.getpID(), team, new Coordinates(xPlayer, yPlayer), pInfo);
@@ -280,7 +264,6 @@ public abstract class BaseBoard extends Interface{
 			for(int i = 0; i < formsList.size(); i++){
 				if(name.equalsIgnoreCase(formsList.get(i).getfName())){
 					currentFormation = i;
-					//System.out.println(formsList.get(i).getPlayers().size());
 					break;
 				}
 			}
@@ -310,9 +293,7 @@ public abstract class BaseBoard extends Interface{
 			this.mMainScene.registerTouchArea(newPlayer);		
 			this.playerSprites.add(newPlayer);
 		}
-		
-		//System.out.println(config.playerInfoDisplayToggle);
-		
+				
 		if(config.playerInfoDisplayToggle == true && config.playerInfoDisplayWhenMode == 1){
 			for(PlayerSprite p1:playerSprites){
 				p1.displayInfo(true);
@@ -326,7 +307,6 @@ public abstract class BaseBoard extends Interface{
 		
 		this.mBall.setPosition(fn.getBall().getX(), fn.getBall().getY());
 		this.mMainScene.getChild(BALL_LAYER).attachChild(this.mBall);
-
 		this.mMainScene.registerTouchArea(this.mBall);
 	}
 
@@ -339,14 +319,12 @@ public abstract class BaseBoard extends Interface{
 				@Override
 				public boolean onMenuItemClicked(final MenuScene pMenuScene, final IMenuItem pMenuItem, final float pMenuItemLocalX, final float pMenuItemLocalY){
 					
+					String[] playerNames;
 					switch(pMenuItem.getID()) {
 					
 						case Constants.PMENU_VIEW:
 							System.out.println("here");
 							Intent intent = new Intent(BaseBoard.this, ViewPlayers.class);
-							//p.getpInfo().writeToParcel(data, 0);
-							
-		
 							intent.putExtra("player", p.getpInfo());
 							BaseBoard.this.startActivity(intent);
 							BaseBoard.this.mMainScene.clearChildScene();
@@ -368,12 +346,8 @@ public abstract class BaseBoard extends Interface{
 						        display += "\t\t\t" + players.get(i).getType();
 								playerNames[i] = display;
 							}
-							//intent1.putExtra("size", players.size());
-							//for(PlayerInfo p:players){
-								//intent1.putExtra("player", p);
-							//}
-							BaseBoard.this.startActivityForResult(intent1, 6);
 							
+							BaseBoard.this.startActivityForResult(intent1, 6);
 							BaseBoard.this.mMainScene.clearChildScene();
 							
 							return true;
@@ -420,7 +394,6 @@ public abstract class BaseBoard extends Interface{
 		playerText = new ChangeableText(+10, +50, this.mPlayerInfoFont, String.valueOf(p.getpInfo().getjNum()), 30);
 		newPlayer.addDisplayInfo(playerText);
 		
-		
 		return newPlayer;
 	}
 	
@@ -452,7 +425,7 @@ public abstract class BaseBoard extends Interface{
 				case TouchEvent.ACTION_MOVE:
 					
 					if(this.mBall.ismGrabbed()) {
-						this.mBall.setPosition(pSceneTouchEvent.getX() - 48 / 2, pSceneTouchEvent.getY() - 48 / 2);
+						this.mBall.setPosition(pSceneTouchEvent.getX() - PLAYER_OFFSET, pSceneTouchEvent.getY() - PLAYER_OFFSET);
 					}
 					return true;
 					
@@ -461,9 +434,7 @@ public abstract class BaseBoard extends Interface{
 					if(this.mBall.ismGrabbed()) {
 						this.mBall.setmGrabbed(false);
 						this.mBall.setScale(1.0f);
-						
 					}
-		
 					return true;
 			}
 		}
@@ -486,19 +457,24 @@ public abstract class BaseBoard extends Interface{
 					
 					sprite.setScale(2.0f);	
 					sprite.setmGrabbed(true);
+			
 					if(config.playerInfoDisplayToggle && config.playerInfoDisplayWhenMode == 0){
 						sprite.displayInfo(true);
 					}
 					path.clear();
-					sprite.setStartX(sprite.getX()+24);
-					sprite.setStartY(sprite.getY()+24);
+					sprite.setStartX(sprite.getX()+ PLAYER_OFFSET);
+					sprite.setStartY(sprite.getY()+ PLAYER_OFFSET);
 				
 					left = LineFactory.createLine(0, 0, 0, 0, 8);
 					right = LineFactory.createLine(0, 0, 0, 0, 8);
 					
 					this.mMainScene.getChild(LINE_LAYER).attachChild(left);
 					this.mMainScene.getChild(LINE_LAYER).attachChild(right);
-				
+					
+					System.out.println("spriteX: " + sprite.getX());
+					System.out.println("spriteY: " + sprite.getY());
+
+					path.add(new Coordinates(sprite.getX(), sprite.getY()));
 					lines.add(left);
 					lines.add(right);
 					
@@ -507,32 +483,32 @@ public abstract class BaseBoard extends Interface{
 				case TouchEvent.ACTION_MOVE:
 					
 					if(sprite.ismGrabbed()) {
+						
+						diff = MathUtils.distance(sprite.getStartX(), sprite.getStartY(), pSceneTouchEvent.getX(), pSceneTouchEvent.getY());
+
+						if(diff > 25){
+						
+							sprite.setPosition(pSceneTouchEvent.getX(), pSceneTouchEvent.getY());
+							body.setTransform(new Vector2(pSceneTouchEvent.getX()/32,  pSceneTouchEvent.getY()/32), 0);
+							
+							moveX = sprite.getX();
+							moveY = sprite.getY();
+							
+							path.add(new Coordinates(sprite.getX()- PLAYER_OFFSET, sprite.getY()- PLAYER_OFFSET));
+							
+							if(config.lineEnabled){
+															
+								float relativeX = 2 * (MathUtils.bringToBounds(0, sprite.getWidth(), pTouchAreaLocalX) / sprite.getWidth() - 0.5f);
+								float relativeY = 2 * (MathUtils.bringToBounds(0, sprite.getHeight(), pTouchAreaLocalY) / sprite.getHeight() - 0.5f);
 	
-						sprite.setPosition(pSceneTouchEvent.getX(), pSceneTouchEvent.getY());
-						body.setTransform(new Vector2(pSceneTouchEvent.getX()/32,  pSceneTouchEvent.getY()/32), 0);
-						
-						moveX = sprite.getX();
-						moveY = sprite.getY();
-						
-						path.add(new Coordinates(sprite.getX()-24, sprite.getY()-24));
-
-						
-						if(config.lineEnabled){
-						
-							diff = MathUtils.distance(sprite.getStartX(), sprite.getStartY(), moveX, moveY);
-							
-							float relativeX = 2 * (MathUtils.bringToBounds(0, sprite.getWidth(), pTouchAreaLocalX) / sprite.getWidth() - 0.5f);
-							float relativeY = 2 * (MathUtils.bringToBounds(0, sprite.getHeight(), pTouchAreaLocalY) / sprite.getHeight() - 0.5f);
-
-							angleDeg = MathUtils.radToDeg((float)Math.atan2(-relativeX, relativeY));
-							
-							if(diff > 30){
+								angleDeg = MathUtils.radToDeg((float)Math.atan2(-relativeX, relativeY));
+								
 								left.setPosition(moveX, moveY, moveX - 20, moveY - 20);
 								right.setPosition(moveX, moveY, moveX + 20, moveY - 20);
-								
+	
 								left.setRotation(angleDeg);
 								right.setRotation(angleDeg);
-								
+	
 								arrowLineMain = LineFactory.createLine(sprite.getStartX(), sprite.getStartY(), moveX, moveY, 8);
 								this.mMainScene.getChild(LINE_LAYER).attachChild(arrowLineMain);
 								this.lines.add(arrowLineMain);
@@ -540,9 +516,7 @@ public abstract class BaseBoard extends Interface{
 								sprite.setStartY(moveY);
 							}
 						}
-						
 					}
-				
 					return true;
 					
 				case TouchEvent.ACTION_UP:
@@ -550,10 +524,10 @@ public abstract class BaseBoard extends Interface{
 					if(sprite.ismGrabbed()) {
 						sprite.setmGrabbed(false);
 						sprite.setScale(1.0f);
+												
 						if(config.playerInfoDisplayToggle && config.playerInfoDisplayWhenMode == 0){
 							sprite.displayInfo(false);
 						}
-						
 						if(recording){
 							if(path.size()>1){
 
@@ -564,9 +538,13 @@ public abstract class BaseBoard extends Interface{
 									Xs[i] = path.get(i).getX();
 									Ys[i] = path.get(i).getY();
 								}
-								Ys[0] = Ys[0] + 24;
+								
 								final PausablePathModifier.Path path1 = new PausablePathModifier.Path(Xs, Ys);
 								pathList.add(new SpritePath((AnimatedSprite)selectedPlayer, path1));
+								System.out.println("after record: " + Xs[0] + " " + Ys[0]);
+								sprite.setPosition(Xs[0], Ys[0]);
+								Xs[0] = Xs[0]+ PLAYER_OFFSET;
+								Ys[0] = Ys[0]+ PLAYER_OFFSET;
 								body.setTransform(new Vector2(Xs[0]/32, Ys[0]/32), 0);
 							}
 						}
@@ -574,9 +552,9 @@ public abstract class BaseBoard extends Interface{
 					}
 					return true;
 				}
-		
 		}
 		else if((pTouchArea) instanceof ButtonSprite){
+			
 			int buttonPushed = buttons.indexOf(pTouchArea);
 			
 			switch(buttonPushed){
@@ -585,16 +563,13 @@ public abstract class BaseBoard extends Interface{
 					for(SpritePath path:pathList){
 						PausablePathModifier path1 = new PausablePathModifier(1.0f, path.getPath());
 						path.getSprite().registerEntityModifier(path1);
-						pauseList.add(path1);
 					}
 					
 					return true;
 					
 				case Constants.STOP_BUTTON:
 					recording = false;
-					for(SpritePath path:pathList){
-						path.getSprite().clearEntityModifiers();
-					}
+					pathList.clear();
 					return true;
 			
 				case Constants.PAUSE_BUTTON:
@@ -612,7 +587,6 @@ public abstract class BaseBoard extends Interface{
 			
 			
 		}
-		
 		return false;
 	}
 	
@@ -620,6 +594,12 @@ public abstract class BaseBoard extends Interface{
 	@Override
 	public boolean onMenuItemClicked(final MenuScene pMenuScene, final IMenuItem pMenuItem, final float pMenuItemLocalX, final float pMenuItemLocalY) {
 				
+		int counter;
+		
+		Intent intent;
+		
+		String[] formNames;
+		String[] playerNames;
 		switch(pMenuItem.getID()) {
 			case Constants.MAIN_MENU_SETTINGS:
 				this.startActivityForResult(new Intent(this, SettingsViewer.class), 4);
@@ -631,9 +611,6 @@ public abstract class BaseBoard extends Interface{
 			case Constants.MAIN_MENU_RESET:
 				
 				clearScene();
-				
-				loadFormation(formsList.get(currentFormation).getfName());
-				
 				showFormation();
 				this.mMainMenu.back();
 
@@ -651,35 +628,50 @@ public abstract class BaseBoard extends Interface{
 				return super.onMenuItemClicked(pMenuScene, pMenuItem, pMenuItemLocalX, pMenuItemLocalY);
 				
 			case Constants.FORMATIONS_SUBMENU_SAVE:
-				formNames = new String[this.formsList.size()];
-				for(int i = 0; i < formsList.size(); i++){
-					formNames[i] = formsList.get(i).getfName();
+				
+				intent = new Intent(this, SaveForm.class);
+				
+				formNames = new String[this.formsList.size()-1];
+				counter = 0;
+				
+				for(int i = 1; i < formsList.size(); i++){
+					formNames[counter] = formsList.get(i).getfName();
+					counter++;
 				}
-				this.startActivityForResult(new Intent(this, SaveForm.class), 1);
+				intent.putExtra("list", formNames);
+				this.startActivityForResult(intent, 1);
 				
 				this.mMainMenu.back();
 				return true;
 			
 			case Constants.FORMATIONS_SUBMENU_DELETE:
+				intent = new Intent(this, DeleteForm.class);
+
+				formNames = new String[this.formsList.size()-1];
 				
-				formNames = new String[this.formsList.size()];
-				for(int i = 0; i < formsList.size(); i++){
-					formNames[i] = formsList.get(i).getfName();
+				counter = 0;
+				
+				for(int i = 1; i < formsList.size(); i++){
+					formNames[counter] = formsList.get(i).getfName();
+					counter++;
 				}
-				
-				this.startActivityForResult(new Intent(this, DeleteForm.class), 3);
+				intent.putExtra("list", formNames);
+
+				this.startActivityForResult(intent, 3);
 				this.mMainMenu.back();
 				return true;
 				
 			//get a list of formations	
 			case Constants.FORMATIONS_SUBMENU_LOAD:
-				
+				intent = new Intent(this, LoadForm.class);
+
 				formNames = new String[this.formsList.size()];
 				for(int i = 0; i < formsList.size(); i++){
 					formNames[i] = formsList.get(i).getfName();
 				}
-				
-				this.startActivityForResult(new Intent(this, LoadForm.class), 2);
+				intent.putExtra("list", formNames);
+
+				this.startActivityForResult(intent, 2);
 				this.mMainMenu.back();
 				return true;
 				
@@ -689,15 +681,14 @@ public abstract class BaseBoard extends Interface{
 				
 			case Constants.PLAYERS_SUBMENU_CREATE:
 				
-				Intent intent = new Intent(this, CreatePlayer.class);
-				
+				intent = new Intent(this, CreatePlayer.class);
 				intent.putExtra("arrayID", arrayID);
-				
 				this.startActivityForResult(intent, 5);
 				this.mMainMenu.back();
 				return true;
 				
 			case Constants.PLAYERS_SUBMENU_VIEW:
+				intent = new Intent(this, ViewPlayers.class);
 				String display;
 				playerNames = new String[BaseBoard.this.players.size()];
 				for(int i = 0; i < players.size(); i++){
@@ -710,7 +701,8 @@ public abstract class BaseBoard extends Interface{
 			        display += "\t\t\t" + players.get(i).getType();
 					playerNames[i] = display;
 				}
-				this.startActivity(new Intent(this, ViewPlayers.class));
+				intent.putExtra("list", playerNames);
+				this.startActivityForResult(intent, 7);
 				this.mMainMenu.back();
 				return true;
 				
@@ -724,27 +716,20 @@ public abstract class BaseBoard extends Interface{
 		
 		List<PlayerObject> playerList = new ArrayList<PlayerObject>();
 		System.out.println("Receive code: " +receiveCode);	
-		//boolean exists = false;
 		FormationObject fn = null;
-		//int index = 0;
-		
 		//save form activity
 
 		if(requestCode == 1){
 			if(receiveCode == 1){
-
 				playerList = captureFormation();
-				
 				if(intent == null){
 					fn = new FormationObject(formsList.get(receiveCode).getfName(), new Coordinates(this.mBall.getX(), this.mBall.getY()), playerList);
-					formsList.set(receiveCode, fn);
+					formsList.set(receiveCode+1, fn);
 				}
 				else{
 					fn = new FormationObject(intent.getType(), new Coordinates(this.mBall.getX(), this.mBall.getY()), playerList);
 					formsList.add(fn);
 				}
-				
-				
 				StringPrinting.printAllFormation(formsList);
 				XMLAccess.writeFormations(this, formsList, SPORT_NAME.toLowerCase());
 			}
@@ -763,11 +748,9 @@ public abstract class BaseBoard extends Interface{
 			
 			if(receiveCode != -1){
 
-				if(formsList.get(receiveCode).getfName().equalsIgnoreCase(DEFAULT_NAME)){
-					
-				}
+				if(formsList.get(receiveCode).getfName().equalsIgnoreCase(DEFAULT_NAME)){}
 				else{
-					formsList.remove(receiveCode);
+					formsList.remove(receiveCode+1);
 					XMLAccess.writeFormations(this, formsList, SPORT_NAME.toLowerCase());
 				}
 			}
@@ -776,6 +759,7 @@ public abstract class BaseBoard extends Interface{
 		else if(requestCode == 4){
 			
 			int menuTextColor = config.menuTextColor;
+			boolean largePlayers = config.largePlayers;
 			
 			updateConfig();
 			PlayerSprite.displayMode = config.playerInfoDisplayWhatMode;
@@ -790,23 +774,21 @@ public abstract class BaseBoard extends Interface{
 				}
 			}
 			if(menuTextColor != config.menuTextColor){
-				
 				createMainMenu();
 				createFormationsSubMenu();
 				createPlayersSubMenu();
 				createPlayerContextMenu();
-				
+			}
+			if(config.largePlayers!=largePlayers){
+				System.out.println("change");
+				changePlayerSize();
 			}
 		}
 		//create a new player
 		else if(requestCode == 5 && receiveCode == 5){
-			
 			PlayerInfo newPlayer = (PlayerInfo)intent.getParcelableExtra(getString(R.string.players_create));
-			
 			StringPrinting.printPlayerInfo(newPlayer);
-			
 			players.add(newPlayer);
-			
 			XMLAccess.writePlayers(this, players, SPORT_NAME.toLowerCase());
 			playerIDCounter++;
 		}
@@ -814,35 +796,13 @@ public abstract class BaseBoard extends Interface{
 		else if(requestCode == 6 && receiveCode > 0){
 			selectedPlayer.swap(players.get(receiveCode));
 		}
-		this.mMainScene.getChild(BALL_LAYER).getChild(0).setVisible(true);
-
-	}
-	
-	public void setCollisionFilters(){
-		
-		for(int i = 0; i < this.mMainScene.getChild(PLAYER_LAYER).getChildCount(); i++){
+		//View players
+		else if(requestCode == 7){
 			
-			final PlayerSprite player = (PlayerSprite) this.mMainScene.getChild(PLAYER_LAYER).getChild(i);
-			
-			for(final ButtonSprite button:buttons){
-				
-				this.mMainScene.registerUpdateHandler(new IUpdateHandler() {
-	
-					@Override
-					public void reset() { }
-	
-					@Override
-					public void onUpdate(final float pSecondsElapsed) {
-						if(player.collidesWith(button)) {
-							//centerRectangle.setColor(1, 0, 0);
-						} else {
-							//centerRectangle.setColor(0, 1, 0);
-						}
-					}
-				});
-			}
 		}
 		
+		this.mMainScene.getChild(BALL_LAYER).getChild(0).setVisible(true);
+
 	}
 	private List<FormationObject> matchPlayers(List<FormationObject> formEntries){
 		
@@ -865,7 +825,6 @@ public abstract class BaseBoard extends Interface{
 						matchList.add(newPlayer);
 					}
 				}
-					
 			}
 			fn = new FormationObject(fEntry.getfName(), fEntry.getBall(), matchList);
 			forms.add(fn);
@@ -878,36 +837,25 @@ public abstract class BaseBoard extends Interface{
 		this.mBluePlayerTexture.clearTextureSources();
 		this.mBallTexture.clearTextureSources();
 		
-		if(config.largePlayers){
-			
+		if(!config.largePlayers){
 			this.mRedPlayerTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mRedPlayerTexture, this, "32x32RED.png", 0, 0, 1, 1);
 			this.mBluePlayerTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mBluePlayerTexture, this, "32x32BLUE.png", 0, 0, 1, 1);
 			this.mBallTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mBallTexture, this, BALL_PATH_SMALL, 0, 0, 1, 1);
-
-			config.largePlayers = false;
 		}
 		else{
 			this.mRedPlayerTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mRedPlayerTexture, this, "48x48RED.png", 0, 0, 1, 1);
 			this.mBluePlayerTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mBluePlayerTexture, this, "48x48BLUE.png", 0, 0, 1, 1);
 			this.mBallTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mBallTexture, this, BALL_PATH_SMALL, 0, 0, 1, 1);
-
-			config.largePlayers = true;
-
 		}
-		this.mMainMenu.back();
 	}
 	
 	@Override
 	public void finish(){
-		
 		SharedPreferences settings = getSharedPreferences(getString(R.string.settings), 0);
-
 		SharedPreferences.Editor editor = settings.edit();
-		
 		editor.putString("last loaded", formsList.get(currentFormation).getfName());
 		editor.commit();
 		super.finish();
 	}
-
 }
 

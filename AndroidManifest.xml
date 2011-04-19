@@ -29,6 +29,8 @@
 			android:screenOrientation="landscape" />	
 		<activity android:name="com.sportsboards2d.boards.HockeyBoard"
 			android:screenOrientation="landscape" />	
+		<activity android:name="com.sportsboards2d.boards.RingetteBoard"
+			android:screenOrientation="landscape" />	
 		<activity android:name="com.sportsboards2d.boards.FootballBoard"
 			android:screenOrientation="landscape" />	
 		

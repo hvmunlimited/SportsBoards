@@ -20,8 +20,6 @@ import android.graphics.Color;
 
 public class BBallBoard extends BaseBoard{
 	
-	
-	
 	// ===========================================================
 	// Methods for/from SuperClass/Interfaces
 	// ===========================================================
@@ -33,8 +31,6 @@ public class BBallBoard extends BaseBoard{
 		BALL_PATH_SMALL = "Basketball_Ball_32.png";
 		return super.onLoadEngine();
 	}
-	
-
 	@Override
 	public void onLoadResources() {
 		super.onLoadResources();	
@@ -46,13 +42,7 @@ public class BBallBoard extends BaseBoard{
 		this.mEngine.getFontManager().loadFont(this.mMenuFont);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.anddev.andengine.ui.IGameInterface#onLoadComplete()
-	 */
 	@Override
-	public void onLoadComplete() {
-		// TODO Auto-generated method stub
-		
-	}
+	public void onLoadComplete() {}
 	
 }

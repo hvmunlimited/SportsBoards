@@ -11,17 +11,8 @@ import org.anddev.andengine.opengl.texture.region.TiledTextureRegion;
  */
 
 public class BallSprite extends BaseSprite{
-	
-	/*
-	 * Variables
-	 */
 
-	/*
-	 * Constructors
-	 */
-	
 	public BallSprite(float x, float y, TiledTextureRegion tex){
 		super(x, y, tex);	
 	}
-	
 }

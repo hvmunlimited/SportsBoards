@@ -34,12 +34,7 @@ import com.sportsboards2d.sprites.PlayerSprite;
  */
 
 public class testingboard extends BaseBoard{
-	
-	
-	private Line arrowLineMain;
-	private Line arrowLineWingLeft;
-	private Line arrowLineWingRight;
-	
+
 	// ===========================================================
 	// Methods for/from SuperClass/Interfaces
 	// ===========================================================
@@ -50,8 +45,6 @@ public class testingboard extends BaseBoard{
 		BALL_PATH_SMALL = "Basketball_Ball_32.png";
 		return super.onLoadEngine();
 	}
-	
-
 	@Override
 	public void onLoadResources() {
 		super.onLoadResources();	
@@ -118,8 +111,7 @@ public class testingboard extends BaseBoard{
 		moveX = 0;
 		moveY = 0;
 		float diff;
-		float angleDeg;
-		
+		float angleDeg = 0.0f;
 	
 		if((pTouchArea) instanceof PlayerSprite){
 			
@@ -133,12 +125,8 @@ public class testingboard extends BaseBoard{
 					sprite.setScale(2.0f);	
 					sprite.setmGrabbed(true);
 					
-					//sprite.displayInfo(true);
-					path.clear();
 					sprite.setStartX(sprite.getX());
 					sprite.setStartY(sprite.getY());
-					
-					
 					return true;
 					
 				case TouchEvent.ACTION_MOVE:
@@ -147,7 +135,6 @@ public class testingboard extends BaseBoard{
 	
 						sprite.setPosition(pSceneTouchEvent.getX(), pSceneTouchEvent.getY());
 						body.setTransform(new Vector2(pSceneTouchEvent.getX()/32,  pSceneTouchEvent.getY()/32), 0);
-						
 						
 						moveX = sprite.getX();
 						moveY = sprite.getY();
@@ -160,23 +147,16 @@ public class testingboard extends BaseBoard{
 						
 						angleDeg = MathUtils.radToDeg((float)Math.atan2(-relativeX, relativeY));
 
-						
-						
-						
 						if(true){
-						
+							
 							diff = MathUtils.distance(sprite.getStartX(), sprite.getStartY(), moveX, moveY);
 							
 							if(diff > 30){
-							
-								
 								sprite.setStartX(moveX);
 								sprite.setStartY(moveY);
 							}
 						}
-						
 					}
-				
 					return true;
 					
 				case TouchEvent.ACTION_UP:
@@ -184,16 +164,10 @@ public class testingboard extends BaseBoard{
 					if(sprite.ismGrabbed()) {
 						sprite.setmGrabbed(false);
 						sprite.setScale(1.0f);
-						
-		
-						//sprite.displayInfo(false);
-
 					}
 					return true;
 				}
-		
 		}
-		
 		return false;
 	}
 }

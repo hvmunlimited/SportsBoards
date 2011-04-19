@@ -14,12 +14,10 @@ import org.xmlpull.v1.XmlSerializer;
 import android.content.Context;
 import android.util.Xml;
 
-import com.sportsboards2d.R;
 import com.sportsboards2d.db.objects.FormationObject;
 import com.sportsboards2d.db.objects.PlayerEntry;
 import com.sportsboards2d.db.objects.PlayerInfo;
 import com.sportsboards2d.db.objects.PlayerObject;
-import com.sportsboards2d.util.StringPrinting;
 
 /**
  * Coded by Nathan King
@@ -45,7 +43,6 @@ public class XMLWriter{
 	    	serializer.startDocument("UTF-8", true);
 	    	serializer.startTag("", "forms");
 	    	for(FormationObject fn: forms){
-		    	//StringPrinting.printForm(fn);
 	    		name = fn.getfName();
 		    	serializer.startTag("", "form");
 		    	serializer.startTag("", "name");
@@ -60,10 +57,8 @@ public class XMLWriter{
 		    		
 		    		
 			    	serializer.startTag("", "pEntry");
-			    	//getString(R.string.default_string);
 		    		serializer.startTag("", "pID");
 		    		if(name.equalsIgnoreCase("Default")){
-		    			//System.out.println("here");
 		    			serializer.attribute("", "id", "0");
 		    		}
 		    		else{

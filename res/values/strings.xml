@@ -6,6 +6,7 @@
 	<string name="football_string">Football</string>
 	<string name="basketball_string">Basketball</string>
 	<string name="hockey_string">Hockey</string>
+	<string name="ringette_string">Ringette</string>
 	
 	<!-- Main Menu Strings -->
 	<string name="reset">Reset</string>
@@ -47,8 +48,15 @@
 		<string name="bTeamLineColor_description">Color of the lines displayed when dragging a blue player</string>
 		<string name="line_type">Line Type</string>
 	
-	<string name="player_settings">Player Settings</string>
-		<!--  Player Settings Strings -->
+	
+	<!--  Player Settings Strings -->
+		
+		<string name="player_settings">Player Settings</string>
+		<string name="largePlayers">largePlayers</string>
+		<string name="player_size">Player Size</string>
+		<string name="player_size_description">Adjust the size of the player icons</string>
+		
+		
 		<string name="player_info_display">player_info_display</string>
 		<string name="player_info_display_title">Enable/Disable player info display</string>
 		<string name="player_info_display_description">This will cause information about the player to be displayed</string>

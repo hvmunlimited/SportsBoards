@@ -6,6 +6,7 @@ import com.sportsboards2d.R;
 import com.sportsboards2d.boards.BBallBoard;
 import com.sportsboards2d.boards.FootballBoard;
 import com.sportsboards2d.boards.HockeyBoard;
+import com.sportsboards2d.boards.RingetteBoard;
 import com.sportsboards2d.boards.SoccerBoard;
 
 /**
@@ -19,15 +20,14 @@ import com.sportsboards2d.boards.SoccerBoard;
 enum Activity{
 
 	/*
-	 * List of Activities (aka sports)
+	 * List of Activities
 	 */
 	
 	SOCCER(SoccerBoard.class, R.string.soccer_string),
 	FOOTBALL(FootballBoard.class, R.string.football_string),
 	BBALL(BBallBoard.class, R.string.basketball_string),
-	HOCKEY(HockeyBoard.class, R.string.hockey_string);
-	//XMLPARSETEST(XMLParseTest.class, R.string.xmltest_string);
-	
+	HOCKEY(HockeyBoard.class, R.string.hockey_string),
+	RINGETTE(RingetteBoard.class, R.string.ringette_string);	
 
 	public final Class<? extends BaseGameActivity> Class;
 	public final int id;
@@ -38,4 +38,3 @@ enum Activity{
 	}
 	
 }
-

@@ -31,18 +31,17 @@ public class SoccerBoard extends BaseBoard{
 		BALL_PATH_SMALL = "Soccer_Ball_32.png";
 		return super.onLoadEngine();
 	}
+	
 	@Override
 	public void onLoadResources() {
 		super.onLoadResources();	
 		this.mBackGroundTextureRegion = TextureRegionFactory.createFromAsset(this.mBackgroundTexture, this, "soccer_field.jpg", 0, 0);
 		this.mMenuFontTexture = new Texture(256, 256, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
 		this.mMenuFont = FontFactory.createFromAsset(this.mMenuFontTexture, this, "VeraBd.ttf", 36, true, Color.WHITE);
-		
 		this.mEngine.getTextureManager().loadTextures(this.mBackgroundTexture, this.mMenuFontTexture);
 		this.mEngine.getFontManager().loadFont(this.mMenuFont);
 	}
+	
 	@Override
-	public void onLoadComplete() {
-
-	}
+	public void onLoadComplete() {}
 }

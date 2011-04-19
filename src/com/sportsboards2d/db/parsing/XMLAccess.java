@@ -10,7 +10,6 @@ import android.content.Context;
 
 import com.sportsboards2d.db.objects.FormationObject;
 import com.sportsboards2d.db.objects.PlayerInfo;
-import com.sportsboards2d.util.StringPrinting;
 
 /**
  * Coded by Nathan King
@@ -29,17 +28,12 @@ public class XMLAccess{
 		FileOutputStream fOut;
 		
 		try {
-			//System.out.println(forms.size());
 			fOut = context.openFileOutput(path + "forms", Context.MODE_PRIVATE);
 			output = writer.convertFormations(context, forms);
-			//System.out.println(output);
 			fOut.write(output.getBytes());
 			fOut.close();
-			
-			//StringPrinting.printAllFormation(forms);
-			
+						
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	
@@ -90,7 +84,6 @@ public class XMLAccess{
 				writeFormations(context, formEntries, path);
 				
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

@@ -17,5 +17,4 @@ public class ButtonSprite extends BaseSprite {
 	public ButtonSprite(float x, float y, TiledTextureRegion tex){
 		super(x, y, tex);	
 	}
-
 }

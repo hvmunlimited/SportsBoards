@@ -25,7 +25,7 @@ import org.anddev.andengine.opengl.texture.Texture;
 import org.anddev.andengine.opengl.texture.TextureOptions;
 import org.anddev.andengine.opengl.texture.region.TextureRegionFactory;
 import org.anddev.andengine.opengl.texture.region.TiledTextureRegion;
-import org.anddev.andengine.ui.activity.BaseGameActivity;
+import org.anddev.andengine.ui.activity.LayoutGameActivity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -35,6 +35,8 @@ import android.view.KeyEvent;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.google.ads.AdRequest;
+import com.google.ads.AdView;
 import com.sportsboards2d.R;
 import com.sportsboards2d.db.objects.Configuration;
 import com.sportsboards2d.db.objects.MenuTextSettings;
@@ -51,7 +53,7 @@ import com.sportsboards2d.util.Constants;
  * Copyright 2011 5807400 Manitoba Inc. All rights reserved.
  */
 
-public abstract class Interface extends BaseGameActivity implements IOnMenuItemClickListener, IOnAreaTouchListener{
+public abstract class Interface extends LayoutGameActivity implements IOnMenuItemClickListener, IOnAreaTouchListener{
 	
 	// ===========================================================
 	// Constants
@@ -59,6 +61,8 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 
 	protected static final int CAMERA_WIDTH = 1024;
 	protected static final int CAMERA_HEIGHT = 600;
+	
+	protected static int PLAYER_OFFSET;
 	
 	protected static final int BACKGROUND_LAYER = 0;
 	protected static final int BALL_LAYER = 2;
@@ -79,9 +83,6 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 	protected HoldDetector mHoldDetector;
 	
 	protected boolean playBackEnabled = false;
-	
-	//private Texture mMenuBorderTexture;
-	//private TextureRegion mMenuBorderTextureRegion;
 	
 	private Texture mPlayButtonTexture;
 	private Texture mRecordButtonTexture;
@@ -111,6 +112,15 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 	protected PhysicsWorld mPhysicsWorld;
 	
 	protected Configuration config;
+	
+	@Override
+	protected int getLayoutID(){
+		return R.layout.adlayout;
+	}
+	@Override
+	protected int getRenderSurfaceViewID() {
+		return R.id.adlayout_surfaceview;
+	}
 	
 	@Override 
 	public void onLoadResources(){
@@ -173,15 +183,10 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 				}
 				Interface.this.mPlayerContextMenu.setOnMenuItemClickListener(selectedPlayer);
 				Interface.this.mMainScene.setChildScene(Interface.this.mPlayerContextMenu, false, true, true);
-				
 			}
-			
 		});
-		
-		
 		this.mHoldDetector.setTriggerHoldMinimumMilliseconds(500);
 		this.mMainScene.registerUpdateHandler(this.mHoldDetector);
-		
 		this.mPhysicsWorld = new PhysicsWorld(new Vector2(0.0f, 0.0f), false);
 
 		final Shape ground = new Rectangle(0, CAMERA_HEIGHT - 2, CAMERA_WIDTH, 2);
@@ -219,25 +224,27 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 
 		button = new ButtonSprite(550, 0, this.mRewindButtonTextureRegion);
 		button.setVisible(false);
-		buttons.add(button);
-		this.mMainScene.getChild(BUTTON_LAYER).attachChild(button);
+		//buttons.add(button);
+		//this.mMainScene.getChild(BUTTON_LAYER).attachChild(button);
 
 		button = new ButtonSprite(625, 0, this.mPauseButtonTextureRegion);
 		button.setVisible(false);
-		buttons.add(button);
-		this.mMainScene.getChild(BUTTON_LAYER).attachChild(button);
-
-	
+		//buttons.add(button);
+		//this.mMainScene.getChild(BUTTON_LAYER).attachChild(button)
 		return this.mMainScene;
 	}
 	
 	private void onLoadConfig(){
-	
+		
+		AdView adView = (AdView)findViewById(R.id.adlayout);
+	    AdRequest request = new AdRequest();
+	    request.setTesting(true);
+	    adView.loadAd(request);
+		
 		SharedPreferences settings = getSharedPreferences(getString(R.string.settings), 0);
 		String default_board = settings.getString("default_board", null);
 		config = new Configuration();
 
-		
 		//No preferences saved, (meaning first boot of the app)
 		if(default_board == null){
 			System.out.println("no prefs");
@@ -253,6 +260,7 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 			editor.putInt(getString(R.string.menuTextColor), 0);
 			editor.putInt(getString(R.string.playerIDCounter), 1);
 			editor.putString("last loaded", getString(R.string.default_string));
+			editor.putInt(getString(R.string.largePlayers), 1);
 			
 			editor.commit();
 			updateConfig();
@@ -277,6 +285,15 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 		BaseBoard.playerIDCounter = config.playerIDCounter;
 		config.lastLoaded = settings.getString("last loaded", "default");
 		
+		if(settings.getInt(getString(R.string.largePlayers), 1)==0){
+			PLAYER_OFFSET = 16;
+			config.largePlayers = false;
+		}
+		else{
+			PLAYER_OFFSET = 24;
+			config.largePlayers = true;
+		}
+
 		MenuTextSettings.setColor(config.menuTextColor);
 	}
 	
@@ -388,11 +405,6 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 		view.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 		this.mPlayersSubMenu.addMenuItem(view);
 		
-		
-		//final IMenuItem load = new ColorMenuItemDecorator(new TextMenuItem(Constants.MAIN_MENU_LOAD, this.mMenuFont, getString(R.string.load_form)), 0.0f, 1.0f,0.0f, 255.0f, 255.0f, 255.0f);
-		//load.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-		//this.mPlayersSubMenu.addMenuItem(load);
-		
 		this.mPlayersSubMenu.buildAnimations();
 		this.mPlayersSubMenu.setBackgroundEnabled(false);
 		this.mPlayersSubMenu.setOnMenuItemClickListener(this);
@@ -479,6 +491,8 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 		switch(pMenuItem.getID()) {
 		
 			case Constants.MAIN_MENU_PLAYBACK:
+				this.mMainScene.getChild(BALL_LAYER).getChild(0).setVisible(true);
+
 				//attach settings menu
 				this.mMainMenu.back();
 				for(ButtonSprite b:buttons){
@@ -492,25 +506,15 @@ public abstract class Interface extends BaseGameActivity implements IOnMenuItemC
 
 					}
 				}
-				//this.mMainMenu.setChildSceneModal(mPlayBackMenu);
 				return true;
 		
 			case Constants.MAIN_MENU_FORMATIONS:
-				
 				this.mMainMenu.setChildSceneModal(this.mFormationsSubMenu);
-				
 				return true;
-				
 			case Constants.MAIN_MENU_PLAYERS:
-				
 				this.mMainMenu.setChildSceneModal(this.mPlayersSubMenu);
-				
 				return true;
-				
-			default:
-				return false;
 		}
+		return false;
 	}
-	
-	
 }

@@ -18,7 +18,7 @@
         android:padding="10px" >
         
 			
-			
+			<!--  
 			<Button
 				android:id="@+id/save_button" 
 		    	android:layout_width="100dip" 
@@ -44,7 +44,7 @@
 		        android:layout_toRightOf="@id/edit_button"
 	            android:layout_alignTop="@id/edit_button"
 	            android:text="Exit" 
-	            android:onClick="exitClicked" />
+	            android:onClick="exitClicked" />-->
 	            
 	</RelativeLayout>			
 

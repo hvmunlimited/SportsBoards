@@ -19,17 +19,13 @@ public class ChangeableTextMenuItem extends ChangeableText implements IMenuItem{
 	private final int mID;
 	
 	public ChangeableTextMenuItem(final int pID, final Font pFont, final String pText) {
-	
 		super(0, 0, pFont, pText);
 		this.mID = pID;
 	}
-
 	public ChangeableTextMenuItem(final int pID, final Font pFont, final String pText, final int pMaxLenght) {
-
 		super(0, 0, pFont, pText, pMaxLenght);
 		this.mID = pID;
 	}
-
 	public void setText(String pText){
 		super.setText(pText);
 	}
@@ -41,8 +37,6 @@ public class ChangeableTextMenuItem extends ChangeableText implements IMenuItem{
 	public void onSelected(){}
 	@Override
 	public void onUnselected(){}
-	
-	
 }
 
 	

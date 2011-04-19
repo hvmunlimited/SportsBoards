@@ -24,7 +24,7 @@ public class FootballBoard extends BaseBoard {
 
 	@Override
 	public Engine onLoadEngine() {
-		SPORT_NAME = getString(R.string.hockey_string);
+		SPORT_NAME = getString(R.string.football_string);
 		BALL_PATH_SMALL = "football.png";
 		return super.onLoadEngine();
 	}
@@ -34,12 +34,9 @@ public class FootballBoard extends BaseBoard {
 		this.mBackGroundTextureRegion = TextureRegionFactory.createFromAsset(this.mBackgroundTexture, this, "football_field.jpg", 0, 0);
 		this.mMenuFontTexture = new Texture(256, 256, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
 		this.mMenuFont = FontFactory.createFromAsset(this.mMenuFontTexture, this, "VeraBd.ttf", 36, true, Color.WHITE);
-		
 		this.mEngine.getTextureManager().loadTextures(this.mBackgroundTexture, this.mMenuFontTexture);
 		this.mEngine.getFontManager().loadFont(this.mMenuFont);
 	}
 	@Override
-	public void onLoadComplete() {
-
-	}
+	public void onLoadComplete() {}
 }

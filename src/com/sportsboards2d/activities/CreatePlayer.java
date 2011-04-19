@@ -47,24 +47,16 @@ public class CreatePlayer extends Activity implements OnItemSelectedListener{
 	public void onCreate(Bundle savedInstanceState){
 		 super.onCreate(savedInstanceState);
 		 setContentView(R.layout.createplayer);
-		
-        // Builder dialog = new Builder(this);
-		 
 		 arrayID = getIntent().getExtras().getInt("arrayID");
-         
          textFirstName = (EditText)findViewById(R.id.playername_first_edit);
          textLastName = (EditText)findViewById(R.id.playername_last_edit);
          jerseyNumber = (EditText)findViewById(R.id.playernum_edit);
-         
          spinner = (Spinner) findViewById(R.id.spinner);
          ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
                  this, arrayID, android.R.layout.simple_spinner_item);
          adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
          spinner.setAdapter(adapter);
-         
          spinner.setOnItemSelectedListener(this);
-
-         
          textFirstName.setOnEditorActionListener(new EditText.OnEditorActionListener() {
         	 @Override
         	 public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -109,16 +101,14 @@ public class CreatePlayer extends Activity implements OnItemSelectedListener{
             			 validJerseyNumber = true;
             		 }
         		 }
-        		 
         		 return false;
         	 }
          }
          );
-         
-        
 	}
 	
 	public void okClicked(View v){
+		
 		PlayerInfo newPlayer;
 		
 		if(validFirstName && validLastName && validJerseyNumber && validPosition){
@@ -127,18 +117,15 @@ public class CreatePlayer extends Activity implements OnItemSelectedListener{
 			System.out.println(type);
 			String name = textFirstName.getText().toString() + " " + textLastName.getText().toString();
 			newPlayer = new PlayerInfo(BaseBoard.playerIDCounter, num, type, name);
-			
 			Intent result = new Intent();
 			result.putExtra(getString(R.string.players_create), newPlayer);
 			setResult(5, result);
-			
 			this.finish();
 		}
 		else{
-			Toast toast = Toast.makeText(getApplicationContext(), "Invalid input. Try something like, John Smith, #27, PG", Toast.LENGTH_SHORT);
+			Toast toast = Toast.makeText(getApplicationContext(), "Invalid input. Try something like John Smith, #27, PG", Toast.LENGTH_SHORT);
 			toast.show();
 		}
-		
 	}
 	
 	public void cancelClicked(View v){
@@ -148,17 +135,12 @@ public class CreatePlayer extends Activity implements OnItemSelectedListener{
 
 	@Override
 	public void onItemSelected(AdapterView<?> parent, View view, int pos, long id){
-		// TODO Auto-generated method stub
 		validPosition = true;
 		System.out.println(parent.getItemAtPosition(pos).toString());
-
 	}
 
 	
 	@Override
-	public void onNothingSelected(AdapterView<?> parent) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void onNothingSelected(AdapterView<?> parent) {}
 	
 }

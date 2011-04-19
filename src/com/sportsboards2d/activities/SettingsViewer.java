@@ -56,6 +56,11 @@ public class SettingsViewer extends PreferenceActivity implements OnSharedPrefer
 			int result = Integer.parseInt(sharedPreferences.getString(key, "0"));
 			editor.putInt(key, result);
 		}
+		else if(key.equals(getString(R.string.largePlayers))){
+			System.out.println("here");
+			int result = Integer.parseInt(sharedPreferences.getString(key, "1"));
+			editor.putInt(key, result);
+		}
 		editor.commit();
 	}
 	@Override
@@ -73,10 +78,11 @@ public class SettingsViewer extends PreferenceActivity implements OnSharedPrefer
         list.setValueIndex(sharedPreferences.getInt(getString(R.string.display_what), 0));
         list = (ListPreference)getPreferenceScreen().findPreference(getString(R.string.menuTextColor));
         list.setValueIndex(sharedPreferences.getInt(getString(R.string.menuTextColor), 0));
+        list = (ListPreference)getPreferenceScreen().findPreference(getString(R.string.largePlayers));
+        list.setValueIndex(sharedPreferences.getInt(getString(R.string.largePlayers), 1));
 
         // Set up a listener whenever a key changes            
-        getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
-        
+        getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);   
     }
 
 	@Override
@@ -85,5 +91,4 @@ public class SettingsViewer extends PreferenceActivity implements OnSharedPrefer
         // Unregister the listener whenever a key changes            
         getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);    
     }
-
 }

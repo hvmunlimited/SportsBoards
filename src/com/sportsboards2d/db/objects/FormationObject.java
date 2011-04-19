@@ -47,5 +47,4 @@ public class FormationObject {
 	public List<PlayerObject> getPlayers() {
 		return players;
 	}
-
 }

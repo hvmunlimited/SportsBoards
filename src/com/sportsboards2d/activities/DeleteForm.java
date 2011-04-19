@@ -15,7 +15,6 @@ import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.sportsboards2d.R;
-import com.sportsboards2d.boards.BaseBoard;
 
 /**
  * Coded by Nathan King
@@ -28,37 +27,34 @@ public class DeleteForm extends ListActivity{
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-	  super.onCreate(savedInstanceState);
-  	final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-	  setResult(-1, null);
-	 
-	  setListAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, BaseBoard.formNames));
-
-	  ListView lv = getListView();
-	  lv.setTextFilterEnabled(true);
-
-	  lv.setOnItemClickListener(new OnItemClickListener() {
-	    public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
-	    	
-			builder.setMessage(R.string.alert_dialog_confirm)
-			       .setCancelable(false)
-			       .setPositiveButton(R.string.confirm_yes, new DialogInterface.OnClickListener() {
-			           public void onClick(DialogInterface dialog, int id) {
-			    	    	setResult(position, null);
-			                DeleteForm.this.finish();
-
-			           }
-			       })
-			       .setNegativeButton(R.string.confirm_no, new DialogInterface.OnClickListener() {
-			           public void onClick(DialogInterface dialog, int id) {
-			                dialog.cancel();
-			           }
-			       });
-			AlertDialog alert = builder.create();
-			alert.show();
-	    }
-	  });
-	}
-
+		
+		super.onCreate(savedInstanceState);
+		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		setResult(-1, null);
+		String[] list;
+		list = getIntent().getStringArrayExtra("list");
+		setListAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, list));
+		ListView lv = getListView();
+		lv.setTextFilterEnabled(true);
+	
+		lv.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> parent, View view, final int position, long id){
+				builder.setMessage(R.string.alert_dialog_confirm)
+				.setCancelable(false)
+				.setPositiveButton(R.string.confirm_yes, new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						setResult(position, null);
+						DeleteForm.this.finish();
+					}
+				})
+				.setNegativeButton(R.string.confirm_no, new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						dialog.cancel();
+					}
+				});
+				AlertDialog alert = builder.create();
+				alert.show();
+			}
+			});
+		}
 }

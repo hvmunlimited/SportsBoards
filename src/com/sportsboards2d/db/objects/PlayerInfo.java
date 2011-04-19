@@ -37,15 +37,12 @@ public class PlayerInfo extends PlayerObject implements Parcelable{
 	
 	public String getFirstName(){
 		String[]result;
-		
 		result = pName.split("\\s+");
-		
 		return result[0];
 	}
 	
 	public String getLastName(){
 		String[]result;
-		
 		result = pName.split("\\s+");
 		try{
 			return result[1];
@@ -60,12 +57,10 @@ public class PlayerInfo extends PlayerObject implements Parcelable{
 		String result = "";
 		
 		for(int i = 0; i < this.pName.length()-1; i++){
-			
 			if(Character.isUpperCase(this.pName.charAt(i))){
 				result += this.pName.charAt(i);
 			}
 		}
-		
 		return result;
 	}
 	
@@ -90,16 +85,11 @@ public class PlayerInfo extends PlayerObject implements Parcelable{
 		return pName;
 	}
 
-	
 	@Override
 	public int describeContents() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	/* (non-Javadoc)
-	 * @see android.os.Parcelable#writeToParcel(android.os.Parcel, int)
-	 */
 	@Override
 	public void writeToParcel(Parcel out, int arg1) {
 		out.writeInt(this.getpID());
@@ -123,6 +113,4 @@ public class PlayerInfo extends PlayerObject implements Parcelable{
         this.type = in.readString();
         this.pName = in.readString();
     }
-
-	
 }

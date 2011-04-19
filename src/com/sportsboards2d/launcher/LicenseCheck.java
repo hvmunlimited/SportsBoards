@@ -127,9 +127,6 @@ public class LicenseCheck extends Activity{
             }
             displayResult(getString(R.string.dont_allow));
             showDialog(0);
-            //startActivity(new Intent(LicenseCheck.this, Launcher.class));
-            //finish();
-            
         }
 
 		@Override
