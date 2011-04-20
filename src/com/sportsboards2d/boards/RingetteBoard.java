@@ -38,7 +38,4 @@ public class RingetteBoard extends BaseBoard{
 		this.mEngine.getTextureManager().loadTextures(this.mBackgroundTexture, this.mMenuFontTexture);
 		this.mEngine.getFontManager().loadFont(this.mMenuFont);
 	}
-	
-	@Override
-	public void onLoadComplete() {}
 }

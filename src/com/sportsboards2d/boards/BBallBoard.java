@@ -42,7 +42,4 @@ public class BBallBoard extends BaseBoard{
 		this.mEngine.getFontManager().loadFont(this.mMenuFont);
 	}
 	
-	@Override
-	public void onLoadComplete() {}
-	
 }

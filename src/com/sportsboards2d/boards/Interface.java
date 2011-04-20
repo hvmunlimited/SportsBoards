@@ -122,6 +122,13 @@ public abstract class Interface extends LayoutGameActivity implements IOnMenuIte
 		return R.id.adlayout_surfaceview;
 	}
 	
+	/*
+	 * onLoadResources()
+	 * 
+	 * Load textures for playback buttons
+	 * 
+	 */
+	
 	@Override 
 	public void onLoadResources(){
 		
@@ -144,6 +151,11 @@ public abstract class Interface extends LayoutGameActivity implements IOnMenuIte
 		this.mEngine.getTextureManager().loadTextures(this.mPlayButtonTexture, this.mStopButtonTexture, this.mPauseButtonTexture, this.mRecordButtonTexture, this.mRewindButtonTexture);
 		
 	}
+	/*
+	 * onLoadScene()
+	 * 
+	 * Create menus and physics
+	 */
 
 	@Override
 	public Scene onLoadScene() {
@@ -163,22 +175,16 @@ public abstract class Interface extends LayoutGameActivity implements IOnMenuIte
 			public void onHoldFinished(final HoldDetector pHoldDetector, long pHoldTimeMilliseconds, final float pHoldX, final float pHoldY){
 				
 				if(pHoldX >= 900){
-					//Interface.this.menuItems.get(Constants.PMENU_VIEW).setPosition(pHoldX-128, pHoldY);
 					Interface.this.menuItems.get(Constants.PMENU_SWAP).setPosition(pHoldX-128, pHoldY+40);
-					//Interface.this.menuItems.get(Constants.PMENU_HIDE).setPosition(pHoldX-128, pHoldY-48);
 					Interface.this.menuItems.get(Constants.PMENU_EXIT).setPosition(pHoldX-128, pHoldY+90);
 				}
 				else if(pHoldY >= 500){
-					//Interface.this.menuItems.get(Constants.PMENU_VIEW).setPosition(pHoldX+24, pHoldY-90);
 					Interface.this.menuItems.get(Constants.PMENU_SWAP).setPosition(pHoldX+24, pHoldY-40);
-					//Interface.this.menuItems.get(Constants.PMENU_HIDE).setPosition(pHoldX-128, pHoldY-48);
 					Interface.this.menuItems.get(Constants.PMENU_EXIT).setPosition(pHoldX+24, pHoldY);
 				}
 				else{
-					//Interface.this.menuItems.get(Constants.PMENU_VIEW).setPosition(pHoldX+24, pHoldY-48);
 
 					Interface.this.menuItems.get(Constants.PMENU_SWAP).setPosition(pHoldX+24, pHoldY);
-	//				Interface.this.menuItems.get(Constants.PMENU_HIDE).setPosition(pHoldX+24, pHoldY-48);
 					Interface.this.menuItems.get(Constants.PMENU_EXIT).setPosition(pHoldX+24, pHoldY+48);
 				}
 				Interface.this.mPlayerContextMenu.setOnMenuItemClickListener(selectedPlayer);
@@ -207,17 +213,17 @@ public abstract class Interface extends LayoutGameActivity implements IOnMenuIte
 		
 		this.mMainScene.registerUpdateHandler(this.mPhysicsWorld);
 		
-		ButtonSprite button = new ButtonSprite(325, 0, this.mPlayButtonTextureRegion);
+		ButtonSprite button = new ButtonSprite(400, 0, this.mPlayButtonTextureRegion);
 		button.setVisible(false);
 		buttons.add(button);
 		this.mMainScene.getChild(BUTTON_LAYER).attachChild(button);
 
-		button = new ButtonSprite(400, 0, this.mRecordButtonTextureRegion);
+		button = new ButtonSprite(475, 0, this.mRecordButtonTextureRegion);
 		button.setVisible(false);
 		buttons.add(button);
 		this.mMainScene.getChild(BUTTON_LAYER).attachChild(button);
 
-		button = new ButtonSprite(475, 0, this.mStopButtonTextureRegion);
+		button = new ButtonSprite(550, 0, this.mStopButtonTextureRegion);
 		button.setVisible(false);
 		buttons.add(button);
 		this.mMainScene.getChild(BUTTON_LAYER).attachChild(button);
@@ -234,12 +240,16 @@ public abstract class Interface extends LayoutGameActivity implements IOnMenuIte
 		return this.mMainScene;
 	}
 	
+	/*
+	 * onLoadConfig
+	 * 
+	 * Load preferences and settings
+	 * If first time boot, will create new preferences file
+	 */
+	
 	private void onLoadConfig(){
 		
-		AdView adView = (AdView)findViewById(R.id.adlayout);
-	    AdRequest request = new AdRequest();
-	    request.setTesting(true);
-	    adView.loadAd(request);
+		
 		
 		SharedPreferences settings = getSharedPreferences(getString(R.string.settings), 0);
 		String default_board = settings.getString("default_board", null);
@@ -269,6 +279,12 @@ public abstract class Interface extends LayoutGameActivity implements IOnMenuIte
 			updateConfig();
 		}	
 	}
+	
+	/*
+	 * updateConfig()
+	 * 
+	 * Update settings 
+	 */
 	protected void updateConfig(){
 		SharedPreferences settings = getSharedPreferences(getString(R.string.settings), 0);
 

@@ -3,6 +3,7 @@
  */
 package com.sportsboards2d.util;
 
+import org.anddev.andengine.entity.modifier.PathModifier;
 import org.anddev.andengine.entity.sprite.AnimatedSprite;
 
 /**
@@ -15,9 +16,9 @@ import org.anddev.andengine.entity.sprite.AnimatedSprite;
 public class SpritePath {
 	
 	private AnimatedSprite sprite;
-	private PausablePathModifier.Path path;
+	private PathModifier.Path path;
 	
-	public SpritePath(AnimatedSprite sprite, PausablePathModifier.Path path1){
+	public SpritePath(AnimatedSprite sprite, PathModifier.Path path1){
 		this.setSprite(sprite);
 		this.setPath(path1);
 	}
@@ -30,11 +31,11 @@ public class SpritePath {
 		return sprite;
 	}
 
-	public void setPath(PausablePathModifier.Path path) {
+	public void setPath(PathModifier.Path path) {
 		this.path = path;
 	}
 
-	public PausablePathModifier.Path getPath() {
+	public PathModifier.Path getPath() {
 		return path;
 	}
 

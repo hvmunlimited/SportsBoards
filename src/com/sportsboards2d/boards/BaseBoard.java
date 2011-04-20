@@ -9,6 +9,7 @@ import org.anddev.andengine.engine.options.EngineOptions;
 import org.anddev.andengine.engine.options.EngineOptions.ScreenOrientation;
 import org.anddev.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
 import org.anddev.andengine.entity.IEntity;
+import org.anddev.andengine.entity.modifier.PathModifier;
 import org.anddev.andengine.entity.primitive.Line;
 import org.anddev.andengine.entity.scene.Scene;
 import org.anddev.andengine.entity.scene.Scene.ITouchArea;
@@ -39,6 +40,8 @@ import android.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.google.ads.AdRequest;
+import com.google.ads.AdView;
 import com.sportsboards2d.R;
 import com.sportsboards2d.activities.CreatePlayer;
 import com.sportsboards2d.activities.DeleteForm;
@@ -59,7 +62,6 @@ import com.sportsboards2d.sprites.ButtonSprite;
 import com.sportsboards2d.sprites.LineFactory;
 import com.sportsboards2d.sprites.PlayerSprite;
 import com.sportsboards2d.util.Constants;
-import com.sportsboards2d.util.PausablePathModifier;
 import com.sportsboards2d.util.SpritePath;
 import com.sportsboards2d.util.StringPrinting;
 
@@ -319,7 +321,7 @@ public abstract class BaseBoard extends Interface{
 				@Override
 				public boolean onMenuItemClicked(final MenuScene pMenuScene, final IMenuItem pMenuItem, final float pMenuItemLocalX, final float pMenuItemLocalY){
 					
-					String[] playerNames;
+					String[] list;
 					switch(pMenuItem.getID()) {
 					
 						case Constants.PMENU_VIEW:
@@ -335,7 +337,7 @@ public abstract class BaseBoard extends Interface{
 							String display;
 							
 							Intent intent1 = new Intent(BaseBoard.this, SelectPlayer.class);
-							playerNames = new String[BaseBoard.this.players.size()];
+							list = new String[BaseBoard.this.players.size()];
 							for(int i = 0; i < players.size(); i++){
 								display = "";
 								display += players.get(i).getFirstName().charAt(0);
@@ -344,9 +346,9 @@ public abstract class BaseBoard extends Interface{
 						        display += "\t\t\t\t\t#";
 						        display += players.get(i).getjNum();
 						        display += "\t\t\t" + players.get(i).getType();
-								playerNames[i] = display;
+								list[i] = display;
 							}
-							
+							intent1.putExtra("list", list);
 							BaseBoard.this.startActivityForResult(intent1, 6);
 							BaseBoard.this.mMainScene.clearChildScene();
 							
@@ -528,6 +530,7 @@ public abstract class BaseBoard extends Interface{
 						if(config.playerInfoDisplayToggle && config.playerInfoDisplayWhenMode == 0){
 							sprite.displayInfo(false);
 						}
+						
 						if(recording){
 							if(path.size()>1){
 
@@ -539,7 +542,7 @@ public abstract class BaseBoard extends Interface{
 									Ys[i] = path.get(i).getY();
 								}
 								
-								final PausablePathModifier.Path path1 = new PausablePathModifier.Path(Xs, Ys);
+								final PathModifier.Path path1 = new PathModifier.Path(Xs, Ys);
 								pathList.add(new SpritePath((AnimatedSprite)selectedPlayer, path1));
 								System.out.println("after record: " + Xs[0] + " " + Ys[0]);
 								sprite.setPosition(Xs[0], Ys[0]);
@@ -561,7 +564,7 @@ public abstract class BaseBoard extends Interface{
 			
 				case Constants.PLAY_BUTTON:
 					for(SpritePath path:pathList){
-						PausablePathModifier path1 = new PausablePathModifier(1.0f, path.getPath());
+						PathModifier path1 = new PathModifier(1.0f, path.getPath());
 						path.getSprite().registerEntityModifier(path1);
 					}
 					
@@ -581,7 +584,6 @@ public abstract class BaseBoard extends Interface{
 					return true;
 					
 				case Constants.REWIND_BUTTON:
-
 					return true;
 			}
 			
@@ -595,11 +597,9 @@ public abstract class BaseBoard extends Interface{
 	public boolean onMenuItemClicked(final MenuScene pMenuScene, final IMenuItem pMenuItem, final float pMenuItemLocalX, final float pMenuItemLocalY) {
 				
 		int counter;
-		
 		Intent intent;
+		String[] list;
 		
-		String[] formNames;
-		String[] playerNames;
 		switch(pMenuItem.getID()) {
 			case Constants.MAIN_MENU_SETTINGS:
 				this.startActivityForResult(new Intent(this, SettingsViewer.class), 4);
@@ -631,14 +631,14 @@ public abstract class BaseBoard extends Interface{
 				
 				intent = new Intent(this, SaveForm.class);
 				
-				formNames = new String[this.formsList.size()-1];
+				list = new String[this.formsList.size()-1];
 				counter = 0;
 				
 				for(int i = 1; i < formsList.size(); i++){
-					formNames[counter] = formsList.get(i).getfName();
+					list[counter] = formsList.get(i).getfName();
 					counter++;
 				}
-				intent.putExtra("list", formNames);
+				intent.putExtra("list", list);
 				this.startActivityForResult(intent, 1);
 				
 				this.mMainMenu.back();
@@ -647,15 +647,15 @@ public abstract class BaseBoard extends Interface{
 			case Constants.FORMATIONS_SUBMENU_DELETE:
 				intent = new Intent(this, DeleteForm.class);
 
-				formNames = new String[this.formsList.size()-1];
+				list = new String[this.formsList.size()-1];
 				
 				counter = 0;
 				
 				for(int i = 1; i < formsList.size(); i++){
-					formNames[counter] = formsList.get(i).getfName();
+					list[counter] = formsList.get(i).getfName();
 					counter++;
 				}
-				intent.putExtra("list", formNames);
+				intent.putExtra("list", list);
 
 				this.startActivityForResult(intent, 3);
 				this.mMainMenu.back();
@@ -665,11 +665,11 @@ public abstract class BaseBoard extends Interface{
 			case Constants.FORMATIONS_SUBMENU_LOAD:
 				intent = new Intent(this, LoadForm.class);
 
-				formNames = new String[this.formsList.size()];
+				list = new String[this.formsList.size()];
 				for(int i = 0; i < formsList.size(); i++){
-					formNames[i] = formsList.get(i).getfName();
+					list[i] = formsList.get(i).getfName();
 				}
-				intent.putExtra("list", formNames);
+				intent.putExtra("list", list);
 
 				this.startActivityForResult(intent, 2);
 				this.mMainMenu.back();
@@ -690,7 +690,7 @@ public abstract class BaseBoard extends Interface{
 			case Constants.PLAYERS_SUBMENU_VIEW:
 				intent = new Intent(this, ViewPlayers.class);
 				String display;
-				playerNames = new String[BaseBoard.this.players.size()];
+				list = new String[BaseBoard.this.players.size()];
 				for(int i = 0; i < players.size(); i++){
 					display = "";
 					display += players.get(i).getFirstName().charAt(0);
@@ -699,9 +699,9 @@ public abstract class BaseBoard extends Interface{
 			        display += "\t\t\t\t\t#";
 			        display += players.get(i).getjNum();
 			        display += "\t\t\t" + players.get(i).getType();
-					playerNames[i] = display;
+					list[i] = display;
 				}
-				intent.putExtra("list", playerNames);
+				intent.putExtra("list", list);
 				this.startActivityForResult(intent, 7);
 				this.mMainMenu.back();
 				return true;
@@ -856,6 +856,14 @@ public abstract class BaseBoard extends Interface{
 		editor.putString("last loaded", formsList.get(currentFormation).getfName());
 		editor.commit();
 		super.finish();
+	}
+	
+	@Override
+	public void onLoadComplete(){
+		AdView adView = (AdView)findViewById(R.id.adlayout);
+	    AdRequest request = new AdRequest();
+	    request.setTesting(true);
+	    adView.loadAd(request);
 	}
 }
 

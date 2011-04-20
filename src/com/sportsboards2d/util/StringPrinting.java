@@ -7,7 +7,6 @@ import java.util.List;
 
 import com.sportsboards2d.db.objects.FormationObject;
 import com.sportsboards2d.db.objects.Player;
-import com.sportsboards2d.db.objects.PlayerEntry;
 import com.sportsboards2d.db.objects.PlayerInfo;
 import com.sportsboards2d.db.objects.PlayerObject;
 
