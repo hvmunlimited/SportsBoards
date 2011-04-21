@@ -41,8 +41,10 @@ import android.widget.Toast;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+
 import com.google.ads.AdRequest;
 import com.google.ads.AdView;
+
 import com.sportsboards2d.R;
 import com.sportsboards2d.activities.CreatePlayer;
 import com.sportsboards2d.activities.DeleteForm;
@@ -107,7 +109,7 @@ public abstract class BaseBoard extends Interface{
 	protected TiledTextureRegion mRedPlayerTextureRegion;
 	private TiledTextureRegion mBluePlayerTextureRegion;
 	
-	private  List<FormationObject> formsList;
+	private List<FormationObject> formsList;
 	protected BallSprite mBall;
 	
 	private List<PlayerSprite> playerSprites = new ArrayList<PlayerSprite>();
@@ -115,13 +117,17 @@ public abstract class BaseBoard extends Interface{
 	private List<Line>lines = new ArrayList<Line>();
 	private List<SpritePath> pathList = new ArrayList<SpritePath>();
 	private List<Coordinates> path = new ArrayList<Coordinates>();
-	
 	private Line left, right;
 	
 	// ===========================================================
 	// Methods for/from SuperClass/Interfaces
 	// ===========================================================
 	
+	/*
+	 * onLoadEngine
+	 * 
+	 * Creates a new engine and initializes the camera
+	 */
 	@Override
 	public Engine onLoadEngine() {
 		
@@ -139,6 +145,11 @@ public abstract class BaseBoard extends Interface{
 		}
 		return engine;
 	}
+	/*
+	 * onLoadResources
+	 * 
+	 * Loads texture resources for menus, players, background
+	 */
 	@Override
 	public void onLoadResources(){
 
@@ -166,6 +177,12 @@ public abstract class BaseBoard extends Interface{
 		}
 		this.mEngine.getTextureManager().loadTextures(this.mBluePlayerTexture, this.mRedPlayerTexture, this.mBallTexture);
 	}
+	
+	/*
+	 * onLoadScene
+	 * 
+	 * Initializes the scene and loads the last loaded formation
+	 */
 	@Override
 	public Scene onLoadScene(){
 		
@@ -186,6 +203,12 @@ public abstract class BaseBoard extends Interface{
 		}
 		return mMainScene;
 	}
+	
+	/*
+	 * clearScene()
+	 * 
+	 * Removes all sprites(players, lines, ball) from the scene
+	 */
 	protected void clearScene(){
 		clearPlayers();
 		clearLines();
@@ -233,7 +256,9 @@ public abstract class BaseBoard extends Interface{
 
 
 	/*
-	 * Capture player & ball positions, save them in XML format to internal storage
+	 * captureFormation
+	 * 
+	 * Returns a list containing player information along with coordinates
 	 */
 	
 	private List<PlayerObject> captureFormation(){
@@ -261,6 +286,12 @@ public abstract class BaseBoard extends Interface{
 		return playerList;
 	}
 	
+	/*
+	 * loadFormation
+	 * 
+	 * Searches for and loads the formation that matches the given parameter
+	 */
+	
 	private void loadFormation(String name){
 		
 		if(formsList != null){
@@ -272,6 +303,12 @@ public abstract class BaseBoard extends Interface{
 			}
 		}
 	}
+	
+	/*
+	 * showFormation
+	 * 
+	 * Displays the current formation
+	 */
 
 	private void showFormation(){
 		
@@ -313,12 +350,19 @@ public abstract class BaseBoard extends Interface{
 		this.mMainScene.registerTouchArea(this.mBall);
 	}
 
+	/*
+	 * createPlayer
+	 * 
+	 * Creates a new player sprite, along with listeners for the sprite context menu
+	 */
+	
 	protected PlayerSprite createPlayer(final Player p, TiledTextureRegion tex){
 		
 		ChangeableText playerText;
 		
 		final PlayerSprite newPlayer = new PlayerSprite(p, p.getX(), p.getY(), tex){
 			
+				//Listeners for the context menu
 				@Override
 				public boolean onMenuItemClicked(final MenuScene pMenuScene, final IMenuItem pMenuItem, final float pMenuItemLocalX, final float pMenuItemLocalY){
 					
@@ -355,7 +399,7 @@ public abstract class BaseBoard extends Interface{
 							
 							return true;
 							
-	/*				    case Constants.PMENU_HIDE:
+	/*				    case Constants.PMENU_DELETE:
 					    	
 					    	mEngine.runOnUpdateThread(new Runnable() {
 					    	
@@ -387,7 +431,6 @@ public abstract class BaseBoard extends Interface{
 				}
 			};
 			
-		
 		playerText = new ChangeableText(+10, -20, this.mPlayerInfoFont, p.getpInfo().getInitials(), 30);
 		newPlayer.addDisplayInfo(playerText);
 		
@@ -400,6 +443,11 @@ public abstract class BaseBoard extends Interface{
 		return newPlayer;
 	}
 	
+	/*
+	 * onAreaTouched
+	 * 
+	 * Listener for the touch screen. Waits for user to touch and drag sprites
+	 */
 	@Override
 	public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final ITouchArea pTouchArea, final float pTouchAreaLocalX, final float pTouchAreaLocalY) {
 
@@ -593,6 +641,11 @@ public abstract class BaseBoard extends Interface{
 		return false;
 	}
 	
+	/*
+	 * onMenuItemClicked
+	 * 
+	 * Listener for main menu
+	 */
 
 	@Override
 	public boolean onMenuItemClicked(final MenuScene pMenuScene, final IMenuItem pMenuItem, final float pMenuItemLocalX, final float pMenuItemLocalY) {
@@ -610,46 +663,32 @@ public abstract class BaseBoard extends Interface{
 				this.playBackEnabled = true;
 				return super.onMenuItemClicked(pMenuScene, pMenuItem, pMenuItemLocalX, pMenuItemLocalY);
 			case Constants.MAIN_MENU_RESET:
-				
 				clearScene();
 				showFormation();
 				this.mMainMenu.back();
-
 				return true;
-
 			case Constants.MAIN_MENU_CLEARLINES:
-				
 				this.clearLines();
 				this.mMainMenu.back();
-
 				return true;
-				
 			case Constants.MAIN_MENU_FORMATIONS:
-				
 				return super.onMenuItemClicked(pMenuScene, pMenuItem, pMenuItemLocalX, pMenuItemLocalY);
-				
 			case Constants.FORMATIONS_SUBMENU_SAVE:
-				
 				intent = new Intent(this, SaveForm.class);
-				
 				list = new String[this.formsList.size()-1];
 				counter = 0;
-				
 				for(int i = 1; i < formsList.size(); i++){
 					list[counter] = formsList.get(i).getfName();
 					counter++;
 				}
 				intent.putExtra("list", list);
 				this.startActivityForResult(intent, 1);
-				
 				this.mMainMenu.back();
 				return true;
 			
 			case Constants.FORMATIONS_SUBMENU_DELETE:
 				intent = new Intent(this, DeleteForm.class);
-
 				list = new String[this.formsList.size()-1];
-				
 				counter = 0;
 				
 				for(int i = 1; i < formsList.size(); i++){
@@ -657,11 +696,9 @@ public abstract class BaseBoard extends Interface{
 					counter++;
 				}
 				intent.putExtra("list", list);
-
 				this.startActivityForResult(intent, 3);
 				this.mMainMenu.back();
 				return true;
-				
 			//get a list of formations	
 			case Constants.FORMATIONS_SUBMENU_LOAD:
 				intent = new Intent(this, LoadForm.class);
@@ -711,6 +748,12 @@ public abstract class BaseBoard extends Interface{
 				return false;
 		}
 	}
+	
+	/*
+	 * onActivityResult
+	 * 
+	 * This is called when an activity finishes (eg. saving/loading/deleting a form)
+	 */
 	
 	@Override
 	protected void onActivityResult(int requestCode, int receiveCode, Intent intent){
@@ -852,6 +895,12 @@ public abstract class BaseBoard extends Interface{
 		}
 	}
 	
+	/*
+	 * finish()
+	 * 
+	 * Called when the app is closing. Saves the current formation so it is loaded on next boot
+	 */
+	
 	@Override
 	public void finish(){
 		SharedPreferences settings = getSharedPreferences(getString(R.string.settings), 0);
@@ -865,7 +914,6 @@ public abstract class BaseBoard extends Interface{
 	public void onLoadComplete(){
 		AdView adView = (AdView)findViewById(R.id.adlayout);
 	    AdRequest request = new AdRequest();
-	    request.setTesting(true);
 	    adView.loadAd(request);
 	}
 }

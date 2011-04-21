@@ -24,12 +24,7 @@ public class Launcher extends ListActivity{
 	public void onCreate(Bundle savedInstanceState){
 		 super.onCreate(savedInstanceState);
 		 this.setContentView(R.layout.launcher_menu);
-		 
-		 //AdView adView = (AdView)this.findViewById(R.id.adView);
-	     // AdRequest request = new AdRequest();
-	     // request.setTesting(true);
-	     // adView.loadAd(request);
-		 
+
 		 mListAdapter = new LauncherMenuAdapter(this); 
 		 this.setListAdapter(mListAdapter);
 	}

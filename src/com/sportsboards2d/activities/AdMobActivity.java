@@ -59,8 +59,6 @@ public abstract class AdMobActivity extends BaseGameActivity{
 
 		adView.loadAd(request);
 
-
-
 		this.mRenderSurfaceView = new RenderSurfaceView(this);
 
 		mRenderSurfaceView.setRenderer(mEngine);

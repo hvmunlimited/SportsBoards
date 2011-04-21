@@ -109,7 +109,6 @@ public class XMLAccess{
 		if(input == null){
 			
 			try {
-				
 				input = context.getAssets().open("database/" + path + "/players.xml");
 				players = reader.parsePlayers(input);
 				input.close();

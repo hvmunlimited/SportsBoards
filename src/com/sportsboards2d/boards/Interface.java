@@ -35,8 +35,6 @@ import android.view.KeyEvent;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.google.ads.AdRequest;
-import com.google.ads.AdView;
 import com.sportsboards2d.R;
 import com.sportsboards2d.db.objects.Configuration;
 import com.sportsboards2d.db.objects.MenuTextSettings;
@@ -249,8 +247,6 @@ public abstract class Interface extends LayoutGameActivity implements IOnMenuIte
 	
 	private void onLoadConfig(){
 		
-		
-		
 		SharedPreferences settings = getSharedPreferences(getString(R.string.settings), 0);
 		String default_board = settings.getString("default_board", null);
 		config = new Configuration();
@@ -314,6 +310,10 @@ public abstract class Interface extends LayoutGameActivity implements IOnMenuIte
 	}
 	
 	/*
+	 * createMainMenu()
+	 * 
+	 * Creates the main menu
+	 * 
 	 * 0.0f, 1,0f, 0.0f, 255.0f, 255.0f, 255.0f = white unselected, green on select
 	 * 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f = black unselected, red on select
 	 */
@@ -371,6 +371,10 @@ public abstract class Interface extends LayoutGameActivity implements IOnMenuIte
 		this.mMainMenu.setBackgroundEnabled(false);
 		this.mMainMenu.setOnMenuItemClickListener(this);
 	}
+	
+	/*
+	 * createFormationsSubMenu
+	 */
 	
 	protected void createFormationsSubMenu(){
 		
@@ -460,6 +464,14 @@ public abstract class Interface extends LayoutGameActivity implements IOnMenuIte
 		
 	}
 	
+	/*
+	 * onKeyDown
+	 * 
+	 * Listener for buttons on device
+	 * 
+	 * Listens for 'Back' button pushes and 'Menu' button pushes
+	 */
+	
 	@Override
 	public boolean onKeyDown(int key, KeyEvent event){
 		
@@ -501,6 +513,13 @@ public abstract class Interface extends LayoutGameActivity implements IOnMenuIte
 			return super.onKeyDown(key, event);
 		}
 	}
+	
+	/*
+	 * onMenuItemClicked
+	 * 
+	 * Listener for clicks on the main menu
+	 */
+	
 	@Override
 	public boolean onMenuItemClicked(final MenuScene pMenuScene, final IMenuItem pMenuItem, final float pMenuItemLocalX, final float pMenuItemLocalY) {
 				
@@ -519,7 +538,6 @@ public abstract class Interface extends LayoutGameActivity implements IOnMenuIte
 					else{
 						b.setVisible(true);
 						this.mMainScene.registerTouchArea(b);
-
 					}
 				}
 				return true;

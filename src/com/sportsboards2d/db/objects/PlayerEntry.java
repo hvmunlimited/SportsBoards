@@ -10,6 +10,10 @@ package com.sportsboards2d.db.objects;
 /**
  * Copyright 2011 5807400 Manitoba Inc. All rights reserved.
  */
+
+/*
+ * This class is used when reading/writing to the database
+ */
 public class PlayerEntry extends PlayerObject{
 	
 	private String pTeam;

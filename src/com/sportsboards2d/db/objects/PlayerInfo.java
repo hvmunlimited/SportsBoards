@@ -13,6 +13,10 @@ import android.os.Parcelable;
  * Copyright 2011 5807400 Manitoba Inc. All rights reserved.
  */
 
+/*
+ * This class stores data unique to the player
+ */
+
 public class PlayerInfo extends PlayerObject implements Parcelable{
 	
 	/*

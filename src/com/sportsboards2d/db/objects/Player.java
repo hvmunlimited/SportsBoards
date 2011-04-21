@@ -10,6 +10,10 @@ package com.sportsboards2d.db.objects;
 /**
  * Copyright 2011 5807400 Manitoba Inc. All rights reserved.
  */
+
+/*
+ * Each PlayerSprite has a Player. Each Player has a PlayerInfo
+ */
 public class Player extends PlayerEntry{
 
 	private PlayerInfo pInfo;

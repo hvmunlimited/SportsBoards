@@ -10,6 +10,7 @@ package com.sportsboards2d.db.objects;
 /**
  * Copyright 2011 5807400 Manitoba Inc. All rights reserved.
  */
+
 public class Configuration {
 	
 	public boolean lineEnabled;
