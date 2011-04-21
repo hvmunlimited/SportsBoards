@@ -36,6 +36,7 @@ import org.anddev.andengine.util.MathUtils;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.widget.Toast;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -791,6 +792,8 @@ public abstract class BaseBoard extends Interface{
 			players.add(newPlayer);
 			XMLAccess.writePlayers(this, players, SPORT_NAME.toLowerCase());
 			playerIDCounter++;
+			
+			Toast.makeText(this, "In order to display different players, touch and hold a player to bring up a context menu", Toast.LENGTH_LONG).show();
 		}
 		//player swap from player context menu
 		else if(requestCode == 6 && receiveCode > 0){
