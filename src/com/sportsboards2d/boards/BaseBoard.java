@@ -271,7 +271,7 @@ public abstract class BaseBoard extends Interface{
 		String team = "";
 		
 		for(int i = 0; i < mMainScene.getChild(PLAYER_LAYER).getChildCount(); i++){
-			if((IEntity) mMainScene.getChild(PLAYER_LAYER).getChild(i) instanceof PlayerSprite){
+			if(mMainScene.getChild(PLAYER_LAYER).getChild(i) instanceof PlayerSprite){
 				pSprite = (PlayerSprite)mMainScene.getChild(PLAYER_LAYER).getChild(i);
 				team = pSprite.getPlayer().getpTeam();
 				xPlayer = pSprite.getX();
@@ -592,7 +592,7 @@ public abstract class BaseBoard extends Interface{
 								}
 								
 								final PathModifier.Path path1 = new PathModifier.Path(Xs, Ys);
-								pathList.add(new SpritePath((AnimatedSprite)selectedPlayer, path1));
+								pathList.add(new SpritePath(selectedPlayer, path1));
 								System.out.println("after record: " + Xs[0] + " " + Ys[0]);
 								sprite.setPosition(Xs[0], Ys[0]);
 								Xs[0] = Xs[0]+ PLAYER_OFFSET;

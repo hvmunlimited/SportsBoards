@@ -38,16 +38,19 @@ public class DeleteForm extends ListActivity{
 		lv.setTextFilterEnabled(true);
 	
 		lv.setOnItemClickListener(new OnItemClickListener() {
+			@Override
 			public void onItemClick(AdapterView<?> parent, View view, final int position, long id){
 				builder.setMessage(R.string.alert_dialog_confirm)
 				.setCancelable(false)
 				.setPositiveButton(R.string.confirm_yes, new DialogInterface.OnClickListener() {
+					@Override
 					public void onClick(DialogInterface dialog, int id) {
 						setResult(position, null);
 						DeleteForm.this.finish();
 					}
 				})
 				.setNegativeButton(R.string.confirm_no, new DialogInterface.OnClickListener() {
+					@Override
 					public void onClick(DialogInterface dialog, int id) {
 						dialog.cancel();
 					}

@@ -26,6 +26,7 @@ public class ChangeableTextMenuItem extends ChangeableText implements IMenuItem{
 		super(0, 0, pFont, pText, pMaxLenght);
 		this.mID = pID;
 	}
+	@Override
 	public void setText(String pText){
 		super.setText(pText);
 	}

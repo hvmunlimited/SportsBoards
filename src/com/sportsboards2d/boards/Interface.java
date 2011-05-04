@@ -496,12 +496,14 @@ public abstract class Interface extends LayoutGameActivity implements IOnMenuIte
 			builder.setMessage(R.string.confirm_quit)
 			       .setCancelable(false)
 			       .setPositiveButton(R.string.confirm_yes, new DialogInterface.OnClickListener() {
-			           public void onClick(DialogInterface dialog, int id) {
+			           @Override
+					public void onClick(DialogInterface dialog, int id) {
 			                Interface.this.finish();
 			           }
 			       })
 			       .setNegativeButton(R.string.confirm_no, new DialogInterface.OnClickListener() {
-			           public void onClick(DialogInterface dialog, int id) {
+			           @Override
+					public void onClick(DialogInterface dialog, int id) {
 			                dialog.cancel();
 			           }
 			       });

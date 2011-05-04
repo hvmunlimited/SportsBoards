@@ -103,11 +103,13 @@ public class PlayerInfo extends PlayerObject implements Parcelable{
 		
 	}
 	public static final Parcelable.Creator<PlayerInfo> CREATOR = new Parcelable.Creator<PlayerInfo>() {
-        public PlayerInfo createFromParcel(Parcel in) {
+        @Override
+		public PlayerInfo createFromParcel(Parcel in) {
             return new PlayerInfo(in);
         }
 
-        public PlayerInfo[] newArray(int size) {
+        @Override
+		public PlayerInfo[] newArray(int size) {
             return new PlayerInfo[size];
         }
     };

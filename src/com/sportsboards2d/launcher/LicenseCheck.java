@@ -101,7 +101,8 @@ public class LicenseCheck extends Activity{
 	
 	 private void displayResult(final String result) {
 	        mHandler.post(new Runnable() {
-	            public void run() {
+	            @Override
+				public void run() {
 	                mStatusText.setText(result);
 	                setProgressBarIndeterminateVisibility(false);
 	            }
@@ -109,7 +110,8 @@ public class LicenseCheck extends Activity{
 	 }
 	
 	private class MyLicenseCheckerCallback implements LicenseCheckerCallback {
-        public void allow() {
+        @Override
+		public void allow() {
             if (isFinishing()) {
                 // Don't update UI if Activity is finishing.
                 return;
@@ -120,7 +122,8 @@ public class LicenseCheck extends Activity{
             finish();
         }
 
-        public void dontAllow() {
+        @Override
+		public void dontAllow() {
             if (isFinishing()) {
                 // Don't update UI if Activity is finishing.
                 return;

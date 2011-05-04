@@ -26,6 +26,7 @@ public class XMLReader extends BaseFeedParser{
 	
 	public XMLReader(){}
 	
+	@Override
 	public List<FormationObject> parseFormation(InputStream input){
 
 		List<FormationObject> entries = null;
@@ -107,6 +108,7 @@ public class XMLReader extends BaseFeedParser{
 		return entries;
 	}
 
+	@Override
 	public List<PlayerInfo> parsePlayers(InputStream input){
 		
 		ArrayList<PlayerInfo> pList = new ArrayList<PlayerInfo>();		

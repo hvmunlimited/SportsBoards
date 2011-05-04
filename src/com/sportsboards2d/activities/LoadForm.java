@@ -30,7 +30,8 @@ public class LoadForm extends ListActivity{
 		lv.setTextFilterEnabled(true);
 		lv.setOnItemClickListener(new OnItemClickListener() {
 		  
-	    public void onItemClick(AdapterView<?> parent, View view, int position, long id){
+	    @Override
+		public void onItemClick(AdapterView<?> parent, View view, int position, long id){
 	    	setResult(position, null);
 	    	LoadForm.this.finish();
 	    }

@@ -1,7 +1,6 @@
 package com.sportsboards2d.boards;
 
 import org.anddev.andengine.engine.Engine;
-import org.anddev.andengine.entity.primitive.Line;
 import org.anddev.andengine.entity.scene.Scene;
 import org.anddev.andengine.entity.scene.Scene.ITouchArea;
 import org.anddev.andengine.entity.scene.background.ColorBackground;

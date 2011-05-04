@@ -26,7 +26,8 @@ package com.android.vending.licensing;
  */
 public class NullDeviceLimiter implements DeviceLimiter {
 
-    public Policy.LicenseResponse isDeviceAllowed(String userId) {
+    @Override
+	public Policy.LicenseResponse isDeviceAllowed(String userId) {
         return Policy.LicenseResponse.LICENSED;
     }
 }

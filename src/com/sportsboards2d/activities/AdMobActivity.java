@@ -6,6 +6,7 @@ package com.sportsboards2d.activities;
 import org.anddev.andengine.opengl.view.RenderSurfaceView;
 import org.anddev.andengine.ui.activity.BaseGameActivity;
 
+import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
@@ -45,15 +46,15 @@ public abstract class AdMobActivity extends BaseGameActivity{
 
 		final FrameLayout.LayoutParams relativeLayoutLayoutParams =
 
-			new FrameLayout.LayoutParams(FrameLayout.LayoutParams.FILL_PARENT,
-										 FrameLayout.LayoutParams.FILL_PARENT);
+			new FrameLayout.LayoutParams(LayoutParams.FILL_PARENT,
+										 LayoutParams.FILL_PARENT);
 
 
 		final AdView adView = (AdView)this.findViewById(R.id.adlayout);
 
 		adView.refreshDrawableState();
 
-		adView.setVisibility(AdView.VISIBLE);
+		adView.setVisibility(View.VISIBLE);
 		
 		AdRequest request = new AdRequest();
 

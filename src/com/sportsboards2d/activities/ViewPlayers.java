@@ -34,7 +34,8 @@ public class ViewPlayers extends ListActivity{
 		 ListView lv = getListView();
 			
 		 lv.setOnItemClickListener(new OnItemClickListener() {
-			 public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+			 @Override
+			public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
 			    	
 				 if(edit == true){
 

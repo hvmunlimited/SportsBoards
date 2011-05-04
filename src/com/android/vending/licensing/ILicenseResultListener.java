@@ -24,16 +24,18 @@ public static com.android.vending.licensing.ILicenseResultListener asInterface(a
 if ((obj==null)) {
 return null;
 }
-android.os.IInterface iin = (android.os.IInterface)obj.queryLocalInterface(DESCRIPTOR);
+android.os.IInterface iin = obj.queryLocalInterface(DESCRIPTOR);
 if (((iin!=null)&&(iin instanceof com.android.vending.licensing.ILicenseResultListener))) {
 return ((com.android.vending.licensing.ILicenseResultListener)iin);
 }
 return new com.android.vending.licensing.ILicenseResultListener.Stub.Proxy(obj);
 }
+@Override
 public android.os.IBinder asBinder()
 {
 return this;
 }
+@Override
 public boolean onTransact(int code, android.os.Parcel data, android.os.Parcel reply, int flags) throws android.os.RemoteException
 {
 switch (code)
@@ -65,10 +67,12 @@ Proxy(android.os.IBinder remote)
 {
 mRemote = remote;
 }
+@Override
 public android.os.IBinder asBinder()
 {
 return mRemote;
 }
+@Override
 public void verifyLicense(int responseCode, java.lang.String signedData, java.lang.String signature) throws android.os.RemoteException
 {
 android.os.Parcel _data = android.os.Parcel.obtain();
