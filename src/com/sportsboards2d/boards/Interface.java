@@ -492,6 +492,8 @@ public abstract class Interface extends LayoutGameActivity implements IOnMenuIte
 		}
 		
 		else if(key == KeyEvent.KEYCODE_BACK){
+			//This is where an ad should be shown in a splash screen, before they quit.
+			//shows a dialog box asking if they want to quit.
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setMessage(R.string.confirm_quit)
 			       .setCancelable(false)

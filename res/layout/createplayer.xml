@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-
+<!-- This is the menu for creating a new player -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
@@ -131,7 +131,7 @@
 	            android:layout_alignTop="@id/ok_button"
 	            android:text="Cancel"
 	            android:onClick="cancelClicked" />
-	            
+	            <!-- Put an ad here? -->
 	</RelativeLayout>			
 
 </LinearLayout>

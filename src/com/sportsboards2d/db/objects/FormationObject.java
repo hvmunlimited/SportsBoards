@@ -13,7 +13,8 @@ import java.util.List;
  * Copyright 2011 5807400 Manitoba Inc. All rights reserved.
  */
 public class FormationObject {
-	
+	//record of one Formation object. Stores the name, the coordinates of the ball, and
+	//an array of all the players.
 	private String fName;
 	private Coordinates mBall;
 	private List<PlayerObject> players;

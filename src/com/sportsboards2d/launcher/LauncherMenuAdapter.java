@@ -16,7 +16,9 @@ import com.sportsboards2d.R;
 /**
  * Copyright 2011 5807400 Manitoba Inc. All rights reserved.
  */
-
+/*
+ * This is the main menu, you pick the field from here.
+ */
 class LauncherMenuAdapter extends BaseAdapter{
 
 	private static final Activity[] Activities = {

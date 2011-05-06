@@ -8,14 +8,12 @@ import org.anddev.andengine.engine.camera.Camera;
 import org.anddev.andengine.engine.options.EngineOptions;
 import org.anddev.andengine.engine.options.EngineOptions.ScreenOrientation;
 import org.anddev.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
-import org.anddev.andengine.entity.IEntity;
 import org.anddev.andengine.entity.modifier.PathModifier;
 import org.anddev.andengine.entity.primitive.Line;
 import org.anddev.andengine.entity.scene.Scene;
 import org.anddev.andengine.entity.scene.Scene.ITouchArea;
 import org.anddev.andengine.entity.scene.menu.MenuScene;
 import org.anddev.andengine.entity.scene.menu.item.IMenuItem;
-import org.anddev.andengine.entity.sprite.AnimatedSprite;
 import org.anddev.andengine.entity.sprite.Sprite;
 import org.anddev.andengine.entity.text.ChangeableText;
 import org.anddev.andengine.extension.input.touch.controller.MultiTouch;
@@ -42,6 +40,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
+import com.google.ads.*;
 import com.google.ads.AdRequest;
 import com.google.ads.AdView;
 
@@ -75,6 +74,8 @@ import com.sportsboards2d.util.StringPrinting;
 /**
  * Copyright 2011 5807400 Manitoba Inc. All rights reserved.
  */
+
+//Starting point for all the boards. 
 
 public abstract class BaseBoard extends Interface{
 	
@@ -127,6 +128,7 @@ public abstract class BaseBoard extends Interface{
 	 * onLoadEngine
 	 * 
 	 * Creates a new engine and initializes the camera
+	 * Creates the 2D engine for the program to use
 	 */
 	@Override
 	public Engine onLoadEngine() {
@@ -149,6 +151,7 @@ public abstract class BaseBoard extends Interface{
 	 * onLoadResources
 	 * 
 	 * Loads texture resources for menus, players, background
+	 * Everything that you're going to see
 	 */
 	@Override
 	public void onLoadResources(){
@@ -181,7 +184,8 @@ public abstract class BaseBoard extends Interface{
 	/*
 	 * onLoadScene
 	 * 
-	 * Initializes the scene and loads the last loaded formation
+	 * Initialises the scene and loads the last loaded formation
+	 * The scene is what you see.
 	 */
 	@Override
 	public Scene onLoadScene(){
@@ -216,10 +220,11 @@ public abstract class BaseBoard extends Interface{
 	}
 	
 	private void clearPlayers(){
-		for(final PlayerSprite p: playerSprites){
+		for(final PlayerSprite p: playerSprites){	//for each Player...
 			mEngine.runOnUpdateThread(new Runnable() {
 	    		@Override
 	    		public void run() {
+	    			//find the physics object, delete it, remove the sprite and unregister the touch area.
 	    			Body body = BaseBoard.this.mPhysicsWorld.getPhysicsConnectorManager().findBodyByShape(p);
 	    			BaseBoard.this.mPhysicsWorld.destroyBody(body);
 	    			BaseBoard.this.mMainScene.getChild(PLAYER_LAYER).detachChild(p);
@@ -547,7 +552,7 @@ public abstract class BaseBoard extends Interface{
 							
 							path.add(new Coordinates(sprite.getX()- PLAYER_OFFSET, sprite.getY()- PLAYER_OFFSET));
 							
-							if(config.lineEnabled){
+							if(config.lineEnabled){//if drawing lines is enabled
 															
 								float relativeX = 2 * (MathUtils.bringToBounds(0, sprite.getWidth(), pTouchAreaLocalX) / sprite.getWidth() - 0.5f);
 								float relativeY = 2 * (MathUtils.bringToBounds(0, sprite.getHeight(), pTouchAreaLocalY) / sprite.getHeight() - 0.5f);
@@ -914,6 +919,7 @@ public abstract class BaseBoard extends Interface{
 	public void onLoadComplete(){
 		AdView adView = (AdView)findViewById(R.id.adlayout);
 	    AdRequest request = new AdRequest();
+	    adView.setEnabled(true);
 	    adView.loadAd(request);
 	}
 }
