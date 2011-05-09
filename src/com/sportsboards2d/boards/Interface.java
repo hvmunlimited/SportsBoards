@@ -81,7 +81,7 @@ public abstract class Interface extends LayoutGameActivity implements IOnMenuIte
 	protected HoldDetector mHoldDetector;
 	
 	protected boolean playBackEnabled = false;
-	
+	/*
 	private Texture mPlayButtonTexture;
 	private Texture mRecordButtonTexture;
 	private Texture mStopButtonTexture;
@@ -92,7 +92,7 @@ public abstract class Interface extends LayoutGameActivity implements IOnMenuIte
 	private TiledTextureRegion mStopButtonTextureRegion;
 	private TiledTextureRegion mRewindButtonTextureRegion;
 	private TiledTextureRegion mPauseButtonTextureRegion;
-	
+	*/
 	protected Texture mMenuFontTexture;
 	protected Font mMenuFont;
 	
@@ -105,7 +105,7 @@ public abstract class Interface extends LayoutGameActivity implements IOnMenuIte
 	protected PlayerSprite selectedPlayer;
 	
 	private List<IMenuItem> menuItems = new ArrayList<IMenuItem>();
-	protected List<ButtonSprite> buttons = new ArrayList<ButtonSprite>();
+	//protected List<ButtonSprite> buttons = new ArrayList<ButtonSprite>();
 
 	protected PhysicsWorld mPhysicsWorld;
 	
@@ -134,7 +134,7 @@ public abstract class Interface extends LayoutGameActivity implements IOnMenuIte
 		
 		FontFactory.setAssetBasePath("font/");
 		TextureRegionFactory.setAssetBasePath("gfx/");
-		
+		/*
 		this.mPlayButtonTexture = new Texture(64, 64, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
 		this.mStopButtonTexture = new Texture(64, 64, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
 		this.mPauseButtonTexture = new Texture(64, 64, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
@@ -147,7 +147,7 @@ public abstract class Interface extends LayoutGameActivity implements IOnMenuIte
 		this.mRecordButtonTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mRecordButtonTexture, this, "record_button.jpg", 0, 0, 1, 1);
 		this.mRewindButtonTextureRegion = TextureRegionFactory.createTiledFromAsset(this.mRewindButtonTexture, this, "rewind_button.jpg", 0, 0, 1, 1);
 		this.mEngine.getTextureManager().loadTextures(this.mPlayButtonTexture, this.mStopButtonTexture, this.mPauseButtonTexture, this.mRecordButtonTexture, this.mRewindButtonTexture);
-		
+		*/
 	}
 	/*
 	 * onLoadScene()
@@ -173,8 +173,8 @@ public abstract class Interface extends LayoutGameActivity implements IOnMenuIte
 			public void onHoldFinished(final HoldDetector pHoldDetector, long pHoldTimeMilliseconds, final float pHoldX, final float pHoldY){
 				
 				if(pHoldX >= 900){
-					Interface.this.menuItems.get(Constants.PMENU_SWAP).setPosition(pHoldX-128, pHoldY+40);
-					Interface.this.menuItems.get(Constants.PMENU_EXIT).setPosition(pHoldX-128, pHoldY+90);
+					Interface.this.menuItems.get(Constants.PMENU_SWAP).setPosition(pHoldX-128, pHoldY-40);
+					Interface.this.menuItems.get(Constants.PMENU_EXIT).setPosition(pHoldX-128, pHoldY);
 				}
 				else if(pHoldY >= 500){
 					Interface.this.menuItems.get(Constants.PMENU_SWAP).setPosition(pHoldX+24, pHoldY-40);
@@ -210,7 +210,7 @@ public abstract class Interface extends LayoutGameActivity implements IOnMenuIte
 		this.mMainScene.getChild(BACKGROUND_LAYER).attachChild(right);
 		
 		this.mMainScene.registerUpdateHandler(this.mPhysicsWorld);
-		
+		/*
 		ButtonSprite button = new ButtonSprite(400, 0, this.mPlayButtonTextureRegion);
 		button.setVisible(false);
 		buttons.add(button);
@@ -235,7 +235,9 @@ public abstract class Interface extends LayoutGameActivity implements IOnMenuIte
 		button.setVisible(false);
 		//buttons.add(button);
 		//this.mMainScene.getChild(BUTTON_LAYER).attachChild(button)
+		*/
 		return this.mMainScene;
+		
 	}
 	
 	/*
@@ -352,14 +354,14 @@ public abstract class Interface extends LayoutGameActivity implements IOnMenuIte
 				MenuTextSettings.onSelectR, MenuTextSettings.onSelectG, MenuTextSettings.onSelectB);
 		players.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 		this.mMainMenu.addMenuItem(players);
-
+/*
 		final IMenuItem playback = new ColorMenuItemDecorator(new TextMenuItem
 				(Constants.MAIN_MENU_PLAYBACK, this.mMenuFont, getString(R.string.playback)),
 				MenuTextSettings.unSelectR, MenuTextSettings.unSelectG, MenuTextSettings.unSelectB,
 				MenuTextSettings.onSelectR, MenuTextSettings.onSelectG, MenuTextSettings.onSelectB);
 		playback.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 		this.mMainMenu.addMenuItem(playback);
-		
+	*/	
 		final IMenuItem settings = new ColorMenuItemDecorator(new TextMenuItem
 				(Constants.MAIN_MENU_SETTINGS, this.mMenuFont, getString(R.string.settings)),
 				MenuTextSettings.unSelectR, MenuTextSettings.unSelectG, MenuTextSettings.unSelectB,
@@ -528,7 +530,7 @@ public abstract class Interface extends LayoutGameActivity implements IOnMenuIte
 	public boolean onMenuItemClicked(final MenuScene pMenuScene, final IMenuItem pMenuItem, final float pMenuItemLocalX, final float pMenuItemLocalY) {
 				
 		switch(pMenuItem.getID()) {
-		
+		/*
 			case Constants.MAIN_MENU_PLAYBACK:
 				this.mMainScene.getChild(BALL_LAYER).getChild(0).setVisible(true);
 
@@ -545,7 +547,7 @@ public abstract class Interface extends LayoutGameActivity implements IOnMenuIte
 					}
 				}
 				return true;
-		
+		*/
 			case Constants.MAIN_MENU_FORMATIONS:
 				this.mMainMenu.setChildSceneModal(this.mFormationsSubMenu);
 				return true;
