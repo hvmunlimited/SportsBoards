@@ -610,6 +610,7 @@ public abstract class BaseBoard extends Interface{
 					return true;
 				}
 		}
+		/*
 		else if((pTouchArea) instanceof ButtonSprite){
 			
 			int buttonPushed = buttons.indexOf(pTouchArea);
@@ -642,7 +643,7 @@ public abstract class BaseBoard extends Interface{
 			}
 			
 			
-		}
+		}*/
 		return false;
 	}
 	
@@ -664,9 +665,9 @@ public abstract class BaseBoard extends Interface{
 				this.startActivityForResult(new Intent(this, SettingsViewer.class), 4);
 				this.mMainMenu.back();
 				return true;
-			case Constants.MAIN_MENU_PLAYBACK:
-				this.playBackEnabled = true;
-				return super.onMenuItemClicked(pMenuScene, pMenuItem, pMenuItemLocalX, pMenuItemLocalY);
+	//		case Constants.MAIN_MENU_PLAYBACK:
+	//			this.playBackEnabled = true;
+	//			return super.onMenuItemClicked(pMenuScene, pMenuItem, pMenuItemLocalX, pMenuItemLocalY);
 			case Constants.MAIN_MENU_RESET:
 				clearScene();
 				showFormation();
