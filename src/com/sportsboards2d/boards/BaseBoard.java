@@ -404,7 +404,7 @@ public abstract class BaseBoard extends Interface{
 							
 							return true;
 							
-	/*				    case Constants.PMENU_DELETE:
+						case Constants.PMENU_HIDE:
 					    	
 					    	mEngine.runOnUpdateThread(new Runnable() {
 					    	
@@ -423,7 +423,7 @@ public abstract class BaseBoard extends Interface{
 					        // Remove the menu and reset it. 
 					        mMainScene.clearChildScene();
 
-					        return true;*/
+					        return true;
 					   
 					    case Constants.PMENU_EXIT:
 					    	mMainScene.clearChildScene();

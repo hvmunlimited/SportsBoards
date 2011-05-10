@@ -173,15 +173,17 @@ public abstract class Interface extends LayoutGameActivity implements IOnMenuIte
 			public void onHoldFinished(final HoldDetector pHoldDetector, long pHoldTimeMilliseconds, final float pHoldX, final float pHoldY){
 				
 				if(pHoldX >= 900){
+					Interface.this.menuItems.get(Constants.PMENU_VIEW).setPosition(pHoldX-128, pHoldY-80);
 					Interface.this.menuItems.get(Constants.PMENU_SWAP).setPosition(pHoldX-128, pHoldY-40);
 					Interface.this.menuItems.get(Constants.PMENU_EXIT).setPosition(pHoldX-128, pHoldY);
 				}
 				else if(pHoldY >= 500){
+					Interface.this.menuItems.get(Constants.PMENU_VIEW).setPosition(pHoldX+24, pHoldY-80);
 					Interface.this.menuItems.get(Constants.PMENU_SWAP).setPosition(pHoldX+24, pHoldY-40);
 					Interface.this.menuItems.get(Constants.PMENU_EXIT).setPosition(pHoldX+24, pHoldY);
 				}
 				else{
-
+					Interface.this.menuItems.get(Constants.PMENU_VIEW).setPosition(pHoldX+24, pHoldY-40);
 					Interface.this.menuItems.get(Constants.PMENU_SWAP).setPosition(pHoldX+24, pHoldY);
 					Interface.this.menuItems.get(Constants.PMENU_EXIT).setPosition(pHoldX+24, pHoldY+48);
 				}
@@ -197,7 +199,7 @@ public abstract class Interface extends LayoutGameActivity implements IOnMenuIte
 		final Shape roof = new Rectangle(0, 0, CAMERA_WIDTH, 2);
 		final Shape left = new Rectangle(0, 0, 2, CAMERA_HEIGHT);
 		final Shape right = new Rectangle(CAMERA_WIDTH - 2, 0, 2, CAMERA_HEIGHT);
-
+			//walls prevent the pieces from being dragged off the screen.
 		final FixtureDef wallFixtureDef = PhysicsFactory.createFixtureDef(0, 0.5f, 0.5f);
 		PhysicsFactory.createBoxBody(this.mPhysicsWorld, ground, BodyType.StaticBody, wallFixtureDef);
 		PhysicsFactory.createBoxBody(this.mPhysicsWorld, roof, BodyType.StaticBody, wallFixtureDef);
@@ -439,13 +441,13 @@ public abstract class Interface extends LayoutGameActivity implements IOnMenuIte
 		this.mPlayerContextMenu.buildAnimations();
 		this.mPlayerContextMenu.setBackgroundEnabled(false);
 		
-		final IMenuItem view = new ColorMenuItemDecorator(new TextMenuItem
-				(Constants.PMENU_VIEW, this.mMenuFont, getString(R.string.players_view)), 
+		final IMenuItem hide = new ColorMenuItemDecorator(new TextMenuItem
+				(Constants.PMENU_HIDE, this.mMenuFont, getString(R.string.hide)), 
 				MenuTextSettings.unSelectR, MenuTextSettings.unSelectG, MenuTextSettings.unSelectB,
 				MenuTextSettings.onSelectR, MenuTextSettings.onSelectG, MenuTextSettings.onSelectB);
-		view.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-		//this.mPlayerContextMenu.addMenuItem(view);
-		menuItems.add(view);
+		hide.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+		this.mPlayerContextMenu.addMenuItem(hide);
+		menuItems.add(hide);
 		
 		final IMenuItem swap = new ColorMenuItemDecorator(new TextMenuItem
 				(Constants.PMENU_SWAP, this.mMenuFont, getString(R.string.swap)), 
