@@ -40,6 +40,7 @@ public abstract class Constants{
 	public static final int PMENU_VIEW = 0;
 	public static final int PMENU_SWAP = 1;
 	public static final int PMENU_EXIT = 2;
+	public static final int PMENU_HIDE = 3;
 
 	
 }

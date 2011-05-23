@@ -14,4 +14,8 @@
 		android:layout_height="wrap_content"
     	ads:adUnitId="a14da2fff0f102e"
     	ads:adSize="BANNER"/>
+    <TextView
+    	android:layout_width="fill_parent"
+    	android:layout_height="fill_parent"
+    	android:id="@+id/text_version"/>
  </LinearLayout>
