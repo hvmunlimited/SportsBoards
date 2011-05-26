@@ -172,20 +172,27 @@ public abstract class Interface extends LayoutGameActivity implements IOnMenuIte
 			@Override
 			public void onHoldFinished(final HoldDetector pHoldDetector, long pHoldTimeMilliseconds, final float pHoldX, final float pHoldY){
 				
-				if(pHoldX >= 900){
-					Interface.this.menuItems.get(Constants.PMENU_VIEW).setPosition(pHoldX-128, pHoldY-80);
-					Interface.this.menuItems.get(Constants.PMENU_SWAP).setPosition(pHoldX-128, pHoldY-40);
-					Interface.this.menuItems.get(Constants.PMENU_EXIT).setPosition(pHoldX-128, pHoldY);
+				if(pHoldX >= 900){	//close to the right edge
+					if (pHoldY >=400){//bottom right
+						Interface.this.menuItems.get(Constants.PMENU_VIEW).setPosition(selectedPlayer.getX()-128, selectedPlayer.getY()-80);
+						Interface.this.menuItems.get(Constants.PMENU_SWAP).setPosition(selectedPlayer.getX()-128, selectedPlayer.getY()-40);
+						Interface.this.menuItems.get(Constants.PMENU_EXIT).setPosition(selectedPlayer.getX()-128, selectedPlayer.getY());
+					}else{//top right
+						Interface.this.menuItems.get(Constants.PMENU_VIEW).setPosition(selectedPlayer.getX()-128, selectedPlayer.getY());
+						Interface.this.menuItems.get(Constants.PMENU_SWAP).setPosition(selectedPlayer.getX()-128, selectedPlayer.getY()+40);
+						Interface.this.menuItems.get(Constants.PMENU_EXIT).setPosition(selectedPlayer.getX()-128, selectedPlayer.getY()+80);
+							
+					}
 				}
-				else if(pHoldY >= 500){
-					Interface.this.menuItems.get(Constants.PMENU_VIEW).setPosition(pHoldX+24, pHoldY-80);
-					Interface.this.menuItems.get(Constants.PMENU_SWAP).setPosition(pHoldX+24, pHoldY-40);
-					Interface.this.menuItems.get(Constants.PMENU_EXIT).setPosition(pHoldX+24, pHoldY);
+				else if(pHoldY >= 500){	//close to the bottom edge
+					Interface.this.menuItems.get(Constants.PMENU_VIEW).setPosition(selectedPlayer.getX()+24, selectedPlayer.getY()-80);
+					Interface.this.menuItems.get(Constants.PMENU_SWAP).setPosition(selectedPlayer.getX()+24,selectedPlayer.getY()-40);
+					Interface.this.menuItems.get(Constants.PMENU_EXIT).setPosition(selectedPlayer.getX()+24, selectedPlayer.getY());
 				}
-				else{
-					Interface.this.menuItems.get(Constants.PMENU_VIEW).setPosition(pHoldX+24, pHoldY-40);
-					Interface.this.menuItems.get(Constants.PMENU_SWAP).setPosition(pHoldX+24, pHoldY);
-					Interface.this.menuItems.get(Constants.PMENU_EXIT).setPosition(pHoldX+24, pHoldY+48);
+				else{	//needs to be down and to the right
+					Interface.this.menuItems.get(Constants.PMENU_VIEW).setPosition(selectedPlayer.getX()+24, selectedPlayer.getY());
+					Interface.this.menuItems.get(Constants.PMENU_SWAP).setPosition(selectedPlayer.getX()+24, selectedPlayer.getY()+40);
+					Interface.this.menuItems.get(Constants.PMENU_EXIT).setPosition(selectedPlayer.getX()+24, selectedPlayer.getY()+80);
 				}
 				Interface.this.mPlayerContextMenu.setOnMenuItemClickListener(selectedPlayer);
 				Interface.this.mMainScene.setChildScene(Interface.this.mPlayerContextMenu, false, true, true);
