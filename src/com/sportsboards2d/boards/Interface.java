@@ -22,9 +22,7 @@ import org.anddev.andengine.input.touch.detector.HoldDetector.IHoldDetectorListe
 import org.anddev.andengine.opengl.font.Font;
 import org.anddev.andengine.opengl.font.FontFactory;
 import org.anddev.andengine.opengl.texture.Texture;
-import org.anddev.andengine.opengl.texture.TextureOptions;
 import org.anddev.andengine.opengl.texture.region.TextureRegionFactory;
-import org.anddev.andengine.opengl.texture.region.TiledTextureRegion;
 import org.anddev.andengine.ui.activity.LayoutGameActivity;
 
 import android.app.AlertDialog;
@@ -33,12 +31,11 @@ import android.content.SharedPreferences;
 import android.view.KeyEvent;
 
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.sportsboards2d.R;
 import com.sportsboards2d.db.objects.Configuration;
 import com.sportsboards2d.db.objects.MenuTextSettings;
-import com.sportsboards2d.sprites.ButtonSprite;
 import com.sportsboards2d.sprites.PlayerSprite;
 import com.sportsboards2d.util.Colors;
 import com.sportsboards2d.util.Constants;
