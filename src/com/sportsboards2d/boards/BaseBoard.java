@@ -918,10 +918,11 @@ public abstract class BaseBoard extends Interface{
 	
 	@Override
 	public void onLoadComplete(){
-		AdView adView = (AdView)findViewById(R.id.adlayout);
-	    AdRequest request = new AdRequest();
-	    adView.setEnabled(true);
-	    adView.loadAd(request);
+		//AdView adView = (AdView)this.findViewById(R.id.adlayout);
+	    //AdRequest request = new AdRequest();
+	    //adView.setEnabled(true);
+	    //adView.loadAd(request);
+	    //adView.loadAd(new AdRequest());
 	}
 }
 

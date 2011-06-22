@@ -33,8 +33,8 @@ public class Launcher extends ListActivity{
 		 //requests an ad. This ad will be put at the bottom of the launcher screen
 		 final TextView txtVersion = (TextView)findViewById(R.id.text_version);
 		 txtVersion.setText(R.string.app_version);
-		 final AdView adView = (AdView)findViewById(R.id.adView);
-		 adView.loadAd(new AdRequest());
+		 //final AdView adView = (AdView)findViewById(R.id.adView);
+		 //adView.loadAd(new AdRequest());
 	}
 	
 	@Override
