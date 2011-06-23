@@ -143,18 +143,8 @@
 	<string name="regex_last_name">"[a-zA-z]+([ '-][a-zA-Z]+)*"</string>
 	<string name="regex_jerseynum">"[1-9]?[0-9]"</string>
 	<string name="regex_position">"[A-Z][A-Z]?[A-Z]?"</string>
-	
-	<string name="check_license">Check license</string>
-    <string name="checking_license">Checking license...</string>
     <string name="dont_allow">Don\'t allow the user access</string>
     <string name="allow">Allow the user access</string>
     <string name="application_error">Application error: %1$s</string>
-
-    <!-- Unlicensed dialog messages -->
-    <string name="unlicensed_dialog_title">Application not licensed</string>
-    <string name="unlicensed_dialog_body">This application is not licensed. Please purchase it from Android Market.</string>
-    <string name="buy_button">Buy app</string>
-    <string name="quit_button">Exit</string>
-    <string name="help_string">Help</string>
 
 </resources>

@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.sportsboards2d.util;
 
 import org.anddev.andengine.util.MathUtils;

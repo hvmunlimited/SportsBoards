@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	          xmlns:ads="http://schemas.android.com/apk/res/com.sportsboards2d"
+	          xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
 	          android:layout_width="fill_parent"
 			  android:layout_height="fill_parent">
 
@@ -12,7 +12,8 @@
 		android:gravity="center"
 		android:layout_alignParentTop="true"
 		ads:adUnitId="a14da2fff0f102e" 
-		ads:adSize="BANNER" />
+		ads:adSize="BANNER"
+		ads:loadAdOnCreate="true" />
 		
 		<org.anddev.andengine.opengl.view.RenderSurfaceView android:id="@+id/adlayout_surfaceview"
 				android:layout_width="fill_parent" 

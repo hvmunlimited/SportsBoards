@@ -103,14 +103,14 @@ public class testingboard extends BaseBoard{
 
 		PlayerSprite sprite = null; 
 			
-		float[]Xs = null;
-		float[]Ys = null;
+		//float[]Xs = null;
+		//float[]Ys = null;
 		
 		float moveX, moveY;
 		moveX = 0;
 		moveY = 0;
 		float diff;
-		float angleDeg = 0.0f;
+		//float angleDeg = 0.0f;
 	
 		if((pTouchArea) instanceof PlayerSprite){
 			
@@ -144,7 +144,7 @@ public class testingboard extends BaseBoard{
 						relativeX = relativeX * 2;
 						relativeY = relativeY * 2;
 						
-						angleDeg = MathUtils.radToDeg((float)Math.atan2(-relativeX, relativeY));
+						//angleDeg = MathUtils.radToDeg((float)Math.atan2(-relativeX, relativeY));
 
 						if(true){
 							

@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.sportsboards2d.sprites;
 
 import org.anddev.andengine.opengl.texture.region.TiledTextureRegion;

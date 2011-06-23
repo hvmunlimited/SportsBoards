@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.sportsboards2d.db.objects;
 
 import com.sportsboards2d.util.Colors;

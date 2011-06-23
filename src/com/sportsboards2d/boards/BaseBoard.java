@@ -39,11 +39,6 @@ import android.widget.Toast;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-
-import com.google.ads.*;
-import com.google.ads.AdRequest;
-import com.google.ads.AdView;
-
 import com.sportsboards2d.R;
 import com.sportsboards2d.activities.CreatePlayer;
 import com.sportsboards2d.activities.DeleteForm;
@@ -60,7 +55,6 @@ import com.sportsboards2d.db.objects.PlayerInfo;
 import com.sportsboards2d.db.objects.PlayerObject;
 import com.sportsboards2d.db.parsing.XMLAccess;
 import com.sportsboards2d.sprites.BallSprite;
-import com.sportsboards2d.sprites.ButtonSprite;
 import com.sportsboards2d.sprites.LineFactory;
 import com.sportsboards2d.sprites.PlayerSprite;
 import com.sportsboards2d.util.Constants;
@@ -918,10 +912,11 @@ public abstract class BaseBoard extends Interface{
 	
 	@Override
 	public void onLoadComplete(){
-		AdView adView = (AdView)findViewById(R.id.adlayout);
-	    AdRequest request = new AdRequest();
-	    adView.setEnabled(true);
-	    adView.loadAd(request);
+		//AdView adView = (AdView)this.findViewById(R.id.adlayout);
+	    //AdRequest request = new AdRequest();
+	    //adView.setEnabled(true);
+	    //adView.loadAd(request);
+	    //adView.loadAd(new AdRequest());
 	}
 }
 
