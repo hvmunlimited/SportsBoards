@@ -148,7 +148,7 @@ public abstract class Interface extends LayoutGameActivity implements IOnMenuIte
 	}
 	/*
 	 * onLoadScene()
-	 * 
+	 * TODO: Fix depreciation
 	 * Create menus and physics
 	 */
 
