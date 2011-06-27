@@ -1,0 +1,18 @@
+<project basedir="." default="javadoc" name="sportsboards2d api docs">
+
+    <property 
+        name="android-sdk-docs"
+        value="/home/glide/android-sdk-linux_86/docs/reference"/>
+
+    <target name="javadoc" description="api docs" depends="">
+        <javadoc destdir="docs">
+            <link offline="true"
+                  href="http://developer.android.com/reference/"
+                  packagelistLoc="${android-sdk-docs}" />
+            <fileset dir="src" includes="**/*.java" />
+        </javadoc>
+    </target>
+
+    <!-- more implementation, any remaining targets -->
+</project>
+

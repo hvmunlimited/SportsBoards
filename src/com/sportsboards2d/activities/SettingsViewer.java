@@ -20,7 +20,7 @@ public class SettingsViewer extends PreferenceActivity implements OnSharedPrefer
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        addPreferencesFromResource(R.layout.settings);
+        addPreferencesFromResource(R.xml.settings);
     }
 	
 	/*
